@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Módulo 2 · Autogestión | Bacteriología</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0a0f1e;--surface:#111827;--surface2:#1e2a3a;--border:#2d3f55;
+  --violet:#7c3aed;--violet2:#a78bfa;--green:#10b981;--amber:#f59e0b;
+  --rose:#f43f5e;--blue:#38bdf8;--text:#e2e8f0;--muted:#8b95a1;--white:#fff;--radius:14px;--shadow:0 8px 32px rgba(0,0,0,.5)
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;line-height:1.7;min-height:100vh;overflow-x:hidden}
+#loader{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px}
+.loader-ring{width:64px;height:64px;border:3px solid var(--border);border-top-color:var(--violet2);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#welcome{position:fixed;inset:0;background:linear-gradient(135deg,#0a0f1e,#1a0533,#0a0f1e);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center}
+.welcome-badge{background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.4);color:var(--violet2);font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;padding:6px 18px;border-radius:100px;margin-bottom:24px}
+#welcome h1{font-family:'Syne',sans-serif;font-size:clamp(2rem,6vw,3.5rem);line-height:1.1;margin-bottom:16px}
+#welcome h1 span{color:var(--violet2)}
+#welcome p{color:var(--muted);max-width:480px;margin-bottom:32px;font-size:1.05rem}
+.name-input-wrap{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:28px;width:100%;max-width:420px}
+.name-input-wrap input{flex:1;min-width:200px;background:var(--surface);border:1.5px solid var(--border);color:var(--text);padding:13px 18px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:1rem;outline:none;transition:border-color .2s}
+.name-input-wrap input:focus{border-color:var(--violet2)}
+.info-chips{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:20px}
+.chip{background:var(--surface2);border:1px solid var(--border);border-radius:100px;padding:5px 14px;font-size:.8rem;color:var(--muted)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 28px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:600;cursor:pointer;border:none;transition:all .2s;text-decoration:none}
+.btn-primary{background:linear-gradient(135deg,var(--violet),var(--violet2));color:#fff}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(124,58,237,.4)}
+.btn-ghost{background:transparent;color:var(--violet2);border:1.5px solid var(--violet2)}
+.btn-ghost:hover{background:rgba(124,58,237,.1)}
+.btn-amber{background:linear-gradient(135deg,#d97706,var(--amber));color:#0a0f1e}
+.btn-amber:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(245,158,11,.35)}
+#app{display:none}
+.top-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 32px;display:flex;align-items:center;gap:20px;position:sticky;top:0;z-index:100}
+.top-logo{font-family:'Syne',sans-serif;font-size:.95rem;color:var(--violet2);font-weight:800;white-space:nowrap}
+.top-greeting{color:var(--muted);font-size:.85rem;flex:1}
+.top-greeting span{color:var(--text);font-weight:600}
+.xp-badge{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.3);color:var(--amber);font-size:.8rem;font-weight:600;padding:5px 14px;border-radius:100px;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.progress-global{background:var(--surface2);padding:16px 32px;border-bottom:1px solid var(--border)}
+.progress-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:.82rem}
+.progress-row span{color:var(--muted)}
+.prog-bar{height:6px;background:var(--border);border-radius:4px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--violet),var(--violet2));border-radius:4px;transition:width .6s cubic-bezier(.4,0,.2,1)}
+.module-nav{display:flex;overflow-x:auto;padding:0 32px;background:var(--surface);border-bottom:1px solid var(--border);gap:4px}
+.mnav-btn{padding:14px 20px;background:none;border:none;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s;display:flex;align-items:center;gap:8px}
+.mnav-btn:hover{color:var(--text)}
+.mnav-btn.active{color:var(--violet2);border-bottom-color:var(--violet2)}
+.mnav-btn .dot{width:7px;height:7px;border-radius:50%;background:var(--border)}
+.mnav-btn.active .dot{background:var(--violet2);box-shadow:0 0 8px var(--violet2)}
+.page{max-width:820px;margin:0 auto;padding:48px 32px 100px}
+.section-panel{display:none}
+.section-panel.active{display:block;animation:fadeSlide .4s ease}
+@keyframes fadeSlide{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.section-hero{background:linear-gradient(135deg,var(--surface),var(--surface2));border:1px solid var(--border);border-radius:var(--radius);padding:40px;margin-bottom:32px;position:relative;overflow:hidden}
+.section-hero::after{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;border-radius:50%;background:var(--violet2);opacity:.05}
+.section-hero .sh-badge{color:var(--violet2);font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;margin-bottom:12px}
+.section-hero h2{font-family:'Syne',sans-serif;font-size:clamp(1.6rem,4vw,2.2rem);line-height:1.2;margin-bottom:12px}
+.section-hero p{color:var(--muted);font-size:1rem;max-width:580px}
+.obj-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:24px}
+.obj-item{background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.2);border-radius:10px;padding:14px 16px;font-size:.88rem;display:flex;align-items:flex-start;gap:10px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin:24px 0}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;position:relative;overflow:hidden;transition:transform .25s,box-shadow .25s,border-color .25s}
+.card:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:var(--violet2)}
+.card .c-icon{font-size:2rem;margin-bottom:12px}
+.card h4{font-family:'Syne',sans-serif;font-size:1rem;margin-bottom:6px;color:var(--white)}
+.card p{font-size:.85rem;color:var(--muted)}
+.card-glow{position:absolute;top:0;left:0;width:3px;height:100%;background:linear-gradient(180deg,var(--violet),var(--violet2))}
+.callout{border-radius:10px;padding:20px 24px;margin:24px 0;font-size:.95rem}
+.callout-violet{background:rgba(124,58,237,.07);border-left:4px solid var(--violet2)}
+.callout-amber{background:rgba(245,158,11,.07);border-left:4px solid var(--amber)}
+.callout-green{background:rgba(16,185,129,.07);border-left:4px solid var(--green)}
+.callout-rose{background:rgba(244,63,94,.07);border-left:4px solid var(--rose)}
+.callout strong{color:var(--white)}
+h3{font-family:'Syne',sans-serif;font-size:1.25rem;color:var(--white);margin:36px 0 12px}
+p{margin-bottom:14px;color:var(--text)}
+.lead{font-size:1.05rem;color:var(--muted);border-left:3px solid var(--violet2);padding-left:16px;margin-bottom:28px}
+.table-wrap{overflow-x:auto;margin:20px 0;border-radius:10px;border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+thead tr{background:var(--surface2)}
+thead th{padding:12px 16px;text-align:left;font-weight:600;color:var(--violet2);font-size:.82rem;letter-spacing:.05em;text-transform:uppercase}
+tbody td{padding:12px 16px;border-top:1px solid var(--border);color:var(--text)}
+tbody tr:hover{background:rgba(255,255,255,.02)}
+ul.sl,ol.sl{list-style:none;padding:0;margin:16px 0 24px}
+ul.sl li,ol.sl li{padding:10px 14px 10px 44px;position:relative;border-bottom:1px solid var(--border);font-size:.93rem}
+ul.sl li::before{content:'◆';position:absolute;left:14px;color:var(--violet2);font-size:.6rem;top:14px}
+ol.sl{counter-reset:c}
+ol.sl li{counter-increment:c}
+ol.sl li::before{content:counter(c);position:absolute;left:10px;width:22px;height:22px;background:var(--violet);color:#fff;font-size:.72rem;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center;top:11px}
+.video-container{position:relative;width:100%;padding-bottom:56.25%;margin:24px 0;border-radius:12px;overflow:hidden;background:var(--surface2);border:1px solid var(--border)}
+.video-container iframe{position:absolute;inset:0;width:100%;height:100%;border:none}
+.video-label{font-size:.82rem;color:var(--muted);margin-top:8px;padding-left:4px}
+.accordion{border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:20px 0}
+.acc-item{border-bottom:1px solid var(--border)}
+.acc-item:last-child{border-bottom:none}
+.acc-head{width:100%;background:var(--surface);color:var(--text);border:none;padding:16px 20px;text-align:left;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:500;display:flex;justify-content:space-between;align-items:center;transition:background .2s}
+.acc-head:hover{background:var(--surface2)}
+.acc-head .arrow{color:var(--violet2);transition:transform .3s}
+.acc-head.open .arrow{transform:rotate(180deg)}
+.acc-body{max-height:0;overflow:hidden;transition:max-height .4s ease,padding .3s}
+.acc-body.open{max-height:600px;padding:20px}
+.acc-body p{color:var(--muted);font-size:.92rem;margin:0}
+.scenario-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;margin:28px 0}
+.scenario-box .sc-title{font-family:'Syne',sans-serif;font-size:1rem;color:var(--amber);margin-bottom:12px}
+.scenario-box .sc-context{font-size:.95rem;color:var(--muted);background:var(--surface2);border-radius:8px;padding:16px;margin-bottom:20px;line-height:1.6}
+.sc-options{display:flex;flex-direction:column;gap:10px}
+.sc-opt{background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:14px 18px;cursor:pointer;font-size:.93rem;color:var(--text);text-align:left;transition:all .2s}
+.sc-opt:hover:not(:disabled){border-color:var(--violet2);background:rgba(124,58,237,.06)}
+.sc-opt.correct{border-color:var(--green);background:rgba(16,185,129,.08);color:#6ee7b7}
+.sc-opt.wrong{border-color:var(--rose);background:rgba(244,63,94,.08);color:#fda4af}
+.sc-opt:disabled{cursor:not-allowed}
+.sc-feedback{margin-top:16px;padding:14px 18px;border-radius:8px;font-size:.9rem;display:none}
+.sc-feedback.ok{display:block;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.3);color:#6ee7b7}
+.sc-feedback.ko{display:block;background:rgba(244,63,94,.08);border:1px solid rgba(244,63,94,.3);color:#fda4af}
+.reflect-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;margin:28px 0}
+.reflect-box h4{font-family:'Syne',sans-serif;color:var(--amber);margin-bottom:10px}
+.reflect-box p{color:var(--muted);font-size:.93rem;margin-bottom:16px}
+.reflect-textarea{width:100%;background:var(--surface2);border:1.5px solid var(--border);color:var(--text);padding:14px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.93rem;resize:vertical;min-height:100px;outline:none;transition:border-color .2s}
+.reflect-textarea:focus{border-color:var(--violet2)}
+.reflect-result{margin-top:14px;padding:14px 18px;border-radius:8px;background:rgba(124,58,237,.07);border:1px solid rgba(124,58,237,.2);color:var(--violet2);font-size:.9rem;display:none}
+/* SLIDER AUTOEVALUACIÓN */
+.slider-wrap{margin:20px 0}
+.slider-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:14px}
+.slider-item label{display:block;font-size:.93rem;color:var(--text);margin-bottom:12px;font-weight:500}
+.slider-item input[type=range]{width:100%;accent-color:var(--violet2);cursor:pointer}
+.slider-labels{display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted);margin-top:6px}
+.slider-val{text-align:center;color:var(--violet2);font-weight:700;font-size:.85rem;margin-top:4px}
+/* PLANIFICADOR */
+.planner{margin:24px 0}
+.planner-day{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:12px}
+.planner-day h4{font-family:'Syne',sans-serif;color:var(--violet2);font-size:.9rem;margin-bottom:12px}
+.planner-input{width:100%;background:var(--surface2);border:1.5px solid var(--border);color:var(--text);padding:10px 14px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.88rem;outline:none;transition:border-color .2s;margin-bottom:8px}
+.planner-input:focus{border-color:var(--violet2)}
+/* CHECKLIST */
+.checklist{margin:20px 0}
+.cl-item{display:flex;align-items:flex-start;gap:14px;padding:14px 0;border-bottom:1px solid var(--border);cursor:pointer}
+.cl-item:last-child{border-bottom:none}
+.cl-check{width:22px;height:22px;min-width:22px;border-radius:6px;border:2px solid var(--border);background:transparent;display:flex;align-items:center;justify-content:center;transition:all .2s;margin-top:1px}
+.cl-item.checked .cl-check{background:var(--violet2);border-color:var(--violet2)}
+.cl-item.checked .cl-check::after{content:'✓';color:#fff;font-size:.75rem;font-weight:700}
+.cl-item.checked .cl-label{color:var(--muted);text-decoration:line-through}
+.cl-label{font-size:.93rem;color:var(--text);line-height:1.4}
+/* QUIZ */
+.quiz-q{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;margin-bottom:20px}
+.quiz-q .q-num{font-size:.75rem;color:var(--violet2);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}
+.quiz-q .q-text{font-size:1rem;font-weight:500;color:var(--white);margin-bottom:20px;line-height:1.5}
+.q-opts{display:flex;flex-direction:column;gap:10px}
+.q-opt{background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:13px 18px;cursor:pointer;font-size:.92rem;color:var(--text);text-align:left;transition:all .2s;display:flex;align-items:center;gap:12px}
+.q-opt::before{content:'';width:18px;height:18px;min-width:18px;border-radius:50%;border:2px solid var(--border);transition:all .2s}
+.q-opt:hover:not(:disabled){border-color:var(--violet2);background:rgba(124,58,237,.05)}
+.q-opt.correct{border-color:var(--green);background:rgba(16,185,129,.08);color:#6ee7b7}
+.q-opt.correct::before{background:var(--green);border-color:var(--green)}
+.q-opt.wrong{border-color:var(--rose);background:rgba(244,63,94,.08);color:#fda4af}
+.q-opt.wrong::before{background:var(--rose);border-color:var(--rose)}
+.q-opt:disabled{cursor:not-allowed}
+.q-fb{margin-top:14px;padding:12px 16px;border-radius:8px;font-size:.88rem;display:none}
+.q-fb.ok{display:block;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.3);color:#6ee7b7}
+.q-fb.ko{display:block;background:rgba(244,63,94,.08);border:1px solid rgba(244,63,94,.3);color:#fda4af}
+.result-panel{background:linear-gradient(135deg,var(--surface),var(--surface2));border:1px solid var(--border);border-radius:var(--radius);padding:40px;text-align:center;margin-top:28px;display:none}
+.result-panel.show{display:block;animation:fadeSlide .5s ease}
+.result-big{font-family:'Syne',sans-serif;font-size:4rem;line-height:1;margin:16px 0 8px;color:var(--violet2)}
+.result-msg{color:var(--muted);font-size:1rem;max-width:420px;margin:0 auto 24px}
+.result-badge{display:inline-block;background:rgba(124,58,237,.12);border:1px solid rgba(124,58,237,.3);color:var(--violet2);padding:8px 20px;border-radius:100px;font-size:.85rem;font-weight:600}
+.achievement-toast{position:fixed;bottom:28px;right:28px;background:linear-gradient(135deg,#1a1030,#0f0a20);border:1px solid var(--amber);border-radius:12px;padding:16px 20px;display:flex;align-items:center;gap:14px;z-index:500;animation:toastIn .4s ease;max-width:300px}
+@keyframes toastIn{from{opacity:0;transform:translateX(80px)}to{opacity:1;transform:translateX(0)}}
+.achievement-toast .a-icon{font-size:2rem}
+.achievement-toast .a-text strong{display:block;color:var(--amber);font-size:.9rem;margin-bottom:2px}
+.achievement-toast .a-text span{color:var(--muted);font-size:.8rem}
+.nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:52px;padding-top:24px;border-top:1px solid var(--border);gap:12px;flex-wrap:wrap}
+/* MATRIZ EISENHOWER */
+.eisenhower{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:24px 0}
+.eis-quad{border-radius:10px;padding:20px;border:1px solid var(--border)}
+.eis-quad h5{font-family:'Syne',sans-serif;font-size:.9rem;margin-bottom:8px}
+.eis-quad p{font-size:.82rem;color:var(--muted);margin:0}
+.eis-q1{background:rgba(244,63,94,.07);border-color:rgba(244,63,94,.3)}
+.eis-q1 h5{color:var(--rose)}
+.eis-q2{background:rgba(16,185,129,.07);border-color:rgba(16,185,129,.3)}
+.eis-q2 h5{color:var(--green)}
+.eis-q3{background:rgba(245,158,11,.07);border-color:rgba(245,158,11,.3)}
+.eis-q3 h5{color:var(--amber)}
+.eis-q4{background:rgba(124,58,237,.07);border-color:rgba(124,58,237,.3)}
+.eis-q4 h5{color:var(--violet2)}
+@media(max-width:640px){.page{padding:28px 16px 80px}.top-bar{padding:12px 16px}.module-nav{padding:0 8px}.eisenhower{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="loader"><div class="loader-ring"></div><p style="color:var(--muted);font-size:.9rem">Cargando módulo...</p></div>
+<div id="welcome">
+  <div class="welcome-badge">Habilidades Blandas · Módulo 2 de 5</div>
+  <div style="font-size:1.5rem;margin-bottom:16px">🧠 ⚡ 📅</div>
+  <h1>Toma el control de<br/><span>tu autogestión</span></h1>
+  <p>La autogestión es la habilidad que separa a los profesionales que sobreviven la práctica de los que la aprovechan al máximo.</p>
+  <div class="name-input-wrap"><input type="text" id="nameInput" placeholder="¿Cómo te llamas?" maxlength="40"/></div>
+  <div class="info-chips">
+    <div class="chip">📚 6 secciones</div>
+    <div class="chip">⏱ ~45 min</div>
+    <div class="chip">🎯 Bacteriología IX–X sem</div>
+  </div>
+  <br/>
+  <button class="btn btn-primary" onclick="startApp()">Iniciar Módulo 2 →</button>
+</div>
+<div id="app">
+  <div class="top-bar">
+    <div class="top-logo">🧠 Autogestión</div>
+    <div class="top-greeting">Hola, <span id="greetName">estudiante</span> · Módulo 2 de 5</div>
+    <div class="xp-badge">⚡ <span id="xpCount">0</span> XP</div>
+  </div>
+  <div class="progress-global">
+    <div class="progress-row"><span>Progreso del módulo</span><span id="progPct">0%</span></div>
+    <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  </div>
+  <nav class="module-nav">
+    <button class="mnav-btn active" onclick="goSection(0)"><span class="dot"></span>Bienvenida</button>
+    <button class="mnav-btn" onclick="goSection(1)"><span class="dot"></span>¿Qué es?</button>
+    <button class="mnav-btn" onclick="goSection(2)"><span class="dot"></span>Gestión del tiempo</button>
+    <button class="mnav-btn" onclick="goSection(3)"><span class="dot"></span>Autorregulación</button>
+    <button class="mnav-btn" onclick="goSection(4)"><span class="dot"></span>Actividades</button>
+    <button class="mnav-btn" onclick="goSection(5)"><span class="dot"></span>Evaluación</button>
+  </nav>
+  <div class="page">
+
+    <!-- SEC 0 BIENVENIDA -->
+    <div class="section-panel active" id="sec0">
+      <div class="section-hero">
+        <div class="sh-badge">🧠 Módulo 2 · Autogestión</div>
+        <h2>Sé el director de<br/>tu propio aprendizaje</h2>
+        <p>En práctica formativa nadie te persigue — eres tú quien decide cuánto crecer. La autogestión es tu motor interno.</p>
+        <div class="obj-list">
+          <div class="obj-item"><span>🎯</span><span>Comprender qué es la autogestión y por qué es crítica en práctica</span></div>
+          <div class="obj-item"><span>🎯</span><span>Aplicar herramientas de gestión del tiempo en entornos clínicos</span></div>
+          <div class="obj-item"><span>🎯</span><span>Desarrollar autorregulación emocional ante situaciones de presión</span></div>
+          <div class="obj-item"><span>🎯</span><span>Construir un plan personal de mejora continua</span></div>
+        </div>
+      </div>
+      <div class="callout callout-amber">
+        <strong>📢 Observación de tus líderes de práctica:</strong><br/>
+        Se han identificado dificultades en la organización del tiempo, el cumplimiento autónomo de responsabilidades y la capacidad de los estudiantes para reconocer y gestionar sus propias emociones durante situaciones de alta demanda.
+      </div>
+      <h3>¿Cómo te sientes hoy?</h3>
+      <p style="color:var(--muted);font-size:.93rem;margin-bottom:16px">Antes de empezar, haz una pausa y evalúa tu estado. Conocerte es el primer paso de la autogestión.</p>
+      <div class="checklist" id="estadoCheck">
+        <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-check"></div><span class="cl-label">Me siento organizado/a para esta semana de práctica</span></div>
+        <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-check"></div><span class="cl-label">Tengo claras mis prioridades del día</span></div>
+        <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-check"></div><span class="cl-label">Me siento emocionalmente estable para aprender hoy</span></div>
+        <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-check"></div><span class="cl-label">Sé cuáles son mis fortalezas y áreas de mejora en práctica</span></div>
+      </div>
+      <div class="nav-row"><span></span><button class="btn btn-primary" onclick="goSection(1)">Comenzar →</button></div>
+    </div>
+
+    <!-- SEC 1 QUÉ ES -->
+    <div class="section-panel" id="sec1">
+      <h3 style="margin-top:0">🔍 ¿Qué es la autogestión?</h3>
+      <p class="lead">La autogestión es la capacidad de dirigir tu propio comportamiento, emociones y aprendizaje hacia metas definidas — sin depender de la supervisión constante de otros.</p>
+      <div class="cards">
+        <div class="card"><div class="card-glow"></div><div class="c-icon">🎯</div><h4>Autodirección</h4><p>Saber qué quieres lograr y tomar decisiones orientadas a ese objetivo cada día.</p></div>
+        <div class="card"><div class="card-glow"></div><div class="c-icon">⏰</div><h4>Gestión del tiempo</h4><p>Organizar tus actividades con eficiencia, priorizando lo importante sobre lo urgente.</p></div>
+        <div class="card"><div class="card-glow"></div><div class="c-icon">🧘</div><h4>Autorregulación</h4><p>Controlar tus emociones e impulsos para mantener el desempeño incluso bajo presión.</p></div>
+        <div class="card"><div class="card-glow"></div><div class="c-icon">📈</div><h4>Mejora continua</h4><p>Evaluar constantemente tu desempeño y buscar formas de hacerlo cada vez mejor.</p></div>
+      </div>
+      <div class="callout callout-violet">
+        <strong>💡 En práctica de bacteriología esto significa:</strong><br/>
+        Llegar preparado/a, cumplir sin que te recuerden, gestionar el estrés de resultados críticos, aprender de los errores sin bloquearte, y mantener la calidad del trabajo cuando hay alta demanda de muestras.
+      </div>
+      <h3>🎬 Video: El arte de la autogestión</h3>
+      <div class="video-container">
+        <iframe src="https://www.youtube.com/embed/75d_29QWELk" title="Autogestión" allowfullscreen loading="lazy"></iframe>
+      </div>
+      <p class="video-label">📌 Duración aprox. 7 min · Identifica cuál de los 4 componentes es tu mayor reto en práctica</p>
+      <div class="reflect-box">
+        <h4>✍️ Reflexión 1 – Mi diagnóstico de autogestión</h4>
+        <p>¿En qué situaciones de tu práctica formativa sientes que pierdes el control (del tiempo, de las emociones, de las prioridades)? Describe una situación específica.</p>
+        <textarea class="reflect-textarea" id="ref1" placeholder="Escribe tu reflexión..."></textarea>
+        <div style="margin-top:12px"><button class="btn btn-ghost" onclick="submitReflect('ref1','rfb1')">Guardar ✓</button></div>
+        <div class="reflect-result" id="rfb1">💾 ¡Guardado! Identificar el problema es el 50% de la solución. +15 XP</div>
+      </div>
+      <div class="nav-row"><button class="btn btn-ghost" onclick="goSection(0)">← Anterior</button><button class="btn btn-primary" onclick="goSection(2)">Siguiente →</button></div>
+    </div>
+
+    <!-- SEC 2 GESTIÓN DEL TIEMPO -->
+    <div class="section-panel" id="sec2">
+      <h3 style="margin-top:0">⏰ Gestión del tiempo en práctica clínica</h3>
+      <p class="lead">El tiempo en el laboratorio clínico no espera. Aprender a priorizarlo es una competencia profesional tan importante como cualquier técnica.</p>
+      <h3>La Matriz de Eisenhower aplicada al laboratorio</h3>
+      <p style="color:var(--muted)">Esta herramienta clasifica tus tareas según urgencia e importancia, ayudándote a decidir qué hacer primero:</p>
+      <div class="eisenhower">
+        <div class="eis-quad eis-q1"><h5>🔴 Urgente + Importante</h5><p><strong>HACER YA</strong><br/>Resultado de pánico · Muestra urgente de UCI · Error en reporte activo</p></div>
+        <div class="eis-quad eis-q2"><h5>🟢 No urgente + Importante</h5><p><strong>PLANIFICAR</strong><br/>Preparar casos del día · Repasar protocolos · Completar bitácora</p></div>
+        <div class="eis-quad eis-q3"><h5>🟡 Urgente + No importante</h5><p><strong>DELEGAR</strong><br/>Llamadas no críticas · Solicitudes administrativas rutinarias</p></div>
+        <div class="eis-quad eis-q4"><h5>🟣 No urgente + No importante</h5><p><strong>ELIMINAR</strong><br/>Revisar redes sociales · Conversaciones no relacionadas al trabajo</p></div>
+      </div>
+      <h3>🎬 Video: Gestión del tiempo efectiva</h3>
+      <div class="video-container">
+        <iframe src="https://www.youtube.com/embed/oTugjssqOT0" title="Gestión del tiempo" allowfullscreen loading="lazy"></iframe>
+      </div>
+      <p class="video-label">📌 Duración aprox. 8 min · Aplica la matriz Eisenhower a tu próxima jornada de práctica</p>
+      <div class="scenario-box">
+        <div class="sc-title">🎭 Escenario – Prioridades en el laboratorio</div>
+        <div class="sc-context">Son las 10am. Tienes pendiente: (1) terminar un hemograma de rutina, (2) atender al médico que llama por resultado de potasio crítico, (3) responder un mensaje de WhatsApp de un compañero sobre el turno, (4) completar el registro de temperatura de la nevera. ¿Qué haces primero?</div>
+        <div class="sc-options" id="sc1opts">
+          <button class="sc-opt" onclick="evalSc('sc1',this,false)">A) Termino el hemograma porque ya casi acabo.</button>
+          <button class="sc-opt" onclick="evalSc('sc1',this,true)">B) Atiendo al médico por el resultado crítico de potasio — es urgente e importante.</button>
+          <button class="sc-opt" onclick="evalSc('sc1',this,false)">C) Respondo el WhatsApp rápido y luego sigo con lo demás.</button>
+          <button class="sc-opt" onclick="evalSc('sc1',this,false)">D) Hago el registro de temperatura porque es protocolo obligatorio.</button>
+        </div>
+        <div class="sc-feedback" id="sc1fb"></div>
+      </div>
+      <h3>⚙️ Técnicas de organización personal</h3>
+      <div class="accordion">
+        <div class="acc-item"><button class="acc-head" onclick="toggleAcc(this)">🍅 Técnica Pomodoro <span class="arrow">▾</span></button><div class="acc-body"><p>Trabaja 25 minutos concentrado/a en una sola tarea, luego descansa 5 minutos. Después de 4 ciclos, un descanso largo de 20 min. Ideal para estudiar protocolos o completar informes en práctica.</p></div></div>
+        <div class="acc-item"><button class="acc-head" onclick="toggleAcc(this)">📋 Lista de prioridades diaria <span class="arrow">▾</span></button><div class="acc-body"><p>Cada mañana antes de iniciar práctica, lista tus 3 tareas más importantes del día (MITs - Most Important Tasks). Completarlas debe ser tu objetivo mínimo del día, independientemente de lo que surja.</p></div></div>
+        <div class="acc-item"><button class="acc-head" onclick="toggleAcc(this)">🔄 Revisión semanal <span class="arrow">▾</span></button><div class="acc-body"><p>Cada domingo dedica 20 minutos a revisar: ¿qué logré esta semana? ¿qué quedó pendiente? ¿qué aprendí? ¿qué haré diferente la próxima semana? Esta práctica acelera el crecimiento profesional exponencialmente.</p></div></div>
+        <div class="acc-item"><button class="acc-head" onclick="toggleAcc(this)">📁 Sistema de organización de información <span class="arrow">▾</span></button><div class="acc-body"><p>Crea carpetas digitales para: protocolos, casos clínicos de interés, retroalimentaciones del tutor, y dudas resueltas. Un profesional organizado recupera información rápido cuando más la necesita.</p></div></div>
+      </div>
+      <div class="nav-row"><button class="btn btn-ghost" onclick="goSection(1)">← Anterior</button><button class="btn btn-primary" onclick="goSection(3)">Siguiente →</button></div>
+    </div>
+
+    <!-- SEC 3 AUTORREGULACIÓN -->
+    <div class="section-panel" id="sec3">
+      <h3 style="margin-top:0">🧘 Autorregulación emocional</h3>
+      <p class="lead">En práctica, las emociones no son el enemigo — son información. Aprender a gestionarlas te convierte en un profesional más eficaz y más humano.</p>
+      <div class="callout callout-rose">
+        <strong>⚠️ Situaciones que desafían la autorregulación en bacteriología:</strong><br/>
+        Cometer un error técnico frente al tutor · Recibir una crítica inesperada · Manejar la ansiedad de un resultado que podría ser grave · Trabajar bajo presión de tiempo con múltiples muestras urgentes · Recibir instrucciones contradictorias de distintos tutores.
+      </div>
+      <h3>El ciclo de la autorregulación</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Paso</th><th>Acción</th><th>Ejemplo práctico</th></tr></thead>
+          <tbody>
+            <tr><td><strong>1. Reconocer</strong></td><td>Identificar qué emoción estás sintiendo</td><td>"Siento ansiedad porque cometí un error"</td></tr>
+            <tr><td><strong>2. Pausar</strong></td><td>Crear un espacio entre el estímulo y la respuesta</td><td>Respirar 3 veces antes de reaccionar</td></tr>
+            <tr><td><strong>3. Evaluar</strong></td><td>¿Esta reacción me ayuda o me perjudica?</td><td>"Si me bloqueo, el trabajo no avanza"</td></tr>
+            <tr><td><strong>4. Elegir</strong></td><td>Seleccionar la respuesta más constructiva</td><td>Reportar el error, corregir y aprender</td></tr>
+            <tr><td><strong>5. Aprender</strong></td><td>Extraer el aprendizaje para la próxima vez</td><td>Registrar qué falló y cómo evitarlo</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>🎬 Video: Inteligencia emocional y autorregulación</h3>
+      <div class="video-container">
+        <iframe src="https://www.youtube.com/embed/n9h5ePyoYBg" title="Autorregulación emocional" allowfullscreen loading="lazy"></iframe>
+      </div>
+      <p class="video-label">📌 Duración aprox. 6 min · Toma nota del modelo de regulación emocional que presenta</p>
+      <h3>📊 Autoevaluación de autogestión</h3>
+      <p style="color:var(--muted);font-size:.93rem">Califica del 1 al 5 tu nivel actual en cada competencia (1 = necesito desarrollar mucho, 5 = fortaleza sólida):</p>
+      <div class="slider-wrap">
+        <div class="slider-item"><label>Organizo mi tiempo de práctica de manera efectiva</label><input type="range" min="1" max="5" value="3" oninput="updateSlider(this)"/><div class="slider-labels"><span>1 - Muy bajo</span><span>5 - Excelente</span></div><div class="slider-val">3 / 5</div></div>
+        <div class="slider-item"><label>Cumplo mis responsabilidades sin que me recuerden</label><input type="range" min="1" max="5" value="3" oninput="updateSlider(this)"/><div class="slider-labels"><span>1 - Muy bajo</span><span>5 - Excelente</span></div><div class="slider-val">3 / 5</div></div>
+        <div class="slider-item"><label>Gestiono mis emociones bajo presión en el laboratorio</label><input type="range" min="1" max="5" value="3" oninput="updateSlider(this)"/><div class="slider-labels"><span>1 - Muy bajo</span><span>5 - Excelente</span></div><div class="slider-val">3 / 5</div></div>
+        <div class="slider-item"><label>Me autoevalúo regularmente y busco mejorar</label><input type="range" min="1" max="5" value="3" oninput="updateSlider(this)"/><div class="slider-labels"><span>1 - Muy bajo</span><span>5 - Excelente</span></div><div class="slider-val">3 / 5</div></div>
+      </div>
+      <button class="btn btn-ghost" onclick="saveSliders()">Guardar autoevaluación ✓</button>
+      <div class="reflect-result" id="sliderFb" style="margin-top:12px">✅ ¡Autoevaluación guardada! Este es tu punto de partida — recuérdalo al final del semestre. +20 XP</div>
+      <div class="nav-row"><button class="btn btn-ghost" onclick="goSection(2)">← Anterior</button><button class="btn btn-primary" onclick="goSection(4)">Siguiente →</button></div>
+    </div>
+
+    <!-- SEC 4 ACTIVIDADES -->
+    <div class="section-panel" id="sec4">
+      <h3 style="margin-top:0">🛠️ Actividades de aplicación</h3>
+      <p class="lead">Estas actividades te ayudan a construir hábitos concretos de autogestión desde hoy.</p>
+      <div class="reflect-box">
+        <h4>📅 Actividad 1 – Mi planificador semanal de práctica</h4>
+        <p>Escribe tus 2 prioridades más importantes para cada día de tu próxima semana de práctica. Sé específico/a (no escribas "estudiar" — escribe "repasar protocolo de hemocultivo").</p>
+        <div class="planner">
+          <div class="planner-day"><h4>Lunes</h4><input class="planner-input" placeholder="Prioridad 1..."/><input class="planner-input" placeholder="Prioridad 2..."/></div>
+          <div class="planner-day"><h4>Martes</h4><input class="planner-input" placeholder="Prioridad 1..."/><input class="planner-input" placeholder="Prioridad 2..."/></div>
+          <div class="planner-day"><h4>Miércoles</h4><input class="planner-input" placeholder="Prioridad 1..."/><input class="planner-input" placeholder="Prioridad 2..."/></div>
+          <div class="planner-day"><h4>Jueves</h4><input class="planner-input" placeholder="Prioridad 1..."/><input class="planner-input" placeholder="Prioridad 2..."/></div>
+          <div class="planner-day"><h4>Viernes</h4><input class="planner-input" placeholder="Prioridad 1..."/><input class="planner-input" placeholder="Prioridad 2..."/></div>
+        </div>
+        <button class="btn btn-ghost" onclick="savePlanner()">Guardar planificador ✓</button>
+        <div class="reflect-result" id="plannerFb" style="margin-top:12px">🗓️ ¡Planificador guardado! Los profesionales exitosos planifican — los demás reaccionan. +25 XP</div>
+      </div>
+      <div class="reflect-box">
+        <h4>🧘 Actividad 2 – Mi protocolo personal anti-estrés</h4>
+        <p>Cuando sientes que te desbordas en práctica (error, crítica, presión de tiempo), ¿qué 3 acciones concretas puedes hacer para recuperarte rápido?</p>
+        <textarea class="reflect-textarea" id="act2" placeholder="Ej.: 1. Respiro 3 veces profundo antes de reaccionar. 2. Me digo a mí mismo/a que los errores son aprendizaje. 3..."></textarea>
+        <div style="margin-top:12px"><button class="btn btn-ghost" onclick="submitReflect('act2','afb2')">Guardar protocolo ✓</button></div>
+        <div class="reflect-result" id="afb2">✅ ¡Tu protocolo personal está listo! Léelo antes de cada jornada difícil. +20 XP</div>
+      </div>
+      <div class="reflect-box">
+        <h4>🌟 Actividad 3 – Mis compromisos de autogestión</h4>
+        <p>Selecciona los hábitos que te comprometes a practicar durante las próximas 2 semanas:</p>
+        <div class="checklist" id="commitList">
+          <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-check"></div><span class="cl-label">Llegar 10 minutos antes a mi turno para organizar el día</span></div>
+          <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-check"></div><span class="cl-label">Usar la matriz Eisenhower para priorizar tareas cada mañana</span></div>
+          <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-check"></div><span class="cl-label">Hacer una revisión de 5 minutos al final del turno: ¿qué aprendí hoy?</span></div>
+          <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-check"></div><span class="cl-label">Aplicar el ciclo de autorregulación cuando sienta estrés o frustración</span></div>
+          <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-check"></div><span class="cl-label">Registrar mis errores como oportunidades de aprendizaje en mi bitácora</span></div>
+        </div>
+        <button class="btn btn-amber" style="margin-top:16px" onclick="saveCommitments()">Asumir compromisos 🤝</button>
+        <div class="reflect-result" id="commitfb" style="margin-top:12px">🤝 ¡Compromisos asumidos! La autogestión es un músculo — se fortalece con la práctica diaria. +25 XP</div>
+      </div>
+      <div class="nav-row"><button class="btn btn-ghost" onclick="goSection(3)">← Anterior</button><button class="btn btn-primary" onclick="goSection(5)">Ir a Evaluación →</button></div>
+    </div>
+
+    <!-- SEC 5 EVALUACIÓN -->
+    <div class="section-panel" id="sec5">
+      <h3 style="margin-top:0">✅ Evaluación del Módulo 2</h3>
+      <p class="lead">8 preguntas con retroalimentación inmediata. ¡Demuestra lo que aprendiste!</p>
+      <div class="quiz-q" id="q1"><div class="q-num">Pregunta 1 de 8</div><div class="q-text">¿Cuál es la principal diferencia entre una persona que practica autogestión y una que no lo hace?</div><div class="q-opts"><button class="q-opt" onclick="ansQ(1,this,false)">La que tiene autogestión trabaja más horas</button><button class="q-opt" onclick="ansQ(1,this,true)">La que tiene autogestión dirige su comportamiento hacia metas sin necesitar supervisión constante</button><button class="q-opt" onclick="ansQ(1,this,false)">La que no tiene autogestión es menos inteligente</button><button class="q-opt" onclick="ansQ(1,this,false)">La autogestión solo importa fuera del trabajo</button></div><div class="q-fb" id="qfb1"></div></div>
+      <div class="quiz-q" id="q2"><div class="q-num">Pregunta 2 de 8</div><div class="q-text">En la Matriz de Eisenhower, ¿en qué cuadrante se ubica atender la llamada de un médico sobre un resultado crítico de potasio?</div><div class="q-opts"><button class="q-opt" onclick="ansQ(2,this,true)">Urgente e importante — hacer de inmediato</button><button class="q-opt" onclick="ansQ(2,this,false)">Urgente pero no importante — delegar</button><button class="q-opt" onclick="ansQ(2,this,false)">No urgente pero importante — planificar</button><button class="q-opt" onclick="ansQ(2,this,false)">No urgente ni importante — eliminar</button></div><div class="q-fb" id="qfb2"></div></div>
+      <div class="quiz-q" id="q3"><div class="q-num">Pregunta 3 de 8</div><div class="q-text">¿Qué representa el segundo paso (Pausar) en el ciclo de autorregulación emocional?</div><div class="q-opts"><button class="q-opt" onclick="ansQ(3,this,false)">Ignorar la emoción para continuar trabajando</button><button class="q-opt" onclick="ansQ(3,this,false)">Esperar a que el tutor dé instrucciones</button><button class="q-opt" onclick="ansQ(3,this,true)">Crear un espacio entre el estímulo y la respuesta para no reaccionar impulsivamente</button><button class="q-opt" onclick="ansQ(3,this,false)">Dejar de trabajar hasta sentirse mejor</button></div><div class="q-fb" id="qfb3"></div></div>
+      <div class="quiz-q" id="q4"><div class="q-num">Pregunta 4 de 8</div><div class="q-text">¿Cuál de las siguientes NO es una estrategia de gestión del tiempo?</div><div class="q-opts"><button class="q-opt" onclick="ansQ(4,this,false)">Técnica Pomodoro</button><button class="q-opt" onclick="ansQ(4,this,false)">Lista de prioridades diaria</button><button class="q-opt" onclick="ansQ(4,this,false)">Revisión semanal del desempeño</button><button class="q-opt" onclick="ansQ(4,this,true)">Responder todos los mensajes de WhatsApp antes de iniciar el turno</button></div><div class="q-fb" id="qfb4"></div></div>
+      <div class="quiz-q" id="q5"><div class="q-num">Pregunta 5 de 8</div><div class="q-text">Un estudiante comete un error en el procesamiento de una muestra. La respuesta que mejor refleja autorregulación es:</div><div class="q-opts"><button class="q-opt" onclick="ansQ(5,this,false)">Ocultarlo para no recibir una mala calificación</button><button class="q-opt" onclick="ansQ(5,this,false)">Bloquearse emocionalmente y no poder continuar trabajando</button><button class="q-opt" onclick="ansQ(5,this,true)">Reconocer el error, reportarlo, corregirlo y registrarlo como aprendizaje</button><button class="q-opt" onclick="ansQ(5,this,false)">Culpar al equipo o al protocolo por el error</button></div><div class="q-fb" id="qfb5"></div></div>
+      <div class="quiz-q" id="q6"><div class="q-num">Pregunta 6 de 8</div><div class="q-text">Las MITs (Most Important Tasks) en la gestión del tiempo son:</div><div class="q-opts"><button class="q-opt" onclick="ansQ(6,this,false)">Todas las tareas que hay que hacer en el día</button><button class="q-opt" onclick="ansQ(6,this,true)">Las 2-3 tareas más importantes que, si se completan, hacen exitoso el día</button><button class="q-opt" onclick="ansQ(6,this,false)">Las tareas más urgentes sin importar su relevancia</button><button class="q-opt" onclick="ansQ(6,this,false)">Las tareas que el tutor asigna como obligatorias</button></div><div class="q-fb" id="qfb6"></div></div>
+      <div class="quiz-q" id="q7"><div class="q-num">Pregunta 7 de 8</div><div class="q-text">¿Por qué es importante la autoevaluación como parte de la autogestión?</div><div class="q-opts"><button class="q-opt" onclick="ansQ(7,this,false)">Porque permite compararse con los compañeros</button><button class="q-opt" onclick="ansQ(7,this,false)">Porque es un requisito de la práctica formativa</button><button class="q-opt" onclick="ansQ(7,this,true)">Porque permite identificar fortalezas y áreas de mejora para crecer conscientemente</button><button class="q-opt" onclick="ansQ(7,this,false)">Porque sustituye la evaluación del tutor</button></div><div class="q-fb" id="qfb7"></div></div>
+      <div class="quiz-q" id="q8"><div class="q-num">Pregunta 8 de 8</div><div class="q-text">La autogestión en el contexto de la práctica formativa de bacteriología implica principalmente:</div><div class="q-opts"><button class="q-opt" onclick="ansQ(8,this,false)">Trabajar de manera independiente sin comunicarse con el equipo</button><button class="q-opt" onclick="ansQ(8,this,false)">Esperar instrucciones detalladas antes de cada procedimiento</button><button class="q-opt" onclick="ansQ(8,this,true)">Dirigir el propio aprendizaje, gestionar el tiempo y las emociones para crecer profesionalmente</button><button class="q-opt" onclick="ansQ(8,this,false)">Memorizar todos los protocolos del laboratorio</button></div><div class="q-fb" id="qfb8"></div></div>
+      <div class="result-panel" id="resultPanel">
+        <div style="color:var(--muted);font-size:.85rem;letter-spacing:.1em;text-transform:uppercase">Resultado final</div>
+        <div class="result-big" id="resultScore">–</div>
+        <div style="font-size:1.8rem;letter-spacing:4px;margin-bottom:12px" id="resultStars">–</div>
+        <p class="result-msg" id="resultMsg">–</p>
+        <div class="result-badge" id="resultBadge">–</div>
+        <br/><br/>
+        <button class="btn btn-primary" onclick="restartQuiz()">Intentar de nuevo</button>
+      </div>
+      <div class="nav-row"><button class="btn btn-ghost" onclick="goSection(4)">← Anterior</button><button class="btn btn-amber" onclick="calcScore()">Ver resultado 🏁</button></div>
+    </div>
+
+  </div>
+</div>
+<div class="achievement-toast" id="achieveToast" style="display:none">
+  <div class="a-icon" id="achieveIcon">🏆</div>
+  <div class="a-text"><strong id="achieveTitle">Logro</strong><span id="achieveDesc">XP ganados</span></div>
+</div>
+<script>
+let studentName='',xp=0,currentSec=0;
+let visitedSecs=new Set([0]);
+const TOTAL_SECS=6;
+const qAnswers={};
+const qFbOk=["✅ ¡Correcto! La autogestión es exactamente esa capacidad de autodirección sin supervisión externa constante.","✅ ¡Exacto! Resultados críticos son siempre urgentes e importantes — acción inmediata requerida.","✅ ¡Muy bien! La pausa entre estímulo y respuesta es la clave de la autorregulación consciente.","✅ ¡Correcto! Revisar WhatsApp antes del turno es una distracción improductiva, no gestión del tiempo.","✅ ¡Excelente! Reconocer, reportar, corregir y aprender — eso es autorregulación profesional.","✅ ¡Correcto! Las MITs son las tareas estratégicas que garantizan un día productivo.","✅ ¡Exacto! Sin autoevaluación honesta no hay crecimiento consciente ni mejora continua.","✅ ¡Perfecto! La autogestión integra aprendizaje, tiempo y emociones en un solo proceso."];
+const qFbKo=["❌ La autogestión no es trabajar más horas — es trabajar con dirección y consciencia propia.","❌ Los resultados críticos siempre son urgentes E importantes. Requieren acción inmediata.","❌ Pausar no es ignorar ni esperar — es crear espacio consciente para responder mejor.","❌ Responder WhatsApp antes del turno es distracción. La gestión del tiempo elimina esos ladrones.","❌ Ocultar errores o bloquearse impide el aprendizaje. La autorregulación permite convertir errores en crecimiento.","❌ Las MITs son específicamente las pocas tareas de mayor impacto, no todas las del día.","❌ La autoevaluación es para el propio crecimiento — no para compararse ni para sustituir evaluaciones.","❌ La autogestión no implica aislamiento — es dirección propia dentro de un equipo."];
+window.addEventListener('load',()=>{setTimeout(()=>{document.getElementById('loader').style.opacity='0';setTimeout(()=>document.getElementById('loader').style.display='none',500)},1200)});
+function startApp(){const n=document.getElementById('nameInput').value.trim();studentName=n||'Estudiante';document.getElementById('welcome').style.display='none';document.getElementById('app').style.display='block';document.getElementById('greetName').textContent=studentName;updateProgress();showAchievement('🚀','¡Módulo 2 iniciado!','Bienvenido/a, '+studentName);gainXP(10,false)}
+function goSection(idx){document.querySelectorAll('.section-panel').forEach((s,i)=>s.classList.toggle('active',i===idx));document.querySelectorAll('.mnav-btn').forEach((b,i)=>{b.classList.remove('active');if(i===idx)b.classList.add('active')});if(idx>currentSec)gainXP(5,false);currentSec=Math.max(currentSec,idx);visitedSecs.add(idx);updateProgress();window.scrollTo({top:0,behavior:'smooth'})}
+function updateProgress(){const pct=Math.round((visitedSecs.size/TOTAL_SECS)*100);document.getElementById('progFill').style.width=pct+'%';document.getElementById('progPct').textContent=pct+'%'}
+function gainXP(amount,announce=true){xp+=amount;document.getElementById('xpCount').textContent=xp;if(announce)showAchievement('⚡','¡XP ganados!','+'+amount+' XP · Total: '+xp)}
+let toastTimeout;
+function showAchievement(icon,title,desc){const t=document.getElementById('achieveToast');document.getElementById('achieveIcon').textContent=icon;document.getElementById('achieveTitle').textContent=title;document.getElementById('achieveDesc').textContent=desc;t.style.display='flex';t.style.animation='none';void t.offsetWidth;t.style.animation='toastIn .4s ease';clearTimeout(toastTimeout);toastTimeout=setTimeout(()=>{t.style.display='none'},3500)}
+function toggleAcc(btn){const body=btn.nextElementSibling;const isOpen=btn.classList.contains('open');document.querySelectorAll('.acc-head').forEach(h=>{h.classList.remove('open');h.nextElementSibling.classList.remove('open')});if(!isOpen){btn.classList.add('open');body.classList.add('open')}}
+function toggleCheck(item){item.classList.toggle('checked');if(item.classList.contains('checked'))gainXP(2,false)}
+function submitReflect(inputId,fbId){const val=document.getElementById(inputId).value.trim();if(val.length<20){alert('Por favor escribe un poco más para continuar.');return}document.getElementById(fbId).style.display='block';gainXP(15);showAchievement('✍️','¡Reflexión completada!','+15 XP')}
+function saveSliders(){document.getElementById('sliderFb').style.display='block';gainXP(20);showAchievement('📊','¡Autoevaluación guardada!','+20 XP')}
+function savePlanner(){const inputs=document.querySelectorAll('.planner-input');let filled=0;inputs.forEach(i=>{if(i.value.trim().length>3)filled++});if(filled<3){alert('Completa al menos 3 campos del planificador.');return}document.getElementById('plannerFb').style.display='block';gainXP(25);showAchievement('📅','¡Planificador guardado!','+25 XP')}
+function saveCommitments(){const checked=document.querySelectorAll('#commitList .cl-item.checked').length;if(checked<1){alert('Selecciona al menos un compromiso.');return}document.getElementById('commitfb').style.display='block';gainXP(25);showAchievement('🤝','¡Compromisos asumidos!',checked+' seleccionados · +25 XP')}
+function updateSlider(input){const val=input.parentElement.querySelector('.slider-val');val.textContent=input.value+' / 5'}
+function evalSc(scId,btn,isOk){const opts=document.querySelectorAll('#'+scId+'opts .sc-opt');opts.forEach(o=>o.disabled=true);btn.classList.add(isOk?'correct':'wrong');if(!isOk)opts.forEach(o=>{if(o.getAttribute('onclick').includes(',true)'))o.classList.add('correct')});const fb=document.getElementById(scId+'fb');fb.textContent=isOk?'✅ ¡Correcto! Atender el resultado crítico primero es la decisión correcta — cuadrante urgente e importante de la matriz Eisenhower.':'❌ Los resultados críticos siempre tienen prioridad máxima. La vida del paciente no puede esperar a que termines otra tarea.';fb.className='sc-feedback '+(isOk?'ok':'ko');if(isOk){gainXP(20);showAchievement('🎭','¡Escenario resuelto!','+20 XP')}}
+function ansQ(num,btn,isOk){if(qAnswers[num]!==undefined)return;qAnswers[num]=isOk?1:0;const opts=document.querySelectorAll('#q'+num+' .q-opt');opts.forEach(o=>o.disabled=true);btn.classList.add(isOk?'correct':'wrong');if(!isOk)opts.forEach(o=>{if(o.getAttribute('onclick').includes(',true)'))o.classList.add('correct')});const fb=document.getElementById('qfb'+num);fb.textContent=isOk?qFbOk[num-1]:qFbKo[num-1];fb.className='q-fb '+(isOk?'ok':'ko');if(isOk)gainXP(10,false)}
+function calcScore(){const total=Object.values(qAnswers).length;if(total<8){alert('Responde todas las preguntas antes de ver tu resultado.');return}const score=Object.values(qAnswers).reduce((a,b)=>a+b,0);const pct=Math.round(score/8*100);const panel=document.getElementById('resultPanel');document.getElementById('resultScore').textContent=pct+' / 100';let stars='',msg='',badge='';if(pct>=87){stars='⭐⭐⭐⭐⭐';msg='¡Excelente! Tienes una comprensión sólida de la autogestión. Tu práctica lo notará.';badge='🏆 Autogestionado/a Nivel Experto';gainXP(50);showAchievement('🏆','¡Resultado sobresaliente!','+50 XP')}else if(pct>=62){stars='⭐⭐⭐⭐';msg='¡Muy bien! Bases sólidas. Aplica las herramientas vistas en tu próxima semana.';badge='✨ En camino al dominio';gainXP(30)}else{stars='⭐⭐⭐';msg='¡Continúa! Revisa las secciones de gestión del tiempo y autorregulación.';badge='📖 Sigue aprendiendo';gainXP(15)}document.getElementById('resultStars').textContent=stars;document.getElementById('resultMsg').textContent=msg;document.getElementById('resultBadge').textContent=badge;panel.classList.add('show');panel.scrollIntoView({behavior:'smooth',block:'center'})}
+function restartQuiz(){Object.keys(qAnswers).forEach(k=>delete qAnswers[k]);for(let i=1;i<=8;i++){const q=document.getElementById('q'+i);q.querySelectorAll('.q-opt').forEach(o=>{o.disabled=false;o.classList.remove('correct','wrong')});const fb=document.getElementById('qfb'+i);fb.className='q-fb';fb.textContent=''}document.getElementById('resultPanel').classList.remove('show');window.scrollTo({top:0,behavior:'smooth'})}
+</script>
+</body>
+</html>

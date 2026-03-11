@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Módulo 1 · Comunicación Efectiva | Bacteriología</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0d1117;
+  --surface:#161b22;
+  --surface2:#1f2937;
+  --border:#2d3748;
+  --teal:#00d4b4;
+  --teal2:#00b09b;
+  --amber:#f59e0b;
+  --rose:#f43f5e;
+  --blue:#38bdf8;
+  --text:#e2e8f0;
+  --muted:#8b95a1;
+  --white:#ffffff;
+  --radius:14px;
+  --shadow:0 8px 32px rgba(0,0,0,.45);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-weight:400;line-height:1.7;min-height:100vh;overflow-x:hidden}
+
+/* ── LOADER ── */
+#loader{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;transition:opacity .5s}
+.loader-ring{width:64px;height:64px;border:3px solid var(--border);border-top-color:var(--teal);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#loader p{color:var(--muted);font-size:.9rem;letter-spacing:.1em}
+
+/* ── WELCOME SCREEN ── */
+#welcome{position:fixed;inset:0;background:linear-gradient(135deg,#0d1117 0%,#0f2027 50%,#0d1117 100%);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center}
+.welcome-badge{background:rgba(0,212,180,.12);border:1px solid rgba(0,212,180,.3);color:var(--teal);font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;padding:6px 18px;border-radius:100px;margin-bottom:24px}
+#welcome h1{font-family:'Syne',sans-serif;font-size:clamp(2rem,6vw,3.5rem);line-height:1.1;margin-bottom:16px}
+#welcome h1 span{color:var(--teal)}
+#welcome p{color:var(--muted);max-width:480px;margin-bottom:32px;font-size:1.05rem}
+.name-input-wrap{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:32px;width:100%;max-width:420px}
+.name-input-wrap input{flex:1;min-width:200px;background:var(--surface);border:1.5px solid var(--border);color:var(--text);padding:13px 18px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:1rem;outline:none;transition:border-color .2s}
+.name-input-wrap input:focus{border-color:var(--teal)}
+.stars{font-size:1.5rem;letter-spacing:6px;margin-bottom:8px}
+.info-chips{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:8px}
+.chip{background:var(--surface2);border:1px solid var(--border);border-radius:100px;padding:5px 14px;font-size:.8rem;color:var(--muted)}
+
+/* ── BOTONES ── */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 28px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:600;cursor:pointer;border:none;transition:all .2s;text-decoration:none}
+.btn-primary{background:linear-gradient(135deg,var(--teal2),var(--teal));color:#0d1117}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,212,180,.35)}
+.btn-ghost{background:transparent;color:var(--teal);border:1.5px solid var(--teal)}
+.btn-ghost:hover{background:rgba(0,212,180,.1)}
+.btn-amber{background:linear-gradient(135deg,#d97706,var(--amber));color:#0d1117}
+.btn-amber:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(245,158,11,.35)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important}
+
+/* ── MAIN SHELL ── */
+#app{display:none}
+.top-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 32px;display:flex;align-items:center;gap:20px;position:sticky;top:0;z-index:100}
+.top-logo{font-family:'Syne',sans-serif;font-size:.95rem;color:var(--teal);font-weight:800;white-space:nowrap}
+.top-greeting{color:var(--muted);font-size:.85rem;flex:1}
+.top-greeting span{color:var(--text);font-weight:600}
+.xp-badge{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.3);color:var(--amber);font-size:.8rem;font-weight:600;padding:5px 14px;border-radius:100px;display:flex;align-items:center;gap:6px;white-space:nowrap}
+
+/* PROGRESO GLOBAL */
+.progress-global{background:var(--surface2);padding:16px 32px;border-bottom:1px solid var(--border)}
+.progress-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:.82rem}
+.progress-row span{color:var(--muted)}
+.prog-bar{height:6px;background:var(--border);border-radius:4px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--teal2),var(--teal));border-radius:4px;transition:width .6s cubic-bezier(.4,0,.2,1)}
+
+/* ── MÓDULO NAV ── */
+.module-nav{display:flex;overflow-x:auto;padding:0 32px;background:var(--surface);border-bottom:1px solid var(--border);gap:4px}
+.mnav-btn{padding:14px 20px;background:none;border:none;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s;display:flex;align-items:center;gap:8px}
+.mnav-btn:hover{color:var(--text)}
+.mnav-btn.active{color:var(--teal);border-bottom-color:var(--teal)}
+.mnav-btn.done{color:var(--teal);opacity:.7}
+.mnav-btn .dot{width:7px;height:7px;border-radius:50%;background:var(--border)}
+.mnav-btn.done .dot{background:var(--teal)}
+.mnav-btn.active .dot{background:var(--teal);box-shadow:0 0 8px var(--teal)}
+
+/* ── CONTENT ── */
+.page{max-width:820px;margin:0 auto;padding:48px 32px 100px}
+.section-panel{display:none}
+.section-panel.active{display:block;animation:fadeSlide .4s ease}
+@keyframes fadeSlide{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── HERO SECTION ── */
+.section-hero{background:linear-gradient(135deg,var(--surface) 0%,var(--surface2) 100%);border:1px solid var(--border);border-radius:var(--radius);padding:40px;margin-bottom:32px;position:relative;overflow:hidden}
+.section-hero::after{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;border-radius:50%;background:var(--teal);opacity:.05}
+.section-hero .sh-badge{color:var(--teal);font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;margin-bottom:12px}
+.section-hero h2{font-family:'Syne',sans-serif;font-size:clamp(1.6rem,4vw,2.2rem);line-height:1.2;margin-bottom:12px}
+.section-hero p{color:var(--muted);font-size:1rem;max-width:580px}
+.obj-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:24px}
+.obj-item{background:rgba(0,212,180,.06);border:1px solid rgba(0,212,180,.15);border-radius:10px;padding:14px 16px;font-size:.88rem;display:flex;align-items:flex-start;gap:10px}
+.obj-item .icon{font-size:1.2rem;margin-top:1px}
+
+/* ── CARDS ── */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin:24px 0}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;position:relative;overflow:hidden;transition:transform .25s,box-shadow .25s,border-color .25s}
+.card:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:var(--teal)}
+.card .c-icon{font-size:2rem;margin-bottom:12px}
+.card h4{font-family:'Syne',sans-serif;font-size:1rem;margin-bottom:6px;color:var(--white)}
+.card p{font-size:.85rem;color:var(--muted)}
+.card-glow{position:absolute;top:0;left:0;width:3px;height:100%;background:linear-gradient(180deg,var(--teal2),var(--teal))}
+
+/* ── CALLOUT ── */
+.callout{border-radius:10px;padding:20px 24px;margin:24px 0;font-size:.95rem}
+.callout-teal{background:rgba(0,212,180,.07);border-left:4px solid var(--teal)}
+.callout-amber{background:rgba(245,158,11,.07);border-left:4px solid var(--amber)}
+.callout-rose{background:rgba(244,63,94,.07);border-left:4px solid var(--rose)}
+.callout strong{color:var(--white)}
+
+/* ── TIPOGRAFÍA ── */
+h3{font-family:'Syne',sans-serif;font-size:1.25rem;color:var(--white);margin:36px 0 12px}
+p{margin-bottom:14px;color:var(--text)}
+.lead{font-size:1.05rem;color:var(--muted);border-left:3px solid var(--teal);padding-left:16px;margin-bottom:28px}
+
+/* ── TABLA ── */
+.table-wrap{overflow-x:auto;margin:20px 0;border-radius:10px;border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+thead tr{background:var(--surface2)}
+thead th{padding:12px 16px;text-align:left;font-weight:600;color:var(--teal);font-size:.82rem;letter-spacing:.05em;text-transform:uppercase}
+tbody td{padding:12px 16px;border-top:1px solid var(--border);color:var(--text)}
+tbody tr:hover{background:rgba(255,255,255,.02)}
+
+/* ── LISTA ── */
+ul.sl,ol.sl{list-style:none;padding:0;margin:16px 0 24px}
+ul.sl li,ol.sl li{padding:10px 14px 10px 44px;position:relative;border-bottom:1px solid var(--border);font-size:.93rem;color:var(--text)}
+ul.sl li::before{content:'◆';position:absolute;left:14px;color:var(--teal);font-size:.6rem;top:14px}
+ol.sl{counter-reset:c}
+ol.sl li{counter-increment:c}
+ol.sl li::before{content:counter(c);position:absolute;left:10px;width:22px;height:22px;background:var(--teal);color:#0d1117;font-size:.72rem;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center;top:11px}
+
+/* ── VIDEO FRAME ── */
+.video-container{position:relative;width:100%;padding-bottom:56.25%;margin:24px 0;border-radius:12px;overflow:hidden;background:var(--surface2);border:1px solid var(--border)}
+.video-container iframe{position:absolute;inset:0;width:100%;height:100%;border:none}
+.video-label{font-size:.82rem;color:var(--muted);margin-top:8px;padding-left:4px}
+
+/* ── ACCORDION ── */
+.accordion{border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:20px 0}
+.acc-item{border-bottom:1px solid var(--border)}
+.acc-item:last-child{border-bottom:none}
+.acc-head{width:100%;background:var(--surface);color:var(--text);border:none;padding:16px 20px;text-align:left;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:500;display:flex;justify-content:space-between;align-items:center;transition:background .2s}
+.acc-head:hover{background:var(--surface2)}
+.acc-head .arrow{color:var(--teal);font-size:1.1rem;transition:transform .3s}
+.acc-head.open .arrow{transform:rotate(180deg)}
+.acc-body{max-height:0;overflow:hidden;transition:max-height .4s ease,padding .3s}
+.acc-body.open{max-height:600px;padding:20px}
+.acc-body p{color:var(--muted);font-size:.92rem;margin:0}
+
+/* ── ESCENARIOS INTERACTIVOS ── */
+.scenario-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;margin:28px 0}
+.scenario-box .sc-title{font-family:'Syne',sans-serif;font-size:1rem;color:var(--amber);margin-bottom:12px}
+.scenario-box .sc-context{font-size:.95rem;color:var(--muted);background:var(--surface2);border-radius:8px;padding:16px;margin-bottom:20px;line-height:1.6}
+.sc-options{display:flex;flex-direction:column;gap:10px}
+.sc-opt{background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:14px 18px;cursor:pointer;font-size:.93rem;color:var(--text);text-align:left;transition:all .2s}
+.sc-opt:hover:not(:disabled){border-color:var(--blue);background:rgba(56,189,248,.06)}
+.sc-opt.correct{border-color:#10b981;background:rgba(16,185,129,.08);color:#6ee7b7}
+.sc-opt.wrong{border-color:var(--rose);background:rgba(244,63,94,.08);color:#fda4af}
+.sc-opt:disabled{cursor:not-allowed}
+.sc-feedback{margin-top:16px;padding:14px 18px;border-radius:8px;font-size:.9rem;display:none}
+.sc-feedback.ok{display:block;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.3);color:#6ee7b7}
+.sc-feedback.ko{display:block;background:rgba(244,63,94,.08);border:1px solid rgba(244,63,94,.3);color:#fda4af}
+.sc-next{margin-top:14px;display:none}
+
+/* ── REFLEXIÓN INTERACTIVA ── */
+.reflect-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;margin:28px 0}
+.reflect-box h4{font-family:'Syne',sans-serif;color:var(--amber);margin-bottom:10px}
+.reflect-box p{color:var(--muted);font-size:.93rem;margin-bottom:16px}
+.reflect-textarea{width:100%;background:var(--surface2);border:1.5px solid var(--border);color:var(--text);padding:14px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.93rem;resize:vertical;min-height:100px;outline:none;transition:border-color .2s}
+.reflect-textarea:focus{border-color:var(--teal)}
+.reflect-submit{margin-top:12px}
+.reflect-result{margin-top:14px;padding:14px 18px;border-radius:8px;background:rgba(0,212,180,.07);border:1px solid rgba(0,212,180,.2);color:var(--teal);font-size:.9rem;display:none}
+
+/* ── RATING INTERACTIVO ── */
+.rating-box{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px;margin:20px 0}
+.rating-box p{font-size:.93rem;color:var(--muted);margin-bottom:14px}
+.stars-rate{display:flex;gap:8px;margin-bottom:16px}
+.star-btn{font-size:1.6rem;cursor:pointer;transition:transform .15s;filter:grayscale(1)}
+.star-btn.lit{filter:none;transform:scale(1.15)}
+.rate-label{font-size:.85rem;color:var(--teal);height:20px;transition:opacity .2s}
+
+/* ── QUIZ ── */
+.quiz-wrap{margin:0}
+.quiz-q{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;margin-bottom:20px}
+.quiz-q .q-num{font-size:.75rem;color:var(--teal);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}
+.quiz-q .q-text{font-size:1rem;font-weight:500;color:var(--white);margin-bottom:20px;line-height:1.5}
+.q-opts{display:flex;flex-direction:column;gap:10px}
+.q-opt{background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:13px 18px;cursor:pointer;font-size:.92rem;color:var(--text);text-align:left;transition:all .2s;display:flex;align-items:center;gap:12px}
+.q-opt::before{content:'';width:18px;height:18px;min-width:18px;border-radius:50%;border:2px solid var(--border);transition:all .2s}
+.q-opt:hover:not(:disabled){border-color:var(--blue);background:rgba(56,189,248,.05)}
+.q-opt:hover::before{border-color:var(--blue)}
+.q-opt.correct{border-color:#10b981;background:rgba(16,185,129,.08);color:#6ee7b7}
+.q-opt.correct::before{background:#10b981;border-color:#10b981}
+.q-opt.wrong{border-color:var(--rose);background:rgba(244,63,94,.08);color:#fda4af}
+.q-opt.wrong::before{background:var(--rose);border-color:var(--rose)}
+.q-opt:disabled{cursor:not-allowed}
+.q-fb{margin-top:14px;padding:12px 16px;border-radius:8px;font-size:.88rem;display:none}
+.q-fb.ok{display:block;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.3);color:#6ee7b7}
+.q-fb.ko{display:block;background:rgba(244,63,94,.08);border:1px solid rgba(244,63,94,.3);color:#fda4af}
+
+/* ── RESULTADO FINAL ── */
+.result-panel{background:linear-gradient(135deg,var(--surface) 0%,var(--surface2) 100%);border:1px solid var(--border);border-radius:var(--radius);padding:40px;text-align:center;margin-top:28px;display:none}
+.result-panel.show{display:block;animation:fadeSlide .5s ease}
+.result-big{font-family:'Syne',sans-serif;font-size:4rem;line-height:1;margin:16px 0 8px}
+.result-stars{font-size:1.8rem;letter-spacing:4px;margin-bottom:12px}
+.result-msg{color:var(--muted);font-size:1rem;max-width:420px;margin:0 auto 24px}
+.result-badge{display:inline-block;background:rgba(0,212,180,.12);border:1px solid rgba(0,212,180,.3);color:var(--teal);padding:8px 20px;border-radius:100px;font-size:.85rem;font-weight:600}
+
+/* ── LOGROS / XP ── */
+.achievement-toast{position:fixed;bottom:28px;right:28px;background:linear-gradient(135deg,#1a2332,#0f1a24);border:1px solid var(--amber);border-radius:12px;padding:16px 20px;display:flex;align-items:center;gap:14px;z-index:500;animation:toastIn .4s ease;max-width:300px}
+@keyframes toastIn{from{opacity:0;transform:translateX(80px)}to{opacity:1;transform:translateX(0)}}
+.achievement-toast .a-icon{font-size:2rem}
+.achievement-toast .a-text strong{display:block;color:var(--amber);font-size:.9rem;margin-bottom:2px}
+.achievement-toast .a-text span{color:var(--muted);font-size:.8rem}
+
+/* ── TIMELINE ── */
+.timeline{margin:24px 0}
+.tl-item{display:flex;gap:20px;margin-bottom:24px}
+.tl-left{display:flex;flex-direction:column;align-items:center;gap:0}
+.tl-dot{width:36px;height:36px;min-width:36px;border-radius:50%;background:rgba(0,212,180,.15);border:2px solid var(--teal);display:flex;align-items:center;justify-content:center;font-size:1rem}
+.tl-line{flex:1;width:2px;background:linear-gradient(180deg,var(--teal),transparent);min-height:40px}
+.tl-content{padding-bottom:8px}
+.tl-content h4{font-family:'Syne',sans-serif;color:var(--white);font-size:.95rem;margin-bottom:4px}
+.tl-content p{color:var(--muted);font-size:.87rem;margin:0}
+
+/* ── CHECKLIST AUTOGESTIÓN ── */
+.checklist{margin:20px 0}
+.cl-item{display:flex;align-items:flex-start;gap:14px;padding:14px 0;border-bottom:1px solid var(--border);cursor:pointer}
+.cl-item:last-child{border-bottom:none}
+.cl-check{width:22px;height:22px;min-width:22px;border-radius:6px;border:2px solid var(--border);background:transparent;display:flex;align-items:center;justify-content:center;transition:all .2s;margin-top:1px}
+.cl-item.checked .cl-check{background:var(--teal);border-color:var(--teal)}
+.cl-item.checked .cl-check::after{content:'✓';color:#0d1117;font-size:.75rem;font-weight:700}
+.cl-item.checked .cl-label{color:var(--muted);text-decoration:line-through}
+.cl-label{font-size:.93rem;color:var(--text);line-height:1.4}
+
+/* ── NAV BUTTONS ── */
+.nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:52px;padding-top:24px;border-top:1px solid var(--border);gap:12px;flex-wrap:wrap}
+
+/* ── RESPONSIVE ── */
+@media(max-width:640px){
+  .page{padding:28px 16px 80px}
+  .top-bar{padding:12px 16px}
+  .module-nav{padding:0 8px}
+  .progress-global{padding:12px 16px}
+  .section-hero{padding:24px 20px}
+}
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-ring"></div>
+  <p>Cargando módulo...</p>
+</div>
+
+<!-- PANTALLA DE BIENVENIDA -->
+<div id="welcome">
+  <div class="welcome-badge">Habilidades Blandas · Práctica Formativa</div>
+  <div class="stars">🔬 🧬 🩺</div>
+  <h1>Tu éxito en<br/><span>práctica formativa</span><br/>empieza aquí</h1>
+  <p>Estás a punto de iniciar un recorrido que fortalecerá tu perfil profesional como bacteriólogo/a. Estos módulos fueron diseñados especialmente para ti.</p>
+  <div class="name-input-wrap">
+    <input type="text" id="nameInput" placeholder="¿Cómo te llamas?" maxlength="40"/>
+  </div>
+  <div class="info-chips">
+    <div class="chip">📚 5 módulos</div>
+    <div class="chip">⏱ ~45 min c/u</div>
+    <div class="chip">🏆 Autogestión total</div>
+    <div class="chip">💊 Bacteriología IX–X sem</div>
+  </div>
+  <br/>
+  <button class="btn btn-primary" onclick="startApp()">Iniciar Módulo 1 →</button>
+</div>
+
+<!-- APP PRINCIPAL -->
+<div id="app">
+
+  <!-- TOPBAR -->
+  <div class="top-bar">
+    <div class="top-logo">🔬 Habilidades Blandas</div>
+    <div class="top-greeting">Hola, <span id="greetName">estudiante</span> · Módulo 1 de 5</div>
+    <div class="xp-badge">⚡ <span id="xpCount">0</span> XP</div>
+  </div>
+
+  <!-- BARRA PROGRESO GLOBAL -->
+  <div class="progress-global">
+    <div class="progress-row">
+      <span>Progreso del módulo</span>
+      <span id="progPct">0%</span>
+    </div>
+    <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  </div>
+
+  <!-- MÓDULO NAV -->
+  <nav class="module-nav" id="moduleNav">
+    <button class="mnav-btn active" onclick="goSection(0)"><span class="dot"></span>Bienvenida</button>
+    <button class="mnav-btn" onclick="goSection(1)"><span class="dot"></span>¿Por qué importa?</button>
+    <button class="mnav-btn" onclick="goSection(2)"><span class="dot"></span>Fundamentos</button>
+    <button class="mnav-btn" onclick="goSection(3)"><span class="dot"></span>Escucha Activa</button>
+    <button class="mnav-btn" onclick="goSection(4)"><span class="dot"></span>Asertividad</button>
+    <button class="mnav-btn" onclick="goSection(5)"><span class="dot"></span>Actividades</button>
+    <button class="mnav-btn" onclick="goSection(6)"><span class="dot"></span>Evaluación</button>
+  </nav>
+
+  <div class="page">
+
+    <!-- ══════════════════════════════
+         SEC 0 · BIENVENIDA
+    ══════════════════════════════ -->
+    <div class="section-panel active" id="sec0">
+      <div class="section-hero">
+        <div class="sh-badge">📡 Módulo 1 · Comunicación Efectiva</div>
+        <h2>Comunica, conecta<br/>y transforma tu práctica</h2>
+        <p>En los sitios de práctica, tus competencias técnicas son esenciales — pero es tu capacidad de comunicarte la que marca la diferencia entre un buen profesional y uno excepcional.</p>
+        <div class="obj-list">
+          <div class="obj-item"><span class="icon">🎯</span><span>Identificar los elementos del proceso comunicativo en contextos clínicos</span></div>
+          <div class="obj-item"><span class="icon">🎯</span><span>Aplicar la escucha activa en la interacción con pacientes y tutores</span></div>
+          <div class="obj-item"><span class="icon">🎯</span><span>Comunicarte de manera asertiva en situaciones de presión</span></div>
+          <div class="obj-item"><span class="icon">🎯</span><span>Reconocer el lenguaje no verbal propio y de los demás</span></div>
+        </div>
+      </div>
+
+      <div class="callout callout-amber">
+        <strong>📢 Nota de tus líderes de práctica:</strong><br/>
+        Las observaciones recibidas en los sitios de práctica indican que las habilidades comunicativas son una de las mayores fortalezas <em>por desarrollar</em> en estudiantes de bacteriología. Este módulo responde directamente a esa necesidad.
+      </div>
+
+      <!-- CHECKLIST MOTIVACIONAL -->
+      <h3>¿Qué vas a lograr hoy?</h3>
+      <div class="checklist" id="welcomeCheck">
+        <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-check"></div><span class="cl-label">Entender por qué la comunicación es una habilidad clínica crítica</span></div>
+        <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-check"></div><span class="cl-label">Conocer los tipos de comunicación y sus barreras en laboratorio clínico</span></div>
+        <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-check"></div><span class="cl-label">Practicar la técnica de escucha activa con casos reales</span></div>
+        <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-check"></div><span class="cl-label">Aplicar comunicación asertiva en escenarios de práctica formativa</span></div>
+        <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-check"></div><span class="cl-label">Completar la evaluación y obtener mi certificado de logro</span></div>
+      </div>
+
+      <div class="nav-row">
+        <span></span>
+        <button class="btn btn-primary" onclick="goSection(1)">Comenzar →</button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════
+         SEC 1 · ¿POR QUÉ IMPORTA?
+    ══════════════════════════════ -->
+    <div class="section-panel" id="sec1">
+      <h3 style="margin-top:0">🌡️ La comunicación como competencia clínica</h3>
+      <p class="lead">No estás solo/a aprendiendo a reportar resultados — estás aprendiendo a <strong>comunicar hallazgos</strong> que impactan decisiones médicas sobre pacientes reales.</p>
+
+      <div class="cards">
+        <div class="card">
+          <div class="card-glow"></div>
+          <div class="c-icon">🧪</div>
+          <h4>En el laboratorio</h4>
+          <p>Un resultado mal comunicado puede llevar a un diagnóstico erróneo. La precisión verbal es tan importante como la técnica.</p>
+        </div>
+        <div class="card">
+          <div class="card-glow"></div>
+          <div class="c-icon">👥</div>
+          <h4>Con el equipo de salud</h4>
+          <p>La interdisciplinariedad exige comunicarte con médicos, enfermeras y especialistas de forma clara y profesional.</p>
+        </div>
+        <div class="card">
+          <div class="card-glow"></div>
+          <div class="c-icon">🤝</div>
+          <h4>Con el paciente</h4>
+          <p>Explicar procedimientos, calmar ansiedades y resolver dudas con empatía hace parte de la atención integral.</p>
+        </div>
+      </div>
+
+      <!-- VIDEO 1 - Comunicación en salud -->
+      <h3>🎬 Video: Comunicación efectiva en entornos de salud</h3>
+      <div class="video-container">
+        <iframe src="https://www.youtube.com/embed/Unzc731iCUY" title="Comunicación efectiva en salud" allowfullscreen loading="lazy"></iframe>
+      </div>
+      <p class="video-label">📌 Duración aprox. 8 min · Reflexiona: ¿Cuántas situaciones del video has vivido en tu práctica?</p>
+
+      <!-- REFLEXIÓN 1 -->
+      <div class="reflect-box">
+        <h4>✍️ Reflexión 1 – Conexión con tu práctica</h4>
+        <p>Recuerda una situación en tu práctica formativa donde la comunicación fue un desafío (con un tutor, un paciente, un compañero). Describe brevemente qué ocurrió y cómo te sentiste.</p>
+        <textarea class="reflect-textarea" id="ref1" placeholder="Escribe tu reflexión aquí... (mínimo 3 líneas para continuar)"></textarea>
+        <div class="reflect-submit">
+          <button class="btn btn-ghost" onclick="submitReflect('ref1','rfb1')">Guardar reflexión ✓</button>
+        </div>
+        <div class="reflect-result" id="rfb1">💾 ¡Reflexión guardada! Recuerda este momento — lo retomará al final del módulo. <span id="ref1xp"></span></div>
+      </div>
+
+      <!-- DATO IMPACTANTE -->
+      <div class="callout callout-rose">
+        <strong>⚠️ Dato clave:</strong> Estudios en entornos hospitalarios indican que más del <strong>70 % de los errores clínicos</strong> tienen como raíz un fallo de comunicación — no un fallo técnico. Tu habilidad para comunicar puede salvar vidas.
+      </div>
+
+      <div class="nav-row">
+        <button class="btn btn-ghost" onclick="goSection(0)">← Anterior</button>
+        <button class="btn btn-primary" onclick="goSection(2)">Siguiente →</button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════
+         SEC 2 · FUNDAMENTOS
+    ══════════════════════════════ -->
+    <div class="section-panel" id="sec2">
+      <h3 style="margin-top:0">📡 El proceso comunicativo en contexto clínico</h3>
+      <p class="lead">Todo mensaje que emites o recibes sigue un proceso. Conocerlo te permite identificar dónde fallan las conversaciones.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Elemento</th><th>¿Qué es?</th><th>Ejemplo en práctica</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Emisor</strong></td><td>Quien genera y codifica el mensaje</td><td>El bacteriólogo que reporta un resultado</td></tr>
+            <tr><td><strong>Receptor</strong></td><td>Quien recibe y decodifica</td><td>El médico que lee el reporte</td></tr>
+            <tr><td><strong>Mensaje</strong></td><td>El contenido transmitido</td><td>El valor de hemoglobina glicosilada</td></tr>
+            <tr><td><strong>Canal</strong></td><td>El medio por el que viaja</td><td>Sistema de información hospitalaria</td></tr>
+            <tr><td><strong>Código</strong></td><td>Sistema de signos compartido</td><td>Terminología clínica y unidades de medida</td></tr>
+            <tr><td><strong>Retroalimentación</strong></td><td>Respuesta del receptor</td><td>El médico confirma recepción del resultado crítico</td></tr>
+            <tr><td><strong>Ruido</strong></td><td>Interferencias que distorsionan</td><td>Interrupciones, jerga técnica ininteligible, prisas</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- VIDEO 2 - Barreras comunicación -->
+      <h3>🎬 Video: Barreras de comunicación</h3>
+      <div class="video-container">
+        <iframe src="https://www.youtube.com/embed/kIXjoFqiZUs" title="Barreras de comunicación" allowfullscreen loading="lazy"></iframe>
+      </div>
+      <p class="video-label">📌 Duración aprox. 5 min · Identifica al menos 2 barreras que hayas experimentado en tu sitio de práctica</p>
+
+      <h3>🚧 Barreras comunicativas más frecuentes en práctica de bacteriología</h3>
+
+      <div class="accordion" id="acc1">
+        <div class="acc-item">
+          <button class="acc-head" onclick="toggleAcc(this)">🔊 Barreras físicas <span class="arrow">▾</span></button>
+          <div class="acc-body"><p>Ruido del laboratorio, equipos funcionando, interrupciones constantes, mala señal en llamadas entre sedes. <strong>Estrategia:</strong> Confirmar recepción del mensaje, usar canales alternativos cuando el ambiente no permite comunicación oral clara.</p></div>
+        </div>
+        <div class="acc-item">
+          <button class="acc-head" onclick="toggleAcc(this)">📖 Barreras semánticas <span class="arrow">▾</span></button>
+          <div class="acc-body"><p>Uso excesivo de siglas y tecnicismos con el paciente. El paciente no siempre comprende términos como "hemocultivo positivo" o "antibiograma". <strong>Estrategia:</strong> Adaptar el lenguaje al interlocutor — técnico con el equipo de salud, sencillo con el paciente.</p></div>
+        </div>
+        <div class="acc-item">
+          <button class="acc-head" onclick="toggleAcc(this)">🧠 Barreras psicológicas <span class="arrow">▾</span></button>
+          <div class="acc-body"><p>Ansiedad por estar en evaluación, miedo a equivocarse frente al tutor, inseguridad al comunicar resultados. <strong>Estrategia:</strong> Prepararse, respirar antes de hablar, recordar que el tutor es un guía, no un juez.</p></div>
+        </div>
+        <div class="acc-item">
+          <button class="acc-head" onclick="toggleAcc(this)">🏛️ Barreras organizacionales <span class="arrow">▾</span></button>
+          <div class="acc-body"><p>Jerarquías estrictas que dificultan preguntar dudas, sobrecarga de trabajo que abrevia la comunicación. <strong>Estrategia:</strong> Identificar el momento adecuado para consultar, ser conciso y específico en las solicitudes.</p></div>
+        </div>
+        <div class="acc-item">
+          <button class="acc-head" onclick="toggleAcc(this)">👁️ Barreras culturales y generacionales <span class="arrow">▾</span></button>
+          <div class="acc-body"><p>Diferencias de valores, experiencias y expectativas entre la generación de los tutores y los estudiantes actuales. <strong>Estrategia:</strong> Escuchar sin juzgar, reconocer la experiencia del otro, comunicar propuestas con respeto y fundamento.</p></div>
+        </div>
+      </div>
+
+      <!-- ESCENARIO INTERACTIVO 1 -->
+      <div class="scenario-box">
+        <div class="sc-title">🎭 Escenario 1 – ¿Qué harías tú?</div>
+        <div class="sc-context">
+          Estás reportando un resultado crítico (potasio = 6.8 mEq/L) al médico de turno por teléfono. El médico parece distraído y responde con un lacónico "ajá". No sabes si recibió bien la información ni si actuará al respecto.
+        </div>
+        <div class="sc-options" id="sc1opts">
+          <button class="sc-opt" onclick="evalSc('sc1',this,false,'A')">A) Colgar tranquilo/a porque ya cumpliste con reportar.</button>
+          <button class="sc-opt" onclick="evalSc('sc1',this,false,'B')">B) Esperar a que el médico llame si tiene preguntas.</button>
+          <button class="sc-opt" onclick="evalSc('sc1',this,true,'C')">C) Confirmar: "Doctor, ¿recibió el valor crítico de potasio 6.8? ¿Alguna indicación o requiere repetición?" y registrar la llamada.</button>
+          <button class="sc-opt" onclick="evalSc('sc1',this,false,'D')">D) Volver a llamar en una hora si no hay novedades.</button>
+        </div>
+        <div class="sc-feedback" id="sc1fb"></div>
+        <div class="sc-next" id="sc1next">
+          <button class="btn btn-amber" onclick="goSection(3)">¡Continuar al siguiente tema! →</button>
+        </div>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn btn-ghost" onclick="goSection(1)">← Anterior</button>
+        <button class="btn btn-primary" onclick="goSection(3)">Siguiente →</button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════
+         SEC 3 · ESCUCHA ACTIVA
+    ══════════════════════════════ -->
+    <div class="section-panel" id="sec3">
+      <h3 style="margin-top:0">👂 Escucha activa: tu herramienta más poderosa</h3>
+      <p class="lead">Escuchar activamente no es solo oír palabras. Es comprender el mensaje completo — lo que se dice, lo que se omite y cómo se siente el otro al decirlo.</p>
+
+      <div class="callout callout-teal">
+        <strong>💡 ¿Sabías que?</strong> Pasamos más del 45 % de nuestra jornada escuchando, pero retenemos apenas el 25 % de lo que oímos. La escucha activa puede triplicar esa retención.
+      </div>
+
+      <!-- TIMELINE - Técnica CARE -->
+      <h3>La técnica CARE en práctica clínica</h3>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-left"><div class="tl-dot">🎯</div><div class="tl-line"></div></div>
+          <div class="tl-content"><h4>C – Concentración total</h4><p>Deja el celular, cierra la laptop, orienta tu cuerpo hacia el hablante. En el laboratorio: finaliza la tarea actual o comunica que en 2 minutos estarás disponible.</p></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-left"><div class="tl-dot">👁️</div><div class="tl-line"></div></div>
+          <div class="tl-content"><h4>A – Atención no verbal</h4><p>Asiente, mantén contacto visual adecuado, muestra disposición corporal abierta. Evita brazos cruzados o mirar el reloj mientras el otro habla.</p></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-left"><div class="tl-dot">🔄</div><div class="tl-line"></div></div>
+          <div class="tl-content"><h4>R – Reflexión y paráfrasis</h4><p>Confirma comprensión parafraseando: <em>"Si entiendo bien, necesita el resultado de la muestra urgente antes de las 2 pm, ¿correcto?"</em> Esto elimina el 80% de los malentendidos.</p></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-left"><div class="tl-dot">❤️</div></div>
+          <div class="tl-content"><h4>E – Empatía genuina</h4><p>Valida lo que siente el otro antes de responder. Al paciente ansioso: <em>"Entiendo que esperar resultados genera incertidumbre. Haré todo lo posible por agilizarlo."</em></p></div>
+        </div>
+      </div>
+
+      <!-- VIDEO 3 - Escucha activa -->
+      <h3>🎬 Video: Escucha activa aplicada</h3>
+      <div class="video-container">
+        <iframe src="https://www.youtube.com/embed/5xUbRuRKDUg" title="Escucha activa" allowfullscreen loading="lazy"></iframe>
+      </div>
+      <p class="video-label">📌 Duración aprox. 6 min · Toma nota de al menos una técnica nueva que puedas aplicar esta semana</p>
+
+      <!-- ESCENARIO 2 -->
+      <div class="scenario-box">
+        <div class="sc-title">🎭 Escenario 2 – Escucha activa con el paciente</div>
+        <div class="sc-context">
+          Una paciente de 65 años llega al laboratorio visiblemente nerviosa para una toma de muestra de sangre. Al acercarte dice: "Es que siempre me desmayo con las agujas y me da mucha pena, yo sé que soy muy exagerada..." Tu siguiente acción es:
+        </div>
+        <div class="sc-options" id="sc2opts">
+          <button class="sc-opt" onclick="evalSc('sc2',this,false,'A')">A) "No se preocupe, es solo un pinchazo pequeño" y procedes rápidamente.</button>
+          <button class="sc-opt" onclick="evalSc('sc2',this,true,'B')">B) "No es ninguna exageración, es algo que le pasa a mucha gente. Cuénteme cómo se ha sentido antes para que tomemos precauciones juntos."</button>
+          <button class="sc-opt" onclick="evalSc('sc2',this,false,'C')">C) Llamar a otro compañero para que lo atienda porque puede desmayarse.</button>
+          <button class="sc-opt" onclick="evalSc('sc2',this,false,'D')">D) "Señora, tiene que ser valiente, ya somos adultos."</button>
+        </div>
+        <div class="sc-feedback" id="sc2fb"></div>
+        <div class="sc-next" id="sc2next"></div>
+      </div>
+
+      <!-- REFLEXIÓN 2 -->
+      <div class="reflect-box">
+        <h4>✍️ Reflexión 2 – Autodiagnóstico de escucha</h4>
+        <p>En una escala personal, ¿cómo calificarías tu escucha activa actual con tus tutores de práctica? ¿Qué elemento de la técnica CARE te cuesta más aplicar y por qué?</p>
+        <textarea class="reflect-textarea" id="ref2" placeholder="Tu reflexión aquí..."></textarea>
+        <div class="reflect-submit">
+          <button class="btn btn-ghost" onclick="submitReflect('ref2','rfb2')">Guardar ✓</button>
+        </div>
+        <div class="reflect-result" id="rfb2">💾 ¡Guardado! Conocerse a uno mismo es el primer paso del cambio. <span id="ref2xp"></span></div>
+      </div>
+
+      <!-- RATING de comprensión -->
+      <div class="rating-box">
+        <p>¿Qué tan claro quedó el tema de <strong>escucha activa</strong> para ti?</p>
+        <div class="stars-rate" id="starsRate1">
+          <span class="star-btn" onclick="setRating('starsRate1',1,'rate1lbl')">⭐</span>
+          <span class="star-btn" onclick="setRating('starsRate1',2,'rate1lbl')">⭐</span>
+          <span class="star-btn" onclick="setRating('starsRate1',3,'rate1lbl')">⭐</span>
+          <span class="star-btn" onclick="setRating('starsRate1',4,'rate1lbl')">⭐</span>
+          <span class="star-btn" onclick="setRating('starsRate1',5,'rate1lbl')">⭐</span>
+        </div>
+        <div class="rate-label" id="rate1lbl"></div>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn btn-ghost" onclick="goSection(2)">← Anterior</button>
+        <button class="btn btn-primary" onclick="goSection(4)">Siguiente →</button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════
+         SEC 4 · ASERTIVIDAD + LNV
+    ══════════════════════════════ -->
+    <div class="section-panel" id="sec4">
+      <h3 style="margin-top:0">💬 Comunicación asertiva en entornos clínicos</h3>
+      <p class="lead">La asertividad es la habilidad de expresar lo que piensas, sientes y necesitas de forma directa y respetuosa — sin agredir y sin someterte.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Estilo</th><th>Cómo se ve</th><th>En práctica de bacteriología</th></tr></thead>
+          <tbody>
+            <tr><td>😶 <strong>Pasivo</strong></td><td>No expresa dudas, acepta todo</td><td>"No entendí el procedimiento pero no pregunto por no molestar"</td></tr>
+            <tr><td>😤 <strong>Agresivo</strong></td><td>Impone su criterio, confronta</td><td>"Eso que me explicaron está mal, en la U nos enseñaron diferente"</td></tr>
+            <tr><td>😊 <strong>Pasivo-agresivo</strong></td><td>Molestia disfrazada</td><td>Cumplir a medias o "olvidar" tareas por inconformidad no expresada</td></tr>
+            <tr><td>✨ <strong>Asertivo</strong></td><td>Claro, directo y respetuoso</td><td>"Tutor, tengo una duda sobre este paso — ¿podría explicarme cuando tenga un momento?"</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>🤲 El lenguaje no verbal: el 55 % de tu mensaje</h3>
+      <p>En el laboratorio clínico, tu cuerpo habla antes que tu boca. Pacientes, tutores y colegas interpretan constantemente tu postura, expresión y movimientos.</p>
+
+      <div class="cards">
+        <div class="card">
+          <div class="card-glow"></div>
+          <div class="c-icon">👁️</div>
+          <h4>Contacto visual</h4>
+          <p>Mantenerlo transmite confianza y atención. Evitarlo puede interpretarse como inseguridad o desinterés en entornos clínicos.</p>
+        </div>
+        <div class="card">
+          <div class="card-glow"></div>
+          <div class="c-icon">🧍</div>
+          <h4>Postura abierta</h4>
+          <p>Brazos cruzados o cuerpo girado al hablar con un paciente o tutor envía señales de rechazo o distancia emocional.</p>
+        </div>
+        <div class="card">
+          <div class="card-glow"></div>
+          <div class="c-icon">🎵</div>
+          <h4>Tono de voz</h4>
+          <p>Un tono suave y pausado con el paciente reduce su ansiedad. Un tono firme y claro al reportar resultados críticos genera confianza.</p>
+        </div>
+        <div class="card">
+          <div class="card-glow"></div>
+          <div class="c-icon">😊</div>
+          <h4>Expresión facial</h4>
+          <p>Una sonrisa genuina al recibir al paciente tiene más impacto que cualquier protocolo de atención memorizado.</p>
+        </div>
+      </div>
+
+      <!-- VIDEO 4 - Lenguaje no verbal -->
+      <h3>🎬 Video: Lenguaje no verbal en el trabajo</h3>
+      <div class="video-container">
+        <iframe src="https://www.youtube.com/embed/cFLjudWTuGQ" title="Lenguaje no verbal" allowfullscreen loading="lazy"></iframe>
+      </div>
+      <p class="video-label">📌 Observa las señales no verbales en el video y piensa: ¿cuáles usas tú habitualmente en tu práctica?</p>
+
+      <!-- ESCENARIO 3 - ASERTIVIDAD -->
+      <div class="scenario-box">
+        <div class="sc-title">🎭 Escenario 3 – Asertividad bajo presión</div>
+        <div class="sc-context">
+          Tu tutor te pide realizar un procedimiento que, según tu criterio y formación, no está siendo realizado de manera adecuada. Te genera incomodidad hacerlo así, pero el tutor es de mucha jerarquía en el servicio y no suele aceptar cuestionamientos.
+        </div>
+        <div class="sc-options" id="sc3opts">
+          <button class="sc-opt" onclick="evalSc('sc3',this,false,'A')">A) Realizar el procedimiento en silencio para evitar conflictos.</button>
+          <button class="sc-opt" onclick="evalSc('sc3',this,false,'B')">B) Negarte directamente: "Eso no es correcto, en la universidad nos enseñaron diferente."</button>
+          <button class="sc-opt" onclick="evalSc('sc3',this,true,'C')">C) En un momento apropiado: "Tutor, tengo una duda sobre este paso. En mi formación aprendí [X] — ¿podría explicarme la diferencia para aprender?"</button>
+          <button class="sc-opt" onclick="evalSc('sc3',this,false,'D')">D) Comentarlo con los compañeros de práctica pero no con el tutor.</button>
+        </div>
+        <div class="sc-feedback" id="sc3fb"></div>
+        <div class="sc-next" id="sc3next"></div>
+      </div>
+
+      <div class="callout callout-teal">
+        <strong>🔑 Técnica del mensaje "Yo":</strong><br/>
+        En lugar de: <em>"Tú nunca explicas bien los procedimientos"</em><br/>
+        Di: <em>"Yo me siento más seguro/a cuando entiendo el fundamento del procedimiento — ¿podría explicarme?"</em><br/><br/>
+        Los mensajes en primera persona reducen la defensividad del interlocutor y abren el diálogo.
+      </div>
+
+      <div class="nav-row">
+        <button class="btn btn-ghost" onclick="goSection(3)">← Anterior</button>
+        <button class="btn btn-primary" onclick="goSection(5)">Siguiente →</button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════
+         SEC 5 · ACTIVIDADES
+    ══════════════════════════════ -->
+    <div class="section-panel" id="sec5">
+      <h3 style="margin-top:0">🛠️ Actividades de aplicación</h3>
+      <p class="lead">Estas actividades son para que reflexiones y apliques. No tienen nota — tienen valor real para tu crecimiento profesional.</p>
+
+      <!-- ACT 1 -->
+      <div class="reflect-box">
+        <h4>📝 Actividad 1 – Reformulación asertiva</h4>
+        <p>Transforma esta frase a un mensaje asertivo usando la técnica "Yo":<br/><br/>
+        <strong style="color:var(--rose)">"Siempre me dejan las muestras urgentes a última hora y no es justo."</strong></p>
+        <textarea class="reflect-textarea" id="act1" placeholder='Ej.: "Yo me siento... cuando... porque... Necesitaría que..."'></textarea>
+        <div class="reflect-submit">
+          <button class="btn btn-ghost" onclick="submitReflect('act1','afb1')">Enviar ✓</button>
+        </div>
+        <div class="reflect-result" id="afb1">✅ ¡Excelente! Practicar este tipo de reformulación en voz alta antes de situaciones difíciles reduce significativamente la ansiedad comunicativa. +15 XP <span id="act1xp"></span></div>
+      </div>
+
+      <!-- ACT 2 -->
+      <div class="reflect-box">
+        <h4>🔍 Actividad 2 – Análisis de caso clínico comunicativo</h4>
+        <p><strong>Caso:</strong> El bacteriólogo Andrés reporta por sistema un resultado de glucosa de <strong>450 mg/dL</strong> (valor de pánico). No llama al médico porque "ya está en el sistema". El médico lo ve 3 horas después y el paciente sufrió una complicación.<br/><br/>
+        Responde: ¿Qué falló en el proceso comunicativo? ¿Qué habría hecho un bacteriólogo con comunicación efectiva?</p>
+        <textarea class="reflect-textarea" id="act2" placeholder="Identifica los elementos del proceso comunicativo que fallaron..."></textarea>
+        <div class="reflect-submit">
+          <button class="btn btn-ghost" onclick="submitReflect('act2','afb2')">Enviar análisis ✓</button>
+        </div>
+        <div class="reflect-result" id="afb2">✅ Análisis guardado. Clave: los valores de pánico siempre requieren comunicación verbal directa y registro documentado. La responsabilidad ética del profesional incluye asegurarse de que el mensaje llegó. +20 XP</div>
+      </div>
+
+      <!-- ACT 3 - COMPROMISOS PERSONALES -->
+      <div class="scenario-box">
+        <div class="sc-title">🌟 Actividad 3 – Mi plan de mejora comunicativa</div>
+        <div class="sc-context">
+          Basándote en lo aprendido, elige las 3 acciones que te comprometes a practicar durante tu próxima semana de práctica formativa:
+        </div>
+        <div class="checklist" id="commitList">
+          <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-check"></div><span class="cl-label">Aplicar la técnica CARE en al menos una conversación difícil con mi tutor</span></div>
+          <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-check"></div><span class="cl-label">Parafrasear instrucciones antes de ejecutar procedimientos nuevos</span></div>
+          <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-check"></div><span class="cl-label">Usar el mensaje "Yo" cuando necesite expresar una incomodidad</span></div>
+          <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-check"></div><span class="cl-label">Observar conscientemente mi lenguaje no verbal en la atención al paciente</span></div>
+          <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-check"></div><span class="cl-label">Comunicar verbalmente los valores de pánico aunque ya estén en el sistema</span></div>
+          <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-check"></div><span class="cl-label">Preguntar dudas al tutor en lugar de suponer o improvisar</span></div>
+        </div>
+        <button class="btn btn-amber" style="margin-top:16px" onclick="saveCommitments()">Guardar mis compromisos 🤝</button>
+        <div class="reflect-result" id="commitfb" style="margin-top:12px">🤝 ¡Compromisos guardados! Recuérdalos cada mañana al llegar a práctica. +25 XP</div>
+      </div>
+
+      <!-- VIDEO 5 - Motivacional -->
+      <h3>🎬 Video motivacional: El poder de comunicar bien</h3>
+      <div class="video-container">
+        <iframe src="https://www.youtube.com/embed/eIho2S0ZahI" title="Comunicación poderosa" allowfullscreen loading="lazy"></iframe>
+      </div>
+      <p class="video-label">📌 Para inspirarte. El comunicador que verás aplicó exactamente lo que aprendiste hoy.</p>
+
+      <div class="nav-row">
+        <button class="btn btn-ghost" onclick="goSection(4)">← Anterior</button>
+        <button class="btn btn-primary" onclick="goSection(6)">Ir a Evaluación →</button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════
+         SEC 6 · EVALUACIÓN
+    ══════════════════════════════ -->
+    <div class="section-panel" id="sec6">
+      <h3 style="margin-top:0">✅ Evaluación final del módulo</h3>
+      <p class="lead">10 preguntas. Recibirás retroalimentación inmediata en cada una. ¡Confía en lo que aprendiste!</p>
+
+      <div class="quiz-wrap" id="quizWrap">
+
+        <!-- Q1 -->
+        <div class="quiz-q" id="q1">
+          <div class="q-num">Pregunta 1 de 10</div>
+          <div class="q-text">En el proceso comunicativo, ¿cuál elemento abarca las interferencias que distorsionan el mensaje en el laboratorio clínico?</div>
+          <div class="q-opts">
+            <button class="q-opt" onclick="ansQ(1,this,false)">El canal</button>
+            <button class="q-opt" onclick="ansQ(1,this,false)">La retroalimentación</button>
+            <button class="q-opt" onclick="ansQ(1,this,true)">El ruido</button>
+            <button class="q-opt" onclick="ansQ(1,this,false)">El código</button>
+          </div>
+          <div class="q-fb" id="qfb1"></div>
+        </div>
+
+        <!-- Q2 -->
+        <div class="quiz-q" id="q2">
+          <div class="q-num">Pregunta 2 de 10</div>
+          <div class="q-text">Un bacteriólogo usa términos como "hemocultivo polimicrobiano con resistencia combinada" al hablar directamente con el paciente. ¿Qué tipo de barrera comunicativa representa esto?</div>
+          <div class="q-opts">
+            <button class="q-opt" onclick="ansQ(2,this,false)">Barrera física</button>
+            <button class="q-opt" onclick="ansQ(2,this,true)">Barrera semántica</button>
+            <button class="q-opt" onclick="ansQ(2,this,false)">Barrera psicológica</button>
+            <button class="q-opt" onclick="ansQ(2,this,false)">Barrera organizacional</button>
+          </div>
+          <div class="q-fb" id="qfb2"></div>
+        </div>
+
+        <!-- Q3 -->
+        <div class="quiz-q" id="q3">
+          <div class="q-num">Pregunta 3 de 10</div>
+          <div class="q-text">¿Cuál de las siguientes acciones corresponde correctamente a la "R" de la técnica CARE de escucha activa?</div>
+          <div class="q-opts">
+            <button class="q-opt" onclick="ansQ(3,this,false)">Recordar todo lo que dijo el paciente sin anotar nada</button>
+            <button class="q-opt" onclick="ansQ(3,this,false)">Responder de inmediato para demostrar atención</button>
+            <button class="q-opt" onclick="ansQ(3,this,true)">Parafrasear para confirmar comprensión: "Si entendí bien, usted necesita..."</button>
+            <button class="q-opt" onclick="ansQ(3,this,false)">Repetir en voz alta las palabras exactas del interlocutor</button>
+          </div>
+          <div class="q-fb" id="qfb3"></div>
+        </div>
+
+        <!-- Q4 -->
+        <div class="quiz-q" id="q4">
+          <div class="q-num">Pregunta 4 de 10</div>
+          <div class="q-text">Un estudiante de bacteriología nunca pregunta dudas a su tutor "para no parecer que no sabe". Este comportamiento corresponde a un estilo de comunicación:</div>
+          <div class="q-opts">
+            <button class="q-opt" onclick="ansQ(4,this,false)">Asertivo</button>
+            <button class="q-opt" onclick="ansQ(4,this,true)">Pasivo</button>
+            <button class="q-opt" onclick="ansQ(4,this,false)">Agresivo</button>
+            <button class="q-opt" onclick="ansQ(4,this,false)">Paraverbal</button>
+          </div>
+          <div class="q-fb" id="qfb4"></div>
+        </div>
+
+        <!-- Q5 -->
+        <div class="quiz-q" id="q5">
+          <div class="q-num">Pregunta 5 de 10</div>
+          <div class="q-text">Según el modelo de Mehrabian, ¿qué porcentaje del impacto de un mensaje cara a cara corresponde al lenguaje no verbal (gestual y postural)?</div>
+          <div class="q-opts">
+            <button class="q-opt" onclick="ansQ(5,this,false)">7%</button>
+            <button class="q-opt" onclick="ansQ(5,this,false)">38%</button>
+            <button class="q-opt" onclick="ansQ(5,this,true)">55%</button>
+            <button class="q-opt" onclick="ansQ(5,this,false)">70%</button>
+          </div>
+          <div class="q-fb" id="qfb5"></div>
+        </div>
+
+        <!-- Q6 -->
+        <div class="quiz-q" id="q6">
+          <div class="q-num">Pregunta 6 de 10</div>
+          <div class="q-text">Al reportar un valor crítico por teléfono y el médico responde solo "ajá", ¿cuál es la acción más adecuada?</div>
+          <div class="q-opts">
+            <button class="q-opt" onclick="ansQ(6,this,false)">Colgar porque el médico escuchó el reporte</button>
+            <button class="q-opt" onclick="ansQ(6,this,true)">Confirmar la recepción: "Doctor, ¿recibió el resultado crítico de [valor]?" y documentar la llamada</button>
+            <button class="q-opt" onclick="ansQ(6,this,false)">Esperar 30 minutos y llamar de nuevo si no actúa</button>
+            <button class="q-opt" onclick="ansQ(6,this,false)">Reportarlo solo en el sistema y no hacer seguimiento</button>
+          </div>
+          <div class="q-fb" id="qfb6"></div>
+        </div>
+
+        <!-- Q7 -->
+        <div class="quiz-q" id="q7">
+          <div class="q-num">Pregunta 7 de 10</div>
+          <div class="q-text">La técnica del mensaje "Yo" es útil porque:</div>
+          <div class="q-opts">
+            <button class="q-opt" onclick="ansQ(7,this,false)">Permite evitar la responsabilidad de los propios errores</button>
+            <button class="q-opt" onclick="ansQ(7,this,false)">Demuestra superioridad intelectual en la conversación</button>
+            <button class="q-opt" onclick="ansQ(7,this,true)">Expresa la propia perspectiva sin atacar al otro, reduciendo la defensividad</button>
+            <button class="q-opt" onclick="ansQ(7,this,false)">Obliga al otro a cambiar de comportamiento inmediatamente</button>
+          </div>
+          <div class="q-fb" id="qfb7"></div>
+        </div>
+
+        <!-- Q8 -->
+        <div class="quiz-q" id="q8">
+          <div class="q-num">Pregunta 8 de 10</div>
+          <div class="q-text">Un paciente ansioso dice "tengo miedo de que mi resultado salga mal". La respuesta que mejor demuestra empatía (CARE) es:</div>
+          <div class="q-opts">
+            <button class="q-opt" onclick="ansQ(8,this,false)">"No se preocupe, seguro sale bien."</button>
+            <button class="q-opt" onclick="ansQ(8,this,false)">"Eso es normal, todos sienten lo mismo."</button>
+            <button class="q-opt" onclick="ansQ(8,this,true)">"Entiendo que es una situación difícil. Cuénteme qué le preocupa para que podamos acompañarlo/a mejor."</button>
+            <button class="q-opt" onclick="ansQ(8,this,false)">"Para eso estamos, es nuestro trabajo."</button>
+          </div>
+          <div class="q-fb" id="qfb8"></div>
+        </div>
+
+        <!-- Q9 -->
+        <div class="quiz-q" id="q9">
+          <div class="q-num">Pregunta 9 de 10</div>
+          <div class="q-text">¿Cuál de los siguientes es un ejemplo de barrera psicológica en la comunicación durante práctica formativa?</div>
+          <div class="q-opts">
+            <button class="q-opt" onclick="ansQ(9,this,false)">Ruido de los equipos del laboratorio</button>
+            <button class="q-opt" onclick="ansQ(9,this,false)">Uso de siglas que el paciente no entiende</button>
+            <button class="q-opt" onclick="ansQ(9,this,true)">Ansiedad del estudiante por ser evaluado que le impide preguntar dudas</button>
+            <button class="q-opt" onclick="ansQ(9,this,false)">Diferencia de turnos entre el estudiante y el médico tratante</button>
+          </div>
+          <div class="q-fb" id="qfb9"></div>
+        </div>
+
+        <!-- Q10 -->
+        <div class="quiz-q" id="q10">
+          <div class="q-num">Pregunta 10 de 10</div>
+          <div class="q-text">La comunicación asertiva en el contexto clínico implica:</div>
+          <div class="q-opts">
+            <button class="q-opt" onclick="ansQ(10,this,false)">Decir siempre lo que se piensa sin filtros para ser honesto</button>
+            <button class="q-opt" onclick="ansQ(10,this,false)">Evitar expresar inconformidades para mantener el ambiente laboral tranquilo</button>
+            <button class="q-opt" onclick="ansQ(10,this,false)">Imponer el criterio propio cuando se tiene certeza técnica</button>
+            <button class="q-opt" onclick="ansQ(10,this,true)">Expresar necesidades, opiniones y límites de forma directa, clara y respetuosa</button>
+          </div>
+          <div class="q-fb" id="qfb10"></div>
+        </div>
+
+      </div><!-- /quizWrap -->
+
+      <!-- RESULTADO -->
+      <div class="result-panel" id="resultPanel">
+        <div style="color:var(--muted);font-size:.85rem;letter-spacing:.1em;text-transform:uppercase">Resultado final</div>
+        <div class="result-big" id="resultScore">–</div>
+        <div class="result-stars" id="resultStars">–</div>
+        <p class="result-msg" id="resultMsg">–</p>
+        <div class="result-badge" id="resultBadge">–</div>
+        <br/><br/>
+        <button class="btn btn-primary" onclick="restartQuiz()">Intentar de nuevo</button>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn btn-ghost" onclick="goSection(5)">← Anterior</button>
+        <button class="btn btn-amber" onclick="calcScore()">Ver mi resultado final 🏁</button>
+      </div>
+    </div>
+
+  </div><!-- /page -->
+</div><!-- /app -->
+
+<!-- TOAST ACHIEVEMENT -->
+<div class="achievement-toast" id="achieveToast" style="display:none">
+  <div class="a-icon" id="achieveIcon">🏆</div>
+  <div class="a-text">
+    <strong id="achieveTitle">Logro desbloqueado</strong>
+    <span id="achieveDesc">+10 XP ganados</span>
+  </div>
+</div>
+
+<script>
+// ── GLOBALS ──────────────────────────────
+let studentName  = '';
+let xp           = 0;
+let currentSec   = 0;
+let visitedSecs  = new Set([0]);
+const TOTAL_SECS = 7;
+
+const qAnswers   = {};
+const qCorrect   = {1:false,2:false,3:false,4:false,5:false,6:false,7:false,8:false,9:false,10:false};
+
+const qFbOk = [
+  "✅ ¡Correcto! El ruido abarca todo tipo de interferencia: ambiental, tecnológica, emocional.",
+  "✅ ¡Exacto! Usar tecnicismos con el paciente es una barrera semántica clásica en entornos clínicos.",
+  "✅ ¡Muy bien! Parafrasear confirma comprensión y evita el 80% de los malentendidos.",
+  "✅ ¡Correcto! Evitar preguntar por miedo al juicio es comunicación pasiva — muy común en práctica.",
+  "✅ ¡Acertado! El lenguaje corporal y gestual representa el 55% del impacto del mensaje.",
+  "✅ ¡Correcto! Confirmar recepción de valores críticos es una obligación ética y profesional.",
+  "✅ ¡Exacto! El mensaje 'Yo' reduce la defensividad porque no apunta al otro como culpable.",
+  "✅ ¡Muy bien! La empatía genuina valida la emoción del paciente antes de resolver el problema.",
+  "✅ ¡Correcto! La ansiedad por evaluación es una de las barreras psicológicas más frecuentes en práctica.",
+  "✅ ¡Perfecto! La asertividad equilibra la expresión propia con el respeto al otro."
+];
+const qFbKo = [
+  "❌ El ruido es la interferencia que distorsiona el mensaje — no el canal (que es el medio).",
+  "❌ Los tecnicismos son una barrera semántica (relacionada con el significado del lenguaje).",
+  "❌ La 'R' de CARE es Reflexión/Paráfrasis — no repetir literalmente ni responder rápido.",
+  "❌ Ese comportamiento es pasivo: el miedo al juicio inhibe la comunicación necesaria.",
+  "❌ Según Mehrabian, el 55% es lenguaje corporal; el 38% es tono; solo el 7% son las palabras.",
+  "❌ Reportar solo en sistema no garantiza la actuación oportuna. Los valores críticos exigen confirmación verbal.",
+  "❌ El mensaje 'Yo' está diseñado específicamente para expresar sin atacar, no para esquivar responsabilidades.",
+  "❌ Decir 'no se preocupe' minimiza el sentimiento del paciente en lugar de validarlo.",
+  "❌ El ruido de equipos es barrera física. La ansiedad por evaluación es la barrera psicológica aquí.",
+  "❌ La asertividad no es ni imposición ni evasión — es expresión directa, clara y respetuosa."
+];
+
+const scFbOk = [
+  "✅ ¡Correcto! Confirmar recepción de valores críticos y documentar la llamada es el estándar de atención. Tu responsabilidad no termina hasta asegurarte de que el mensaje llegó y fue comprendido.",
+  "✅ ¡Excelente! Al validar su emoción y preguntar por su experiencia previa, puedes tomar medidas preventivas (posición reclinada, vendaje compresivo) y el paciente confía en ti. Eso es empatía clínica en acción.",
+  "✅ ¡Muy bien! Preguntar con curiosidad genuina en lugar de confrontar directamente mantiene la relación con el tutor, demuestra iniciativa y abre el diálogo para aprender. La asertividad nunca implica confrontación agresiva."
+];
+const scFbKo = [
+  "❌ Reportar un valor crítico sin confirmar recepción es un riesgo clínico real. El proceso comunicativo solo se completa cuando hay retroalimentación — no basta que tú hayas dicho el mensaje.",
+  "❌ Minimizar el miedo del paciente ('es solo un pinchazo') puede aumentar su ansiedad. La empatía requiere primero validar el sentimiento antes de ofrecer soluciones.",
+  "❌ Ni la sumisión ni la confrontación directa son la respuesta ideal. La asertividad consiste en expresar tu perspectiva con respeto — incluyendo al superior jerárquico."
+];
+
+// ── LOADER ───────────────────────────────
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('loader').style.opacity = '0';
+    setTimeout(() => document.getElementById('loader').style.display = 'none', 500);
+  }, 1200);
+});
+
+// ── WELCOME ──────────────────────────────
+function startApp() {
+  const n = document.getElementById('nameInput').value.trim();
+  studentName = n || 'Estudiante';
+  document.getElementById('welcome').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  document.getElementById('greetName').textContent = studentName;
+  updateProgress();
+  showAchievement('🚀', '¡Módulo iniciado!', 'Bienvenido/a, ' + studentName);
+  gainXP(10, false);
+}
+
+// ── NAVEGACIÓN ───────────────────────────
+function goSection(idx) {
+  document.querySelectorAll('.section-panel').forEach((s,i) => s.classList.toggle('active', i===idx));
+  const btns = document.querySelectorAll('.mnav-btn');
+  btns.forEach((b,i) => { b.classList.remove('active'); });
+  btns[idx].classList.add('active');
+  visitedSecs.add(idx);
+  if(visitedSecs.size > currentSec + 1 || idx > currentSec) {
+    if(idx > currentSec){ gainXP(5, false); }
+    currentSec = Math.max(currentSec, idx);
+  }
+  updateProgress();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function updateProgress() {
+  const pct = Math.round((visitedSecs.size / TOTAL_SECS) * 100);
+  document.getElementById('progFill').style.width = pct + '%';
+  document.getElementById('progPct').textContent = pct + '%';
+}
+
+// ── XP ───────────────────────────────────
+function gainXP(amount, announce=true) {
+  xp += amount;
+  document.getElementById('xpCount').textContent = xp;
+  if(announce) showAchievement('⚡','¡XP ganados!','+' + amount + ' XP · Total: ' + xp);
+}
+
+let toastTimeout;
+function showAchievement(icon, title, desc) {
+  const t = document.getElementById('achieveToast');
+  document.getElementById('achieveIcon').textContent = icon;
+  document.getElementById('achieveTitle').textContent = title;
+  document.getElementById('achieveDesc').textContent = desc;
+  t.style.display = 'flex';
+  t.style.animation = 'none';
+  void t.offsetWidth;
+  t.style.animation = 'toastIn .4s ease';
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => { t.style.display = 'none'; }, 3500);
+}
+
+// ── ACCORDION ────────────────────────────
+function toggleAcc(btn) {
+  const body = btn.nextElementSibling;
+  const isOpen = btn.classList.contains('open');
+  document.querySelectorAll('.acc-head').forEach(h => { h.classList.remove('open'); h.nextElementSibling.classList.remove('open'); });
+  if(!isOpen){ btn.classList.add('open'); body.classList.add('open'); }
+}
+
+// ── CHECKLIST ────────────────────────────
+function toggleCheck(item) {
+  item.classList.toggle('checked');
+  if(item.classList.contains('checked')) gainXP(2, false);
+}
+
+// ── REFLEXIONES ──────────────────────────
+function submitReflect(inputId, fbId) {
+  const val = document.getElementById(inputId).value.trim();
+  if(val.length < 20){ alert('Por favor escribe al menos una frase para continuar.'); return; }
+  const fb = document.getElementById(fbId);
+  fb.style.display = 'block';
+  gainXP(15);
+  showAchievement('✍️','¡Reflexión completada!','+15 XP por tu autoconocimiento');
+}
+
+// ── COMPROMISOS ──────────────────────────
+function saveCommitments() {
+  const checked = document.querySelectorAll('#commitList .cl-item.checked').length;
+  if(checked < 1){ alert('Selecciona al menos un compromiso.'); return; }
+  document.getElementById('commitfb').style.display = 'block';
+  gainXP(25);
+  showAchievement('🤝','¡Compromisos guardados!',checked + ' compromisos · +25 XP');
+}
+
+// ── RATING ───────────────────────────────
+const ratingLabels = ['','Necesito repasar este tema','Entendí lo básico','Bastante claro','Muy claro','¡Dominado! Listo para aplicarlo'];
+function setRating(wrapperId, val, lblId) {
+  const stars = document.querySelectorAll('#'+wrapperId+' .star-btn');
+  stars.forEach((s,i) => s.classList.toggle('lit', i < val));
+  document.getElementById(lblId).textContent = ratingLabels[val];
+  gainXP(5, false);
+  if(val <= 2) {
+    setTimeout(()=>showAchievement('📖','¿Necesitas repasar?','Regresa a la sección cuando quieras'),200);
+  }
+}
+
+// ── ESCENARIOS ───────────────────────────
+function evalSc(scId, btn, isOk, label) {
+  const opts = document.querySelectorAll('#'+scId+'opts .sc-opt');
+  opts.forEach(o => o.disabled = true);
+  btn.classList.add(isOk ? 'correct' : 'wrong');
+  if(!isOk) opts.forEach(o => { if(o.getAttribute('onclick').includes(',true,')) o.classList.add('correct'); });
+  const scNum = parseInt(scId.replace('sc','')) - 1;
+  const fb = document.getElementById(scId+'fb');
+  fb.textContent = isOk ? scFbOk[scNum] : scFbKo[scNum];
+  fb.className = 'sc-feedback ' + (isOk ? 'ok' : 'ko');
+  if(isOk){ gainXP(20); showAchievement('🎭','¡Escenario resuelto!','+20 XP · Decisión acertada'); }
+  const nxt = document.getElementById(scId+'next');
+  if(nxt){ nxt.style.display = 'block'; }
+}
+
+// ── QUIZ ─────────────────────────────────
+function ansQ(num, btn, isOk) {
+  if(qAnswers[num] !== undefined) return;
+  qAnswers[num] = isOk ? 1 : 0;
+  qCorrect[num] = isOk;
+  const opts = document.querySelectorAll('#q'+num+' .q-opt');
+  opts.forEach(o => o.disabled = true);
+  btn.classList.add(isOk ? 'correct' : 'wrong');
+  if(!isOk) opts.forEach(o => { if(o.getAttribute('onclick').includes(',true)')) o.classList.add('correct'); });
+  const fb = document.getElementById('qfb'+num);
+  fb.textContent = isOk ? qFbOk[num-1] : qFbKo[num-1];
+  fb.className = 'q-fb ' + (isOk ? 'ok' : 'ko');
+  if(isOk) gainXP(10, false);
+}
+
+function calcScore() {
+  const total = Object.values(qAnswers).length;
+  if(total < 10){ alert('Por favor responde todas las preguntas antes de ver tu resultado.'); return; }
+  const score = Object.values(qAnswers).reduce((a,b)=>a+b,0);
+  const pct = score * 10;
+  const panel = document.getElementById('resultPanel');
+  document.getElementById('resultScore').textContent = pct + ' / 100';
+  let stars = '', msg = '', badge = '';
+  if(pct >= 90){ stars='⭐⭐⭐⭐⭐'; msg='¡Excelente! Dominas los fundamentos de comunicación efectiva. Tu práctica formativa se notará.'; badge='🏆 Comunicador/a Nivel Experto'; gainXP(50); showAchievement('🏆','¡Resultado sobresaliente!','Módulo 1 completado · +50 XP'); }
+  else if(pct >= 70){ stars='⭐⭐⭐⭐'; msg='¡Muy bien! Tienes bases sólidas. Repasa los escenarios donde tuviste dudas.'; badge='✨ Comunicador/a Competente'; gainXP(30); showAchievement('✨','¡Buen resultado!','Módulo 1 completado · +30 XP'); }
+  else if(pct >= 50){ stars='⭐⭐⭐'; msg='Vas por buen camino. Te recomendamos revisar las secciones de escucha activa y asertividad.'; badge='📖 En proceso de aprendizaje'; gainXP(15); }
+  else { stars='⭐⭐'; msg='Anímate — el aprendizaje es un proceso. Revisa el contenido y vuelve a intentarlo. ¡Tú puedes!'; badge='🔄 Sigue practicando'; gainXP(5); }
+  document.getElementById('resultStars').textContent = stars;
+  document.getElementById('resultMsg').textContent = msg;
+  document.getElementById('resultBadge').textContent = badge;
+  panel.classList.add('show');
+  panel.scrollIntoView({behavior:'smooth', block:'center'});
+  // Marcar nav como done
+  document.querySelectorAll('.mnav-btn').forEach(b => b.classList.add('done'));
+}
+
+function restartQuiz() {
+  Object.keys(qAnswers).forEach(k => delete qAnswers[k]);
+  for(let i=1;i<=10;i++){
+    const q = document.getElementById('q'+i);
+    q.querySelectorAll('.q-opt').forEach(o => { o.disabled=false; o.classList.remove('correct','wrong'); });
+    document.getElementById('qfb'+i).className = 'q-fb';
+    document.getElementById('qfb'+i).textContent = '';
+  }
+  document.getElementById('resultPanel').classList.remove('show');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>

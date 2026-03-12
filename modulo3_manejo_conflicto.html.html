@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Módulo 3 · Manejo del Conflicto | Bacteriología</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#0f1a0f;--surface:#141f14;--surface2:#1a2e1a;--border:#2d4a2d;--green:#22c55e;--green2:#4ade80;--amber:#f59e0b;--rose:#f43f5e;--blue:#38bdf8;--text:#e2e8f0;--muted:#8b95a1;--white:#fff;--radius:14px;--shadow:0 8px 32px rgba(0,0,0,.5)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;line-height:1.7;min-height:100vh;overflow-x:hidden}
+#loader{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px}
+.loader-ring{width:64px;height:64px;border:3px solid var(--border);border-top-color:var(--green2);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#welcome{position:fixed;inset:0;background:linear-gradient(135deg,#0f1a0f,#0a2010,#0f1a0f);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center}
+.welcome-badge{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);color:var(--green2);font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;padding:6px 18px;border-radius:100px;margin-bottom:24px}
+#welcome h1{font-family:'Syne',sans-serif;font-size:clamp(2rem,6vw,3.5rem);line-height:1.1;margin-bottom:16px}
+#welcome h1 span{color:var(--green2)}
+#welcome p{color:var(--muted);max-width:480px;margin-bottom:32px;font-size:1.05rem}
+.name-input-wrap{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:28px;width:100%;max-width:420px}
+.name-input-wrap input{flex:1;min-width:200px;background:var(--surface);border:1.5px solid var(--border);color:var(--text);padding:13px 18px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:1rem;outline:none;transition:border-color .2s}
+.name-input-wrap input:focus{border-color:var(--green2)}
+.info-chips{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:20px}
+.chip{background:var(--surface2);border:1px solid var(--border);border-radius:100px;padding:5px 14px;font-size:.8rem;color:var(--muted)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 28px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:600;cursor:pointer;border:none;transition:all .2s}
+.btn-primary{background:linear-gradient(135deg,#16a34a,var(--green2));color:#0f1a0f}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(34,197,94,.35)}
+.btn-ghost{background:transparent;color:var(--green2);border:1.5px solid var(--green2)}
+.btn-ghost:hover{background:rgba(34,197,94,.1)}
+.btn-amber{background:linear-gradient(135deg,#d97706,var(--amber));color:#0f1a0f}
+#app{display:none}
+.top-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 32px;display:flex;align-items:center;gap:20px;position:sticky;top:0;z-index:100}
+.top-logo{font-family:'Syne',sans-serif;font-size:.95rem;color:var(--green2);font-weight:800;white-space:nowrap}
+.top-greeting{color:var(--muted);font-size:.85rem;flex:1}.top-greeting span{color:var(--text);font-weight:600}
+.xp-badge{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.3);color:var(--amber);font-size:.8rem;font-weight:600;padding:5px 14px;border-radius:100px;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.progress-global{background:var(--surface2);padding:16px 32px;border-bottom:1px solid var(--border)}
+.progress-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:.82rem}.progress-row span{color:var(--muted)}
+.prog-bar{height:6px;background:var(--border);border-radius:4px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,#16a34a,var(--green2));border-radius:4px;transition:width .6s cubic-bezier(.4,0,.2,1)}
+.module-nav{display:flex;overflow-x:auto;padding:0 32px;background:var(--surface);border-bottom:1px solid var(--border);gap:4px}
+.mnav-btn{padding:14px 20px;background:none;border:none;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s;display:flex;align-items:center;gap:8px}
+.mnav-btn:hover{color:var(--text)}.mnav-btn.active{color:var(--green2);border-bottom-color:var(--green2)}
+.mnav-btn .dot{width:7px;height:7px;border-radius:50%;background:var(--border)}.mnav-btn.active .dot{background:var(--green2);box-shadow:0 0 8px var(--green2)}
+.page{max-width:820px;margin:0 auto;padding:48px 32px 100px}
+.section-panel{display:none}.section-panel.active{display:block;animation:fadeSlide .4s ease}
+@keyframes fadeSlide{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.section-hero{background:linear-gradient(135deg,var(--surface),var(--surface2));border:1px solid var(--border);border-radius:var(--radius);padding:40px;margin-bottom:32px;position:relative;overflow:hidden}
+.section-hero::after{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;border-radius:50%;background:var(--green2);opacity:.04}
+.section-hero .sh-badge{color:var(--green2);font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;margin-bottom:12px}
+.section-hero h2{font-family:'Syne',sans-serif;font-size:clamp(1.6rem,4vw,2.2rem);line-height:1.2;margin-bottom:12px}
+.section-hero p{color:var(--muted);font-size:1rem;max-width:580px}
+.obj-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:24px}
+.obj-item{background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);border-radius:10px;padding:14px 16px;font-size:.88rem;display:flex;align-items:flex-start;gap:10px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin:24px 0}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;position:relative;overflow:hidden;transition:transform .25s,box-shadow .25s,border-color .25s}
+.card:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:var(--green2)}
+.card .c-icon{font-size:2rem;margin-bottom:12px}.card h4{font-family:'Syne',sans-serif;font-size:1rem;margin-bottom:6px;color:var(--white)}.card p{font-size:.85rem;color:var(--muted)}
+.card-glow{position:absolute;top:0;left:0;width:3px;height:100%;background:linear-gradient(180deg,#16a34a,var(--green2))}
+.callout{border-radius:10px;padding:20px 24px;margin:24px 0;font-size:.95rem}
+.callout-green{background:rgba(34,197,94,.07);border-left:4px solid var(--green2)}
+.callout-amber{background:rgba(245,158,11,.07);border-left:4px solid var(--amber)}
+.callout-rose{background:rgba(244,63,94,.07);border-left:4px solid var(--rose)}
+.callout-blue{background:rgba(56,189,248,.07);border-left:4px solid var(--blue)}
+.callout strong{color:var(--white)}
+h3{font-family:'Syne',sans-serif;font-size:1.25rem;color:var(--white);margin:36px 0 12px}
+p{margin-bottom:14px;color:var(--text)}.lead{font-size:1.05rem;color:var(--muted);border-left:3px solid var(--green2);padding-left:16px;margin-bottom:28px}
+.table-wrap{overflow-x:auto;margin:20px 0;border-radius:10px;border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+thead tr{background:var(--surface2)}thead th{padding:12px 16px;text-align:left;font-weight:600;color:var(--green2);font-size:.82rem;letter-spacing:.05em;text-transform:uppercase}
+tbody td{padding:12px 16px;border-top:1px solid var(--border);color:var(--text)}tbody tr:hover{background:rgba(255,255,255,.02)}
+ul.sl{list-style:none;padding:0;margin:16px 0 24px}
+ul.sl li{padding:10px 14px 10px 44px;position:relative;border-bottom:1px solid var(--border);font-size:.93rem}
+ul.sl li::before{content:'◆';position:absolute;left:14px;color:var(--green2);font-size:.6rem;top:14px}
+.video-container{position:relative;width:100%;padding-bottom:56.25%;margin:24px 0;border-radius:12px;overflow:hidden;background:var(--surface2);border:1px solid var(--border)}
+.video-container iframe{position:absolute;inset:0;width:100%;height:100%;border:none}
+.video-label{font-size:.82rem;color:var(--muted);margin-top:8px;padding-left:4px}
+.accordion{border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:20px 0}
+.acc-item{border-bottom:1px solid var(--border)}.acc-item:last-child{border-bottom:none}
+.acc-head{width:100%;background:var(--surface);color:var(--text);border:none;padding:16px 20px;text-align:left;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:500;display:flex;justify-content:space-between;align-items:center;transition:background .2s}
+.acc-head:hover{background:var(--surface2)}.acc-head .arrow{color:var(--green2);transition:transform .3s}.acc-head.open .arrow{transform:rotate(180deg)}
+.acc-body{max-height:0;overflow:hidden;transition:max-height .4s ease,padding .3s}.acc-body.open{max-height:600px;padding:20px}.acc-body p{color:var(--muted);font-size:.92rem;margin:0}
+.scenario-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;margin:28px 0}
+.scenario-box .sc-title{font-family:'Syne',sans-serif;font-size:1rem;color:var(--amber);margin-bottom:12px}
+.scenario-box .sc-context{font-size:.95rem;color:var(--muted);background:var(--surface2);border-radius:8px;padding:16px;margin-bottom:20px;line-height:1.6}
+.sc-options{display:flex;flex-direction:column;gap:10px}
+.sc-opt{background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:14px 18px;cursor:pointer;font-size:.93rem;color:var(--text);text-align:left;transition:all .2s}
+.sc-opt:hover:not(:disabled){border-color:var(--green2);background:rgba(34,197,94,.06)}.sc-opt.correct{border-color:var(--green);background:rgba(16,185,129,.08);color:#6ee7b7}.sc-opt.wrong{border-color:var(--rose);background:rgba(244,63,94,.08);color:#fda4af}.sc-opt:disabled{cursor:not-allowed}
+.sc-feedback{margin-top:16px;padding:14px 18px;border-radius:8px;font-size:.9rem;display:none}
+.sc-feedback.ok{display:block;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.3);color:#6ee7b7}
+.sc-feedback.ko{display:block;background:rgba(244,63,94,.08);border:1px solid rgba(244,63,94,.3);color:#fda4af}
+.reflect-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;margin:28px 0}
+.reflect-box h4{font-family:'Syne',sans-serif;color:var(--amber);margin-bottom:10px}.reflect-box p{color:var(--muted);font-size:.93rem;margin-bottom:16px}
+.reflect-textarea{width:100%;background:var(--surface2);border:1.5px solid var(--border);color:var(--text);padding:14px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.93rem;resize:vertical;min-height:100px;outline:none;transition:border-color .2s}
+.reflect-textarea:focus{border-color:var(--green2)}
+.reflect-result{margin-top:14px;padding:14px 18px;border-radius:8px;background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.2);color:var(--green2);font-size:.9rem;display:none}
+.checklist{margin:20px 0}
+.cl-item{display:flex;align-items:flex-start;gap:14px;padding:14px 0;border-bottom:1px solid var(--border);cursor:pointer}.cl-item:last-child{border-bottom:none}
+.cl-check{width:22px;height:22px;min-width:22px;border-radius:6px;border:2px solid var(--border);background:transparent;display:flex;align-items:center;justify-content:center;transition:all .2s;margin-top:1px}
+.cl-item.checked .cl-check{background:var(--green2);border-color:var(--green2)}.cl-item.checked .cl-check::after{content:'✓';color:#0f1a0f;font-size:.75rem;font-weight:700}
+.cl-item.checked .cl-label{color:var(--muted);text-decoration:line-through}.cl-label{font-size:.93rem;color:var(--text);line-height:1.4}
+/* TERMÓMETRO CONFLICTO */
+.conflict-meter{margin:24px 0}
+.cm-level{display:flex;align-items:center;gap:16px;padding:16px;border-radius:10px;margin-bottom:10px;border:1px solid var(--border);cursor:pointer;transition:all .2s}
+.cm-level:hover{transform:translateX(4px)}
+.cm-badge{width:44px;height:44px;min-width:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:700;font-family:'Syne',sans-serif}
+.cm-l1{background:rgba(34,197,94,.15);border-color:rgba(34,197,94,.3)}.cm-l1 .cm-badge{background:rgba(34,197,94,.2);color:var(--green2)}
+.cm-l2{background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.3)}.cm-l2 .cm-badge{background:rgba(245,158,11,.2);color:var(--amber)}
+.cm-l3{background:rgba(251,146,60,.08);border-color:rgba(251,146,60,.3)}.cm-l3 .cm-badge{background:rgba(251,146,60,.2);color:#fb923c}
+.cm-l4{background:rgba(244,63,94,.08);border-color:rgba(244,63,94,.3)}.cm-l4 .cm-badge{background:rgba(244,63,94,.2);color:var(--rose)}
+.cm-l5{background:rgba(139,0,0,.15);border-color:rgba(180,0,0,.4)}.cm-l5 .cm-badge{background:rgba(180,0,0,.2);color:#ff6b6b}
+.cm-info h5{font-family:'Syne',sans-serif;font-size:.9rem;margin-bottom:3px}.cm-info p{font-size:.82rem;color:var(--muted);margin:0}
+.quiz-q{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;margin-bottom:20px}
+.quiz-q .q-num{font-size:.75rem;color:var(--green2);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}
+.quiz-q .q-text{font-size:1rem;font-weight:500;color:var(--white);margin-bottom:20px;line-height:1.5}
+.q-opts{display:flex;flex-direction:column;gap:10px}
+.q-opt{background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:13px 18px;cursor:pointer;font-size:.92rem;color:var(--text);text-align:left;transition:all .2s;display:flex;align-items:center;gap:12px}
+.q-opt::before{content:'';width:18px;height:18px;min-width:18px;border-radius:50%;border:2px solid var(--border);transition:all .2s}
+.q-opt:hover:not(:disabled){border-color:var(--green2);background:rgba(34,197,94,.05)}
+.q-opt.correct{border-color:var(--green);background:rgba(16,185,129,.08);color:#6ee7b7}.q-opt.correct::before{background:var(--green);border-color:var(--green)}
+.q-opt.wrong{border-color:var(--rose);background:rgba(244,63,94,.08);color:#fda4af}.q-opt.wrong::before{background:var(--rose);border-color:var(--rose)}
+.q-opt:disabled{cursor:not-allowed}
+.q-fb{margin-top:14px;padding:12px 16px;border-radius:8px;font-size:.88rem;display:none}
+.q-fb.ok{display:block;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.3);color:#6ee7b7}
+.q-fb.ko{display:block;background:rgba(244,63,94,.08);border:1px solid rgba(244,63,94,.3);color:#fda4af}
+.result-panel{background:linear-gradient(135deg,var(--surface),var(--surface2));border:1px solid var(--border);border-radius:var(--radius);padding:40px;text-align:center;margin-top:28px;display:none}
+.result-panel.show{display:block;animation:fadeSlide .5s ease}
+.result-big{font-family:'Syne',sans-serif;font-size:4rem;line-height:1;margin:16px 0 8px;color:var(--green2)}
+.result-msg{color:var(--muted);font-size:1rem;max-width:420px;margin:0 auto 24px}
+.result-badge{display:inline-block;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);color:var(--green2);padding:8px 20px;border-radius:100px;font-size:.85rem;font-weight:600}
+.achievement-toast{position:fixed;bottom:28px;right:28px;background:linear-gradient(135deg,#0f1a0f,#0a2010);border:1px solid var(--amber);border-radius:12px;padding:16px 20px;display:flex;align-items:center;gap:14px;z-index:500;animation:toastIn .4s ease;max-width:300px}
+@keyframes toastIn{from{opacity:0;transform:translateX(80px)}to{opacity:1;transform:translateX(0)}}
+.achievement-toast .a-icon{font-size:2rem}.achievement-toast .a-text strong{display:block;color:var(--amber);font-size:.9rem;margin-bottom:2px}.achievement-toast .a-text span{color:var(--muted);font-size:.8rem}
+.nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:52px;padding-top:24px;border-top:1px solid var(--border);gap:12px;flex-wrap:wrap}
+@media(max-width:640px){.page{padding:28px 16px 80px}.top-bar{padding:12px 16px}.module-nav{padding:0 8px}}
+</style>
+</head>
+<body>
+<div id="loader"><div class="loader-ring"></div><p style="color:var(--muted);font-size:.9rem">Cargando módulo...</p></div>
+<div id="welcome">
+  <div class="welcome-badge">Habilidades Blandas · Módulo 3 de 5</div>
+  <div style="font-size:1.5rem;margin-bottom:16px">🤝 ⚡ 🌱</div>
+  <h1>Convierte el conflicto<br/>en <span>crecimiento</span></h1>
+  <p>El conflicto no es el problema — cómo lo manejas, sí. Aprende a construir relaciones sólidas en entornos de alta presión.</p>
+  <div class="name-input-wrap"><input type="text" id="nameInput" placeholder="¿Cómo te llamas?" maxlength="40"/></div>
+  <div class="info-chips"><div class="chip">📚 6 secciones</div><div class="chip">⏱ ~45 min</div><div class="chip">🎯 Bacteriología IX–X sem</div></div>
+  <br/><button class="btn btn-primary" onclick="startApp()">Iniciar Módulo 3 →</button>
+</div>
+<div id="app">
+  <div class="top-bar"><div class="top-logo">🤝 Conflicto e Interpersonal</div><div class="top-greeting">Hola, <span id="greetName">estudiante</span> · Módulo 3 de 5</div><div class="xp-badge">⚡ <span id="xpCount">0</span> XP</div></div>
+  <div class="progress-global"><div class="progress-row"><span>Progreso del módulo</span><span id="progPct">0%</span></div><div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div></div>
+  <nav class="module-nav">
+    <button class="mnav-btn active" onclick="goSection(0)"><span class="dot"></span>Bienvenida</button>
+    <button class="mnav-btn" onclick="goSection(1)"><span class="dot"></span>El conflicto</button>
+    <button class="mnav-btn" onclick="goSection(2)"><span class="dot"></span>Estilos de respuesta</button>
+    <button class="mnav-btn" onclick="goSection(3)"><span class="dot"></span>Relaciones interpersonales</button>
+    <button class="mnav-btn" onclick="goSection(4)"><span class="dot"></span>Actividades</button>
+    <button class="mnav-btn" onclick="goSection(5)"><span class="dot"></span>Evaluación</button>
+  </nav>
+  <div class="page">
+
+    <!-- SEC 0 -->
+    <div class="section-panel active" id="sec0">
+      <div class="section-hero">
+        <div class="sh-badge">🤝 Módulo 3 · Manejo del Conflicto</div>
+        <h2>El conflicto bien manejado<br/>fortalece los equipos</h2>
+        <p>En el laboratorio clínico trabajas bajo presión, con personas diversas y en situaciones de alta carga emocional. El conflicto es inevitable — saber navegarlo es lo que marca la diferencia.</p>
+        <div class="obj-list">
+          <div class="obj-item"><span>🎯</span><span>Identificar los niveles y tipos de conflicto en entornos clínicos</span></div>
+          <div class="obj-item"><span>🎯</span><span>Reconocer tu estilo habitual de respuesta ante el conflicto</span></div>
+          <div class="obj-item"><span>🎯</span><span>Aplicar técnicas de resolución constructiva de conflictos</span></div>
+          <div class="obj-item"><span>🎯</span><span>Construir relaciones interpersonales sólidas en práctica</span></div>
+        </div>
+      </div>
+      <div class="callout callout-amber"><strong>📢 Observación de líderes de práctica:</strong><br/>Se han identificado dificultades en el manejo de situaciones tensas con tutores y compañeros, la comunicación durante desacuerdos, y la construcción de relaciones de trabajo respetuosas y productivas.</div>
+      <div class="nav-row"><span></span><button class="btn btn-primary" onclick="goSection(1)">Comenzar →</button></div>
+    </div>
+
+    <!-- SEC 1 -->
+    <div class="section-panel" id="sec1">
+      <h3 style="margin-top:0">⚡ ¿Qué es el conflicto y por qué aparece?</h3>
+      <p class="lead">El conflicto es una situación de incompatibilidad real o percibida entre dos o más personas. No es ni bueno ni malo — su valor depende de cómo se gestione.</p>
+      <div class="callout callout-green"><strong>💡 El conflicto en bacteriología surge cuando:</strong><br/>Dos tutores dan instrucciones contradictorias · Un compañero no cumple su parte del trabajo · Un paciente rechaza el procedimiento · Un médico cuestiona tu resultado · Sientes que no te valoran o no te escuchan en el equipo.</div>
+      <h3>🌡️ Termómetro del conflicto — Niveles de escalada</h3>
+      <p style="color:var(--muted);font-size:.93rem">El conflicto tiene niveles. Reconocerlos a tiempo te permite intervenir antes de que escale:</p>
+      <div class="conflict-meter">
+        <div class="cm-level cm-l1"><div class="cm-badge">1</div><div class="cm-info"><h5>Incomodidad</h5><p>Algo no se siente bien, pero no hay problema claro aún. Actúa ahora — es el momento más fácil.</p></div></div>
+        <div class="cm-level cm-l2"><div class="cm-badge">2</div><div class="cm-info"><h5>Malentendido</h5><p>Interpretaciones diferentes del mismo evento. La comunicación directa lo resuelve.</p></div></div>
+        <div class="cm-level cm-l3"><div class="cm-badge">3</div><div class="cm-info"><h5>Incidente</h5><p>Roces visibles, tensión en el equipo. Requiere conversación honesta y mediación.</p></div></div>
+        <div class="cm-level cm-l4"><div class="cm-badge">4</div><div class="cm-info"><h5>Crisis</h5><p>El conflicto afecta el trabajo. Necesita intervención de un tercero o el coordinador.</p></div></div>
+        <div class="cm-level cm-l5"><div class="cm-badge">5</div><div class="cm-info"><h5>Ruptura</h5><p>La relación está fracturada. Proceso formal necesario. Muy difícil de revertir.</p></div></div>
+      </div>
+      <h3>🎬 Video: Conflicto y resolución en equipos de trabajo</h3>
+      <div class="video-container"><iframe src="https://www.youtube.com/embed/KY5TWVz5ZDU" title="Manejo del conflicto" allowfullscreen loading="lazy"></iframe></div>
+      <p class="video-label">📌 Duración aprox. 7 min · ¿En qué nivel del termómetro has estado tú en práctica?</p>
+      <div class="reflect-box">
+        <h4>✍️ Reflexión 1 – Mi historia con el conflicto</h4>
+        <p>Piensa en un conflicto que hayas vivido en tu práctica (con tutor, compañero o paciente). ¿En qué nivel del termómetro llegó? ¿Cómo lo resolviste o cómo desearías haberlo resuelto?</p>
+        <textarea class="reflect-textarea" id="ref1" placeholder="Escribe tu reflexión..."></textarea>
+        <div style="margin-top:12px"><button class="btn btn-ghost" onclick="submitReflect('ref1','rfb1')">Guardar ✓</button></div>
+        <div class="reflect-result" id="rfb1">💾 ¡Guardado! Nombrar el conflicto es el primer paso para transformarlo. +15 XP</div>
+      </div>
+      <div class="nav-row"><button class="btn btn-ghost" onclick="goSection(0)">← Anterior</button><button class="btn btn-primary" onclick="goSection(2)">Siguiente →</button></div>
+    </div>
+
+    <!-- SEC 2 -->
+    <div class="section-panel" id="sec2">
+      <h3 style="margin-top:0">🎭 Estilos de respuesta ante el conflicto</h3>
+      <p class="lead">Todos tenemos un estilo habitual de responder al conflicto. Conocer el tuyo es el primer paso para elegir el más adecuado a cada situación.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Estilo</th><th>¿Cómo actúa?</th><th>¿Cuándo usarlo?</th><th>Riesgo</th></tr></thead>
+          <tbody>
+            <tr><td>🐢 <strong>Evasión</strong></td><td>Ignora o pospone el conflicto</td><td>Cuando no es el momento o el problema es menor</td><td>El conflicto escala sin resolverse</td></tr>
+            <tr><td>🦁 <strong>Competición</strong></td><td>Impone su posición, gana a toda costa</td><td>Emergencias donde hay que decidir rápido</td><td>Daña relaciones y genera resentimiento</td></tr>
+            <tr><td>🕊️ <strong>Acomodación</strong></td><td>Cede para mantener la paz</td><td>Cuando el tema es más importante para el otro</td><td>Acumula insatisfacción propia</td></tr>
+            <tr><td>🤝 <strong>Compromiso</strong></td><td>Ambos ceden algo para llegar a un acuerdo</td><td>Cuando ambas partes tienen razón parcial</td><td>Ninguno queda completamente satisfecho</td></tr>
+            <tr><td>🌟 <strong>Colaboración</strong></td><td>Busca solución que satisfaga a todos</td><td>Cuando la relación y el resultado son importantes</td><td>Requiere tiempo y voluntad de ambas partes</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout callout-blue"><strong>🔑 ¿Cuál es el mejor estilo?</strong><br/>No hay uno solo correcto — el ideal depende del contexto. Pero la <strong>colaboración</strong> es la más poderosa para relaciones de largo plazo como la que tienes con tus tutores y compañeros de práctica.</div>
+      <h3>🎬 Video: Estilos de manejo de conflictos</h3>
+      <div class="video-container"><iframe src="https://www.youtube.com/embed/5JXzHQInPmQ" title="Estilos de conflicto" allowfullscreen loading="lazy"></iframe></div>
+      <p class="video-label">📌 Identifica tu estilo predominante viendo los ejemplos del video</p>
+      <div class="scenario-box">
+        <div class="sc-title">🎭 Escenario 1 – Instrucciones contradictorias</div>
+        <div class="sc-context">Tu tutor A te dijo que los hemocultivos se incuban a 35°C. Tu tutor B insiste en que es 37°C y te llama la atención frente a otros estudiantes porque lo hiciste a 35°C. Ambos son de alta jerarquía. ¿Cómo respondes?</div>
+        <div class="sc-options" id="sc1opts">
+          <button class="sc-opt" onclick="evalSc('sc1',this,false)">A) Le dices a tutor B que tutor A te lo enseñó así y que él está equivocado.</button>
+          <button class="sc-opt" onclick="evalSc('sc1',this,false)">B) No dices nada y cambias a 37°C en silencio para evitar más tensión.</button>
+          <button class="sc-opt" onclick="evalSc('sc1',this,true)">C) En privado le dices a tutor B: "Entiendo su corrección. Tutor A me indicó 35°C — ¿podría orientarme cuál es el protocolo vigente para seguirlo correctamente?"</button>
+          <button class="sc-opt" onclick="evalSc('sc1',this,false)">D) Buscas el protocolo solo y aplicas lo que encuentres sin comentarlo con ninguno.</button>
+        </div>
+        <div class="sc-feedback" id="sc1fb"></div>
+      </div>
+      <div class="accordion">
+        <div class="acc-item"><button class="acc-head" onclick="toggleAcc(this)">🔧 Técnica del DESC para resolver conflictos <span class="arrow">▾</span></button><div class="acc-body"><p><strong>D</strong>escribir la situación objetivamente: "Cuando ocurre X..."<br/><strong>E</strong>xpresar cómo te sientes: "Yo me siento..."<br/><strong>S</strong>olicitar el cambio específico: "Necesitaría que..."<br/><strong>C</strong>onsecuencias positivas: "Así podríamos..."<br/><br/>Ejemplo: "Cuando recibo instrucciones diferentes de distintos tutores, me siento confundido/a. Necesitaría que el equipo unificara el protocolo. Así podría desempeñarme mejor y con más seguridad."</p></div></div>
+        <div class="acc-item"><button class="acc-head" onclick="toggleAcc(this)">🧊 Técnica del "enfriamiento" <span class="arrow">▾</span></button><div class="acc-body"><p>Cuando el conflicto es emocional y las palabras pueden empeorar las cosas, propón una pausa: "Me gustaría continuar esta conversación en un momento en que ambos estemos más tranquilos. ¿Podemos hablar más tarde?" Esto no es evasión — es inteligencia emocional aplicada.</p></div></div>
+        <div class="acc-item"><button class="acc-head" onclick="toggleAcc(this)">🪞 La escucha antes de responder <span class="arrow">▾</span></button><div class="acc-body"><p>En el 80% de los conflictos, la otra persona solo necesita sentirse escuchada. Antes de argumentar tu posición, haz preguntas: "¿Puedes contarme más sobre por qué lo ves así?" Esto desescala y genera apertura al diálogo.</p></div></div>
+      </div>
+      <div class="nav-row"><button class="btn btn-ghost" onclick="goSection(1)">← Anterior</button><button class="btn btn-primary" onclick="goSection(3)">Siguiente →</button></div>
+    </div>
+
+    <!-- SEC 3 -->
+    <div class="section-panel" id="sec3">
+      <h3 style="margin-top:0">🌱 Relaciones interpersonales en el laboratorio</h3>
+      <p class="lead">Las relaciones profesionales se construyen con pequeñas acciones cotidianas. No se trata de ser el mejor amigo de todos — sino de ser un colega confiable y respetuoso.</p>
+      <div class="cards">
+        <div class="card"><div class="card-glow"></div><div class="c-icon">🤝</div><h4>Confianza</h4><p>Cumple lo que prometes, sé puntual y cuida la confidencialidad de la información clínica.</p></div>
+        <div class="card"><div class="card-glow"></div><div class="c-icon">🎯</div><h4>Respeto</h4><p>Trata a todos con la misma dignidad: al médico especialista y al auxiliar de limpieza merecen el mismo trato.</p></div>
+        <div class="card"><div class="card-glow"></div><div class="c-icon">💬</div><h4>Comunicación abierta</h4><p>Di lo que piensas con respeto, escucha sin juzgar y confirma que fuiste entendido/a.</p></div>
+        <div class="card"><div class="card-glow"></div><div class="c-icon">🔄</div><h4>Reciprocidad</h4><p>Ofrece ayuda cuando puedes. Los equipos fuertes se construyen sobre la colaboración mutua.</p></div>
+      </div>
+      <h3>🎬 Video: Relaciones interpersonales en el trabajo</h3>
+      <div class="video-container"><iframe src="https://www.youtube.com/embed/saXfavo1OQo" title="Relaciones interpersonales" allowfullscreen loading="lazy"></iframe></div>
+      <p class="video-label">📌 Duración aprox. 6 min · Identifica 2 hábitos de los que menciona que puedas aplicar esta semana</p>
+      <div class="scenario-box">
+        <div class="sc-title">🎭 Escenario 2 – Compañero que no cumple</div>
+        <div class="sc-context">Llevas 3 semanas de práctica con un compañero que constantemente llega tarde, dejando el trabajo de apertura del laboratorio solo para ti. Ya acumulas frustración. Esta mañana vuelve a llegar 30 minutos tarde.</div>
+        <div class="sc-options" id="sc2opts">
+          <button class="sc-opt" onclick="evalSc('sc2',this,false)">A) Le dices frente a todos: "Como siempre, yo haciendo todo el trabajo mientras tú llegas tarde."</button>
+          <button class="sc-opt" onclick="evalSc('sc2',this,false)">B) Sigues haciendo el trabajo solo/a sin decir nada para no generar problemas.</button>
+          <button class="sc-opt" onclick="evalSc('sc2',this,true)">C) En privado y calmado/a: "Quiero hablarte de algo. Cuando llegas tarde, el trabajo de apertura queda solo para mí y me genera mucha presión. ¿Podemos buscar juntos una solución?"</button>
+          <button class="sc-opt" onclick="evalSc('sc2',this,false)">D) Lo reportas directamente al tutor sin haberlo hablado primero con tu compañero.</button>
+        </div>
+        <div class="sc-feedback" id="sc2fb"></div>
+      </div>
+      <div class="reflect-box">
+        <h4>✍️ Reflexión 2 – Mis relaciones en práctica</h4>
+        <p>¿Con quién de tu entorno de práctica (tutor, compañero, personal de salud) te cuesta más relacionarte? ¿Qué crees que genera esa dificultad y qué podrías hacer diferente?</p>
+        <textarea class="reflect-textarea" id="ref2" placeholder="Tu reflexión..."></textarea>
+        <div style="margin-top:12px"><button class="btn btn-ghost" onclick="submitReflect('ref2','rfb2')">Guardar ✓</button></div>
+        <div class="reflect-result" id="rfb2">💾 ¡Guardado! Las relaciones difíciles son las que más nos enseñan cuando las enfrentamos con consciencia. +15 XP</div>
+      </div>
+      <div class="nav-row"><button class="btn btn-ghost" onclick="goSection(2)">← Anterior</button><button class="btn btn-primary" onclick="goSection(4)">Siguiente →</button></div>
+    </div>
+
+    <!-- SEC 4 ACTIVIDADES -->
+    <div class="section-panel" id="sec4">
+      <h3 style="margin-top:0">🛠️ Actividades de aplicación</h3>
+      <p class="lead">Practica las habilidades de resolución de conflictos con estas actividades concretas.</p>
+      <div class="reflect-box">
+        <h4>📝 Actividad 1 – Aplica la técnica DESC</h4>
+        <p>Elige una situación de conflicto real o hipotética de tu práctica y escribe un mensaje usando la técnica DESC:<br/><br/>
+        <strong style="color:var(--green2)">D</strong> – Describe la situación · <strong style="color:var(--green2)">E</strong> – Expresa tu sentimiento · <strong style="color:var(--green2)">S</strong> – Solicita el cambio · <strong style="color:var(--green2)">C</strong> – Consecuencia positiva</p>
+        <textarea class="reflect-textarea" id="act1" placeholder="D: Cuando ocurre...&#10;E: Me siento...&#10;S: Necesitaría que...&#10;C: Así podríamos..."></textarea>
+        <div style="margin-top:12px"><button class="btn btn-ghost" onclick="submitReflect('act1','afb1')">Enviar ✓</button></div>
+        <div class="reflect-result" id="afb1">✅ ¡Excelente! Tener este mensaje preparado antes de una conversación difícil reduce la ansiedad y mejora el resultado. +20 XP</div>
+      </div>
+      <div class="reflect-box">
+        <h4>🌟 Actividad 2 – Mis compromisos de relación</h4>
+        <p>Selecciona los hábitos relacionales que practicarás esta semana:</p>
+        <div class="checklist" id="commitList">
+          <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-check"></div><span class="cl-label">Saludar a todo el equipo al llegar al laboratorio (incluyendo auxiliares y personal de servicios)</span></div>
+          <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-check"></div><span class="cl-label">Si hay un malentendido, abordarlo directamente con la persona en lugar de comentarlo con otros</span></div>
+          <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-check"></div><span class="cl-label">Usar la técnica DESC en al menos una conversación difícil esta semana</span></div>
+          <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-check"></div><span class="cl-label">Reconocer el trabajo de un compañero o tutor con palabras concretas de agradecimiento</span></div>
+          <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-check"></div><span class="cl-label">Antes de escalar un conflicto, intentar resolverlo directamente con la persona involucrada</span></div>
+        </div>
+        <button class="btn btn-amber" style="margin-top:16px" onclick="saveCommitments()">Asumir compromisos 🤝</button>
+        <div class="reflect-result" id="commitfb" style="margin-top:12px">🤝 ¡Compromisos guardados! Las relaciones de calidad se construyen con consistencia diaria. +25 XP</div>
+      </div>
+      <div class="nav-row"><button class="btn btn-ghost" onclick="goSection(3)">← Anterior</button><button class="btn btn-primary" onclick="goSection(5)">Ir a Evaluación →</button></div>
+    </div>
+
+    <!-- SEC 5 EVALUACIÓN -->
+    <div class="section-panel" id="sec5">
+      <h3 style="margin-top:0">✅ Evaluación del Módulo 3</h3>
+      <p class="lead">8 preguntas con retroalimentación inmediata.</p>
+      <div class="quiz-q" id="q1"><div class="q-num">Pregunta 1 de 8</div><div class="q-text">¿Cuál de los siguientes niveles del termómetro del conflicto es el más fácil de resolver y en el que se debe actuar antes de que escale?</div><div class="q-opts"><button class="q-opt" onclick="ansQ(1,this,false)">Incidente</button><button class="q-opt" onclick="ansQ(1,this,false)">Malentendido</button><button class="q-opt" onclick="ansQ(1,this,true)">Incomodidad</button><button class="q-opt" onclick="ansQ(1,this,false)">Crisis</button></div><div class="q-fb" id="qfb1"></div></div>
+      <div class="quiz-q" id="q2"><div class="q-num">Pregunta 2 de 8</div><div class="q-text">El estilo de resolución de conflictos más recomendado para relaciones de largo plazo como la de estudiante-tutor es:</div><div class="q-opts"><button class="q-opt" onclick="ansQ(2,this,false)">Evasión</button><button class="q-opt" onclick="ansQ(2,this,false)">Competición</button><button class="q-opt" onclick="ansQ(2,this,false)">Acomodación</button><button class="q-opt" onclick="ansQ(2,this,true)">Colaboración</button></div><div class="q-fb" id="qfb2"></div></div>
+      <div class="quiz-q" id="q3"><div class="q-num">Pregunta 3 de 8</div><div class="q-text">En la técnica DESC, la letra "S" significa:</div><div class="q-opts"><button class="q-opt" onclick="ansQ(3,this,false)">Sentimiento expresado</button><button class="q-opt" onclick="ansQ(3,this,true)">Solicitar un cambio específico</button><button class="q-opt" onclick="ansQ(3,this,false)">Situación descrita</button><button class="q-opt" onclick="ansQ(3,this,false)">Silencio antes de responder</button></div><div class="q-fb" id="qfb3"></div></div>
+      <div class="quiz-q" id="q4"><div class="q-num">Pregunta 4 de 8</div><div class="q-text">Ante instrucciones contradictorias de dos tutores, la respuesta más adecuada es:</div><div class="q-opts"><button class="q-opt" onclick="ansQ(4,this,false)">Seguir la instrucción del tutor de mayor jerarquía sin consultar</button><button class="q-opt" onclick="ansQ(4,this,false)">Hacer lo que consideras correcto sin comentarlo</button><button class="q-opt" onclick="ansQ(4,this,true)">Preguntar en privado por el protocolo vigente para seguirlo correctamente</button><button class="q-opt" onclick="ansQ(4,this,false)">Reportar la contradicción al coordinador de práctica inmediatamente</button></div><div class="q-fb" id="qfb4"></div></div>
+      <div class="quiz-q" id="q5"><div class="q-num">Pregunta 5 de 8</div><div class="q-text">La técnica del "enfriamiento" en un conflicto consiste en:</div><div class="q-opts"><button class="q-opt" onclick="ansQ(5,this,false)">Ignorar completamente el conflicto para que se resuelva solo</button><button class="q-opt" onclick="ansQ(5,this,true)">Proponer una pausa consciente para continuar la conversación cuando ambos estén más tranquilos</button><button class="q-opt" onclick="ansQ(5,this,false)">Hablar con otros compañeros para desahogarse</button><button class="q-opt" onclick="ansQ(5,this,false)">Terminar la relación profesional con esa persona</button></div><div class="q-fb" id="qfb5"></div></div>
+      <div class="quiz-q" id="q6"><div class="q-num">Pregunta 6 de 8</div><div class="q-text">¿Cuál de las siguientes acciones contribuye más a construir relaciones interpersonales sólidas en práctica?</div><div class="q-opts"><button class="q-opt" onclick="ansQ(6,this,false)">Ser el más competente técnicamente del grupo</button><button class="q-opt" onclick="ansQ(6,this,false)">Evitar involucrarse en conflictos ajenos</button><button class="q-opt" onclick="ansQ(6,this,true)">Cumplir lo prometido, respetar a todos y comunicarse abiertamente</button><button class="q-opt" onclick="ansQ(6,this,false)">Relacionarse solo con quienes comparten tu visión</button></div><div class="q-fb" id="qfb6"></div></div>
+      <div class="quiz-q" id="q7"><div class="q-num">Pregunta 7 de 8</div><div class="q-text">Ante un compañero que incumple reiteradamente sus responsabilidades, el primer paso recomendado es:</div><div class="q-opts"><button class="q-opt" onclick="ansQ(7,this,false)">Reportarlo directamente al tutor o coordinador</button><button class="q-opt" onclick="ansQ(7,this,false)">Hacer su trabajo en silencio para no generar conflicto</button><button class="q-opt" onclick="ansQ(7,this,false)">Comentarlo con otros compañeros para buscar apoyo</button><button class="q-opt" onclick="ansQ(7,this,true)">Hablar directamente con él/ella de manera privada y calmada</button></div><div class="q-fb" id="qfb7"></div></div>
+      <div class="quiz-q" id="q8"><div class="q-num">Pregunta 8 de 8</div><div class="q-text">En el 80% de los conflictos, ¿qué necesita principalmente la otra persona para que el conflicto se desescale?</div><div class="q-opts"><button class="q-opt" onclick="ansQ(8,this,false)">Que le den la razón</button><button class="q-opt" onclick="ansQ(8,this,true)">Sentirse escuchada y comprendida</button><button class="q-opt" onclick="ansQ(8,this,false)">Que se le ofrezca una disculpa</button><button class="q-opt" onclick="ansQ(8,this,false)">Que el problema se resuelva técnicamente</button></div><div class="q-fb" id="qfb8"></div></div>
+      <div class="result-panel" id="resultPanel">
+        <div style="color:var(--muted);font-size:.85rem;letter-spacing:.1em;text-transform:uppercase">Resultado final</div>
+        <div class="result-big" id="resultScore">–</div>
+        <div style="font-size:1.8rem;letter-spacing:4px;margin-bottom:12px" id="resultStars">–</div>
+        <p class="result-msg" id="resultMsg">–</p>
+        <div class="result-badge" id="resultBadge">–</div>
+        <br/><br/><button class="btn btn-primary" onclick="restartQuiz()">Intentar de nuevo</button>
+      </div>
+      <div class="nav-row"><button class="btn btn-ghost" onclick="goSection(4)">← Anterior</button><button class="btn btn-amber" onclick="calcScore()">Ver resultado 🏁</button></div>
+    </div>
+  </div>
+</div>
+<div class="achievement-toast" id="achieveToast" style="display:none"><div class="a-icon" id="achieveIcon">🏆</div><div class="a-text"><strong id="achieveTitle">Logro</strong><span id="achieveDesc">XP</span></div></div>
+<script>
+let studentName='',xp=0,currentSec=0,visitedSecs=new Set([0]);
+const TOTAL_SECS=6,qAnswers={};
+const qFbOk=["✅ ¡Correcto! La incomodidad es la señal temprana — actuar en ese momento requiere el menor esfuerzo.","✅ ¡Exacto! La colaboración busca que todos ganen — ideal para relaciones profesionales duraderas.","✅ ¡Muy bien! S = Solicitar un cambio concreto y realizable.","✅ ¡Correcto! Preguntar por el protocolo en privado es asertivo, respetuoso y resuelve el problema de raíz.","✅ ¡Acertado! El enfriamiento es inteligencia emocional — no evasión. Crear espacio para dialogar mejor.","✅ ¡Exacto! La confianza, el respeto y la comunicación son los pilares de las relaciones profesionales.","✅ ¡Correcto! El diálogo directo siempre debe ser el primer paso antes de escalar el conflicto.","✅ ¡Perfecto! La escucha genuina es la herramienta más poderosa para resolver conflictos."];
+const qFbKo=["❌ La incomodidad (nivel 1) es el momento ideal para actuar — antes de que se convierta en incidente o crisis.","❌ La competición y la evasión dañan las relaciones. La colaboración es la más sostenible a largo plazo.","❌ La S en DESC es Solicitar un cambio específico — no el sentimiento (esa es la E).","❌ Seguir una instrucción sin entender el fundamento no es la solución. Preguntar en privado es lo más profesional.","❌ El enfriamiento es una pausa consciente para retomar con más calma — no ignorar el conflicto.","❌ La competencia técnica es importante, pero las relaciones se construyen con comportamientos, no con conocimientos.","❌ Reportar sin hablar primero puede dañar la relación y generar desconfianza. El diálogo directo va primero.","❌ La escucha genuina, no dar la razón, es lo que permite que las personas bajen la guardia y dialoguen."];
+const scFbOk=["✅ ¡Excelente! Buscar el protocolo vigente en privado es la respuesta colaborativa: aprendes, mantienes la relación con ambos tutores y resuelves la confusión.","✅ ¡Muy bien! El mensaje DESC en privado es la respuesta más constructiva: nombras el problema, expresas tu sentir y buscas solución juntos."];
+const scFbKo=["❌ Confrontar a un tutor frente a otros puede dañar irreparablemente la relación. Buscar el protocolo en privado es la vía más profesional y efectiva.","❌ Seguir absorbiendo el trabajo en silencio acumula resentimiento y no resuelve el problema. El diálogo directo, calmado y privado es el primer paso."];
+window.addEventListener('load',()=>{setTimeout(()=>{document.getElementById('loader').style.opacity='0';setTimeout(()=>document.getElementById('loader').style.display='none',500)},1200)});
+function startApp(){const n=document.getElementById('nameInput').value.trim();studentName=n||'Estudiante';document.getElementById('welcome').style.display='none';document.getElementById('app').style.display='block';document.getElementById('greetName').textContent=studentName;updateProgress();showAchievement('🚀','¡Módulo 3 iniciado!','Bienvenido/a, '+studentName);gainXP(10,false)}
+function goSection(idx){document.querySelectorAll('.section-panel').forEach((s,i)=>s.classList.toggle('active',i===idx));document.querySelectorAll('.mnav-btn').forEach((b,i)=>{b.classList.remove('active');if(i===idx)b.classList.add('active')});if(idx>currentSec)gainXP(5,false);currentSec=Math.max(currentSec,idx);visitedSecs.add(idx);updateProgress();window.scrollTo({top:0,behavior:'smooth'})}
+function updateProgress(){const pct=Math.round((visitedSecs.size/TOTAL_SECS)*100);document.getElementById('progFill').style.width=pct+'%';document.getElementById('progPct').textContent=pct+'%'}
+function gainXP(amount,announce=true){xp+=amount;document.getElementById('xpCount').textContent=xp;if(announce)showAchievement('⚡','¡XP ganados!','+'+amount+' XP · Total: '+xp)}
+let toastTimeout;
+function showAchievement(icon,title,desc){const t=document.getElementById('achieveToast');document.getElementById('achieveIcon').textContent=icon;document.getElementById('achieveTitle').textContent=title;document.getElementById('achieveDesc').textContent=desc;t.style.display='flex';t.style.animation='none';void t.offsetWidth;t.style.animation='toastIn .4s ease';clearTimeout(toastTimeout);toastTimeout=setTimeout(()=>{t.style.display='none'},3500)}
+function toggleAcc(btn){const body=btn.nextElementSibling;const isOpen=btn.classList.contains('open');document.querySelectorAll('.acc-head').forEach(h=>{h.classList.remove('open');h.nextElementSibling.classList.remove('open')});if(!isOpen){btn.classList.add('open');body.classList.add('open')}}
+function toggleCheck(item){item.classList.toggle('checked');if(item.classList.contains('checked'))gainXP(2,false)}
+function submitReflect(inputId,fbId){const val=document.getElementById(inputId).value.trim();if(val.length<20){alert('Por favor escribe un poco más.');return}document.getElementById(fbId).style.display='block';gainXP(15);showAchievement('✍️','¡Reflexión guardada!','+15 XP')}
+function saveCommitments(){const checked=document.querySelectorAll('#commitList .cl-item.checked').length;if(checked<1){alert('Selecciona al menos un compromiso.');return}document.getElementById('commitfb').style.display='block';gainXP(25);showAchievement('🤝','¡Compromisos asumidos!',checked+' seleccionados · +25 XP')}
+function evalSc(scId,btn,isOk){const num=parseInt(scId.replace('sc',''))-1;const opts=document.querySelectorAll('#'+scId+'opts .sc-opt');opts.forEach(o=>o.disabled=true);btn.classList.add(isOk?'correct':'wrong');if(!isOk)opts.forEach(o=>{if(o.getAttribute('onclick').includes(',true)'))o.classList.add('correct')});const fb=document.getElementById(scId+'fb');fb.textContent=isOk?scFbOk[num]:scFbKo[num];fb.className='sc-feedback '+(isOk?'ok':'ko');if(isOk){gainXP(20);showAchievement('🎭','¡Escenario resuelto!','+20 XP')}}
+function ansQ(num,btn,isOk){if(qAnswers[num]!==undefined)return;qAnswers[num]=isOk?1:0;const opts=document.querySelectorAll('#q'+num+' .q-opt');opts.forEach(o=>o.disabled=true);btn.classList.add(isOk?'correct':'wrong');if(!isOk)opts.forEach(o=>{if(o.getAttribute('onclick').includes(',true)'))o.classList.add('correct')});const fb=document.getElementById('qfb'+num);fb.textContent=isOk?qFbOk[num-1]:qFbKo[num-1];fb.className='q-fb '+(isOk?'ok':'ko');if(isOk)gainXP(10,false)}
+function calcScore(){const total=Object.values(qAnswers).length;if(total<8){alert('Responde todas las preguntas primero.');return}const score=Object.values(qAnswers).reduce((a,b)=>a+b,0);const pct=Math.round(score/8*100);document.getElementById('resultScore').textContent=pct+' / 100';let stars='',msg='',badge='';if(pct>=87){stars='⭐⭐⭐⭐⭐';msg='¡Excelente! Sabes manejar el conflicto con inteligencia. Tu equipo de práctica lo agradecerá.';badge='🏆 Gestor/a de Conflictos Experto';gainXP(50);showAchievement('🏆','¡Resultado sobresaliente!','+50 XP')}else if(pct>=62){stars='⭐⭐⭐⭐';msg='¡Muy bien! Tienes buenas bases. Practica la técnica DESC en situaciones reales.';badge='✨ En camino al dominio';gainXP(30)}else{stars='⭐⭐⭐';msg='Continúa — revisa los estilos de respuesta y la técnica DESC.';badge='📖 Sigue aprendiendo';gainXP(15)}document.getElementById('resultStars').textContent=stars;document.getElementById('resultMsg').textContent=msg;document.getElementById('resultBadge').textContent=badge;document.getElementById('resultPanel').classList.add('show');document.getElementById('resultPanel').scrollIntoView({behavior:'smooth',block:'center'})}
+function restartQuiz(){Object.keys(qAnswers).forEach(k=>delete qAnswers[k]);for(let i=1;i<=8;i++){const q=document.getElementById('q'+i);q.querySelectorAll('.q-opt').forEach(o=>{o.disabled=false;o.classList.remove('correct','wrong')});const fb=document.getElementById('qfb'+i);fb.className='q-fb';fb.textContent=''}document.getElementById('resultPanel').classList.remove('show');window.scrollTo({top:0,behavior:'smooth'})}
+</script>
+</body>
+</html>

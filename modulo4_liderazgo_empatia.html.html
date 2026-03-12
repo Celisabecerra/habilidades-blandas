@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Módulo 4 · Liderazgo, Empatía y Servicio | Bacteriología</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#1a0a00;--surface:#241208;--surface2:#2e1a0a;--border:#4a2e10;--orange:#f97316;--orange2:#fb923c;--amber:#f59e0b;--rose:#f43f5e;--blue:#38bdf8;--green:#22c55e;--text:#e2e8f0;--muted:#8b95a1;--white:#fff;--radius:14px;--shadow:0 8px 32px rgba(0,0,0,.5)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;line-height:1.7;min-height:100vh;overflow-x:hidden}
+#loader{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px}
+.loader-ring{width:64px;height:64px;border:3px solid var(--border);border-top-color:var(--orange2);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#welcome{position:fixed;inset:0;background:linear-gradient(135deg,#1a0a00,#2e1000,#1a0a00);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center}
+.welcome-badge{background:rgba(249,115,22,.12);border:1px solid rgba(249,115,22,.3);color:var(--orange2);font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;padding:6px 18px;border-radius:100px;margin-bottom:24px}
+#welcome h1{font-family:'Syne',sans-serif;font-size:clamp(2rem,6vw,3.5rem);line-height:1.1;margin-bottom:16px}
+#welcome h1 span{color:var(--orange2)}
+#welcome p{color:var(--muted);max-width:480px;margin-bottom:32px;font-size:1.05rem}
+.name-input-wrap{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:28px;width:100%;max-width:420px}
+.name-input-wrap input{flex:1;min-width:200px;background:var(--surface);border:1.5px solid var(--border);color:var(--text);padding:13px 18px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:1rem;outline:none;transition:border-color .2s}
+.name-input-wrap input:focus{border-color:var(--orange2)}
+.info-chips{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:20px}
+.chip{background:var(--surface2);border:1px solid var(--border);border-radius:100px;padding:5px 14px;font-size:.8rem;color:var(--muted)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 28px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:600;cursor:pointer;border:none;transition:all .2s}
+.btn-primary{background:linear-gradient(135deg,var(--orange),var(--orange2));color:#1a0a00}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(249,115,22,.35)}
+.btn-ghost{background:transparent;color:var(--orange2);border:1.5px solid var(--orange2)}
+.btn-ghost:hover{background:rgba(249,115,22,.1)}
+.btn-amber{background:linear-gradient(135deg,#d97706,var(--amber));color:#1a0a00}
+#app{display:none}
+.top-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 32px;display:flex;align-items:center;gap:20px;position:sticky;top:0;z-index:100}
+.top-logo{font-family:'Syne',sans-serif;font-size:.95rem;color:var(--orange2);font-weight:800;white-space:nowrap}
+.top-greeting{color:var(--muted);font-size:.85rem;flex:1}.top-greeting span{color:var(--text);font-weight:600}
+.xp-badge{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.3);color:var(--amber);font-size:.8rem;font-weight:600;padding:5px 14px;border-radius:100px;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.progress-global{background:var(--surface2);padding:16px 32px;border-bottom:1px solid var(--border)}
+.progress-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:.82rem}.progress-row span{color:var(--muted)}
+.prog-bar{height:6px;background:var(--border);border-radius:4px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--orange),var(--orange2));border-radius:4px;transition:width .6s cubic-bezier(.4,0,.2,1)}
+.module-nav{display:flex;overflow-x:auto;padding:0 32px;background:var(--surface);border-bottom:1px solid var(--border);gap:4px}
+.mnav-btn{padding:14px 20px;background:none;border:none;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s;display:flex;align-items:center;gap:8px}
+.mnav-btn:hover{color:var(--text)}.mnav-btn.active{color:var(--orange2);border-bottom-color:var(--orange2)}
+.mnav-btn .dot{width:7px;height:7px;border-radius:50%;background:var(--border)}.mnav-btn.active .dot{background:var(--orange2);box-shadow:0 0 8px var(--orange2)}
+.page{max-width:820px;margin:0 auto;padding:48px 32px 100px}
+.section-panel{display:none}.section-panel.active{display:block;animation:fadeSlide .4s ease}
+@keyframes fadeSlide{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.section-hero{background:linear-gradient(135deg,var(--surface),var(--surface2));border:1px solid var(--border);border-radius:var(--radius);padding:40px;margin-bottom:32px;position:relative;overflow:hidden}
+.section-hero::after{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;border-radius:50%;background:var(--orange2);opacity:.04}
+.section-hero .sh-badge{color:var(--orange2);font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;margin-bottom:12px}
+.section-hero h2{font-family:'Syne',sans-serif;font-size:clamp(1.6rem,4vw,2.2rem);line-height:1.2;margin-bottom:12px}
+.section-hero p{color:var(--muted);font-size:1rem;max-width:580px}
+.obj-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:24px}
+.obj-item{background:rgba(249,115,22,.06);border:1px solid rgba(249,115,22,.2);border-radius:10px;padding:14px 16px;font-size:.88rem;display:flex;align-items:flex-start;gap:10px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin:24px 0}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;position:relative;overflow:hidden;transition:transform .25s,box-shadow .25s,border-color .25s}
+.card:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:var(--orange2)}
+.card .c-icon{font-size:2rem;margin-bottom:12px}.card h4{font-family:'Syne',sans-serif;font-size:1rem;margin-bottom:6px;color:var(--white)}.card p{font-size:.85rem;color:var(--muted)}
+.card-glow{position:absolute;top:0;left:0;width:3px;height:100%;background:linear-gradient(180deg,var(--orange),var(--orange2))}
+.callout{border-radius:10px;padding:20px 24px;margin:24px 0;font-size:.95rem}
+.callout-orange{background:rgba(249,115,22,.07);border-left:4px solid var(--orange2)}
+.callout-amber{background:rgba(245,158,11,.07);border-left:4px solid var(--amber)}
+.callout-rose{background:rgba(244,63,94,.07);border-left:4px solid var(--rose)}
+.callout-blue{background:rgba(56,189,248,.07);border-left:4px solid var(--blue)}
+.callout-green{background:rgba(34,197,94,.07);border-left:4px solid var(--green)}
+.callout strong{color:var(--white)}
+h3{font-family:'Syne',sans-serif;font-size:1.25rem;color:var(--white);margin:36px 0 12px}
+p{margin-bottom:14px;color:var(--text)}.lead{font-size:1.05rem;color:var(--muted);border-left:3px solid var(--orange2);padding-left:16px;margin-bottom:28px}
+.table-wrap{overflow-x:auto;margin:20px 0;border-radius:10px;border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+thead tr{background:var(--surface2)}thead th{padding:12px 16px;text-align:left;font-weight:600;color:var(--orange2);font-size:.82rem;letter-spacing:.05em;text-transform:uppercase}
+tbody td{padding:12px 16px;border-top:1px solid var(--border);color:var(--text)}tbody tr:hover{background:rgba(255,255,255,.02)}
+ul.sl{list-style:none;padding:0;margin:16px 0 24px}
+ul.sl li{padding:10px 14px 10px 44px;position:relative;border-bottom:1px solid var(--border);font-size:.93rem}
+ul.sl li::before{content:'◆';position:absolute;left:14px;color:var(--orange2);font-size:.6rem;top:14px}
+.video-container{position:relative;width:100%;padding-bottom:56.25%;margin:24px 0;border-radius:12px;overflow:hidden;background:var(--surface2);border:1px solid var(--border)}
+.video-container iframe{position:absolute;inset:0;width:100%;height:100%;border:none}
+.video-label{font-size:.82rem;color:var(--muted);margin-top:8px;padding-left:4px}
+.scenario-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;margin:28px 0}
+.scenario-box .sc-title{font-family:'Syne',sans-serif;font-size:1rem;color:var(--amber);margin-bottom:12px}
+.scenario-box .sc-context{font-size:.95rem;color:var(--muted);background:var(--surface2);border-radius:8px;padding:16px;margin-bottom:20px;line-height:1.6}
+.sc-options{display:flex;flex-direction:column;gap:10px}
+.sc-opt{background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:14px 18px;cursor:pointer;font-size:.93rem;color:var(--text);text-align:left;transition:all .2s}
+.sc-opt:hover:not(:disabled){border-color:var(--orange2);background:rgba(249,115,22,.06)}.sc-opt.correct{border-color:var(--green);background:rgba(34,197,94,.08);color:#6ee7b7}.sc-opt.wrong{border-color:var(--rose);background:rgba(244,63,94,.08);color:#fda4af}.sc-opt:disabled{cursor:not-allowed}
+.sc-feedback{margin-top:16px;padding:14px 18px;border-radius:8px;font-size:.9rem;display:none}
+.sc-feedback.ok{display:block;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.3);color:#6ee7b7}
+.sc-feedback.ko{display:block;background:rgba(244,63,94,.08);border:1px solid rgba(244,63,94,.3);color:#fda4af}
+.reflect-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;margin:28px 0}
+.reflect-box h4{font-family:'Syne',sans-serif;color:var(--amber);margin-bottom:10px}.reflect-box p{color:var(--muted);font-size:.93rem;margin-bottom:16px}
+.reflect-textarea{width:100%;background:var(--surface2);border:1.5px solid var(--border);color:var(--text);padding:14px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.93rem;resize:vertical;min-height:100px;outline:none;transition:border-color .2s}
+.reflect-textarea:focus{border-color:var(--orange2)}
+.reflect-result{margin-top:14px;padding:14px 18px;border-radius:8px;background:rgba(249,115,22,.07);border:1px solid rgba(249,115,22,.2);color:var(--orange2);font-size:.9rem;display:none}
+.checklist{margin:20px 0}
+.cl-item{display:flex;align-items:flex-start;gap:14px;padding:14px 0;border-bottom:1px solid var(--border);cursor:pointer}.cl-item:last-child{border-bottom:none}
+.cl-check{width:22px;height:22px;min-width:22px;border-radius:6px;border:2px solid var(--border);background:transparent;display:flex;align-items:center;justify-content:center;transition:all .2s;margin-top:1px}
+.cl-item.checked .cl-check{background:var(--orange2);border-color:var(--orange2)}.cl-item.checked .cl-check::after{content:'✓';color:#1a0a00;font-size:.75rem;font-weight:700}
+.cl-item.checked .cl-label{color:var(--muted);text-decoration:line-through}.cl-label{font-size:.93rem;color:var(--text);line-height:1.4}
+/* EMPATÍA METER */
+.empathy-scale{display:flex;justify-content:space-between;align-items:flex-end;gap:8px;margin:24px 0;padding:20px;background:var(--surface);border-radius:10px;border:1px solid var(--border)}
+.es-bar{flex:1;border-radius:6px 6px 0 0;cursor:pointer;transition:all .3s;position:relative;display:flex;align-items:flex-end;justify-content:center}
+.es-bar:hover{filter:brightness(1.2)}
+.es-label{font-size:.72rem;color:var(--muted);text-align:center;margin-top:8px}
+/* QUIZ */
+.quiz-q{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;margin-bottom:20px}
+.quiz-q .q-num{font-size:.75rem;color:var(--orange2);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}
+.quiz-q .q-text{font-size:1rem;font-weight:500;color:var(--white);margin-bottom:20px;line-height:1.5}
+.q-opts{display:flex;flex-direction:column;gap:10px}
+.q-opt{background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:13px 18px;cursor:pointer;font-size:.92rem;color:var(--text);text-align:left;transition:all .2s;display:flex;align-items:center;gap:12px}
+.q-opt::before{content:'';width:18px;height:18px;min-width:18px;border-radius:50%;border:2px solid var(--border);transition:all .2s}
+.q-opt:hover:not(:disabled){border-color:var(--orange2);background:rgba(249,115,22,.05)}
+.q-opt.correct{border-color:var(--green);background:rgba(34,197,94,.08);color:#6ee7b7}.q-opt.correct::before{background:var(--green);border-color:var(--green)}
+.q-opt.wrong{border-color:var(--rose);background:rgba(244,63,94,.08);color:#fda4af}.q-opt.wrong::before{background:var(--rose);border-color:var(--rose)}
+.q-opt:disabled{cursor:not-allowed}
+.q-fb{margin-top:14px;padding:12px 16px;border-radius:8px;font-size:.88rem;display:none}
+.q-fb.ok{display:block;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.3);color:#6ee7b7}
+.q-fb.ko{display:block;background:rgba(244,63,94,.08);border:1px solid rgba(244,63,94,.3);color:#fda4af}
+.result-panel{background:linear-gradient(135deg,var(--surface),var(--surface2));border:1px solid var(--border);border-radius:var(--radius);padding:40px;text-align:center;margin-top:28px;display:none}
+.result-panel.show{display:block;animation:fadeSlide .5s ease}
+.result-big{font-family:'Syne',sans-serif;font-size:4rem;line-height:1;margin:16px 0 8px;color:var(--orange2)}
+.result-msg{color:var(--muted);font-size:1rem;max-width:420px;margin:0 auto 24px}
+.result-badge{display:inline-block;background:rgba(249,115,22,.12);border:1px solid rgba(249,115,22,.3);color:var(--orange2);padding:8px 20px;border-radius:100px;font-size:.85rem;font-weight:600}
+.achievement-toast{position:fixed;bottom:28px;right:28px;background:linear-gradient(135deg,#1a0a00,#2e1000);border:1px solid var(--amber);border-radius:12px;padding:16px 20px;display:flex;align-items:center;gap:14px;z-index:500;animation:toastIn .4s ease;max-width:300px}
+@keyframes toastIn{from{opacity:0;transform:translateX(80px)}to{opacity:1;transform:translateX(0)}}
+.achievement-toast .a-icon{font-size:2rem}.achievement-toast .a-text strong{display:block;color:var(--amber);font-size:.9rem;margin-bottom:2px}.achievement-toast .a-text span{color:var(--muted);font-size:.8rem}
+.nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:52px;padding-top:24px;border-top:1px solid var(--border);gap:12px;flex-wrap:wrap}
+@media(max-width:640px){.page{padding:28px 16px 80px}.top-bar{padding:12px 16px}.module-nav{padding:0 8px}}
+</style>
+</head>
+<body>
+<div id="loader"><div class="loader-ring"></div><p style="color:var(--muted);font-size:.9rem">Cargando módulo...</p></div>
+<div id="welcome">
+  <div class="welcome-badge">Habilidades Blandas · Módulo 4 de 5</div>
+  <div style="font-size:1.5rem;margin-bottom:16px">🦁 ❤️ 🌟</div>
+  <h1>Lidera con <span>empatía</span>,<br/>sirve con excelencia</h1>
+  <p>El liderazgo no es un cargo — es una actitud. Y la empatía es el motor que convierte el servicio en una experiencia que transforma vidas.</p>
+  <div class="name-input-wrap"><input type="text" id="nameInput" placeholder="¿Cómo te llamas?" maxlength="40"/></div>
+  <div class="info-chips"><div class="chip">📚 6 secciones</div><div class="chip">⏱ ~45 min</div><div class="chip">🎯 Bacteriología IX–X sem</div></div>
+  <br/><button class="btn btn-primary" onclick="startApp()">Iniciar Módulo 4 →</button>
+</div>
+<div id="app">
+  <div class="top-bar"><div class="top-logo">🦁 Liderazgo y Empatía</div><div class="top-greeting">Hola, <span id="greetName">estudiante</span> · Módulo 4 de 5</div><div class="xp-badge">⚡ <span id="xpCount">0</span> XP</div></div>
+  <div class="progress-global"><div class="progress-row"><span>Progreso del módulo</span><span id="progPct">0%</span></div><div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div></div>
+  <nav class="module-nav">
+    <button class="mnav-btn active" onclick="goSection(0)"><span class="dot"></span>Bienvenida</button>
+    <button class="mnav-btn" onclick="goSection(1)"><span class="dot"></span>Liderazgo</button>
+    <button class="mnav-btn" onclick="goSection(2)"><span class="dot"></span>Empatía</button>
+    <button class="mnav-btn" onclick="goSection(3)"><span class="dot"></span>Servicio al paciente</button>
+    <button class="mnav-btn" onclick="goSection(4)"><span class="dot"></span>Actividades</button>
+    <button class="mnav-btn" onclick="goSection(5)"><span class="dot"></span>Evaluación</button>
+  </nav>
+  <div class="page">
+
+    <!-- SEC 0 -->
+    <div class="section-panel active" id="sec0">
+      <div class="section-hero">
+        <div class="sh-badge">🦁 Módulo 4 · Liderazgo, Empatía y Servicio</div>
+        <h2>El bacteriólogo que marca<br/>la diferencia</h2>
+        <p>Tu rol en el laboratorio clínico va mucho más allá de procesar muestras. Cada interacción es una oportunidad de liderar con tu actitud, conectar con empatía y transformar la experiencia del paciente.</p>
+        <div class="obj-list">
+          <div class="obj-item"><span>🎯</span><span>Identificar tu estilo de liderazgo y desarrollarlo desde la práctica</span></div>
+          <div class="obj-item"><span>🎯</span><span>Aplicar la empatía como herramienta clínica en la atención</span></div>
+          <div class="obj-item"><span>🎯</span><span>Ofrecer un servicio al paciente de calidad humana y técnica</span></div>
+          <div class="obj-item"><span>🎯</span><span>Reconocer el impacto del liderazgo cotidiano en el equipo</span></div>
+        </div>
+      </div>
+      <div class="callout callout-amber"><strong>📢 Observación de líderes de práctica:</strong><br/>Se han identificado oportunidades de mejora en la iniciativa propia, la empatía hacia el paciente y la calidad del servicio en la atención, especialmente en situaciones de alta demanda o con pacientes vulnerables.</div>
+      <div class="nav-row"><span></span><button class="btn btn-primary" onclick="goSection(1)">Comenzar →</button></div>
+    </div>
+
+    <!-- SEC 1 LIDERAZGO -->
+    <div class="section-panel" id="sec1">
+      <h3 style="margin-top:0">🦁 Liderazgo: no es un cargo, es una actitud</h3>
+      <p class="lead">En tu práctica formativa aún no tienes un cargo de jefe — pero sí tienes la oportunidad de liderar con tu actitud, tu puntualidad, tu calidad técnica y tu disposición a colaborar.</p>
+      <div class="callout callout-orange"><strong>💡 ¿Qué es el liderazgo situacional?</strong><br/>Es la capacidad de adaptar tu estilo de influencia según el contexto y las personas con las que trabajas. No hay un líder perfecto — hay un líder que sabe cuándo dirigir, cuándo apoyar, cuándo delegar y cuándo acompañar.</div>
+      <div class="cards">
+        <div class="card"><div class="card-glow"></div><div class="c-icon">🎯</div><h4>Liderazgo directivo</h4><p>Instrucción clara y supervisión alta. Útil cuando el equipo no conoce aún el procedimiento.</p></div>
+        <div class="card"><div class="card-glow"></div><div class="c-icon">🤝</div><h4>Liderazgo de apoyo</h4><p>Mucha motivación y acompañamiento emocional. Útil cuando hay habilidad pero baja confianza.</p></div>
+        <div class="card"><div class="card-glow"></div><div class="c-icon">🔄</div><h4>Liderazgo participativo</h4><p>Decisiones compartidas. Útil cuando el equipo tiene experiencia y quiere aportar.</p></div>
+        <div class="card"><div class="card-glow"></div><div class="c-icon">🚀</div><h4>Liderazgo delegador</h4><p>Autonomía total. Útil con profesionales expertos y comprometidos.</p></div>
+      </div>
+      <h3>🎬 Video: Liderazgo que inspira</h3>
+      <div class="video-container"><iframe src="https://www.youtube.com/embed/qp0HIF3SfI4" title="Liderazgo" allowfullscreen loading="lazy"></iframe></div>
+      <p class="video-label">📌 Duración aprox. 8 min · ¿Con cuál estilo de liderazgo te identificas hoy?</p>
+      <div class="reflect-box">
+        <h4>✍️ Reflexión 1 – Mi liderazgo cotidiano</h4>
+        <p>¿Qué acciones concretas realizas (o podrías realizar) en tu práctica que demuestren liderazgo sin necesitar un cargo? Piensa en puntualidad, iniciativa, calidad del trabajo, actitud ante las dificultades.</p>
+        <textarea class="reflect-textarea" id="ref1" placeholder="Escribe tu reflexión..."></textarea>
+        <div style="margin-top:12px"><button class="btn btn-ghost" onclick="submitReflect('ref1','rfb1')">Guardar ✓</button></div>
+        <div class="reflect-result" id="rfb1">💾 ¡Guardado! El liderazgo se demuestra en los detalles de cada día. +15 XP</div>
+      </div>
+      <div class="nav-row"><button class="btn btn-ghost" onclick="goSection(0)">← Anterior</button><button class="btn btn-primary" onclick="goSection(2)">Siguiente →</button></div>
+    </div>
+
+    <!-- SEC 2 EMPATÍA -->
+    <div class="section-panel" id="sec2">
+      <h3 style="margin-top:0">❤️ Empatía: la habilidad más humana del profesional de salud</h3>
+      <p class="lead">La empatía no es sentir lo mismo que el otro — es comprender su perspectiva y actuar desde esa comprensión. En el laboratorio clínico, la empatía es una herramienta clínica.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Nivel</th><th>¿Qué es?</th><th>Ejemplo en práctica</th></tr></thead>
+          <tbody>
+            <tr><td>🪞 <strong>Simpatía</strong></td><td>Sentir lástima por el otro desde afuera</td><td>"Pobrecita la señora, qué difícil"</td></tr>
+            <tr><td>❤️ <strong>Empatía cognitiva</strong></td><td>Comprender la perspectiva del otro</td><td>"Entiendo que le genera ansiedad esperar el resultado"</td></tr>
+            <tr><td>💗 <strong>Empatía emocional</strong></td><td>Conectar con lo que siente el otro</td><td>Notar el miedo del paciente y ajustar tu tono y ritmo</td></tr>
+            <tr><td>🌟 <strong>Empatía compasiva</strong></td><td>Comprender + sentir + actuar</td><td>Explicar el procedimiento, calmarlo y tomarse el tiempo extra que necesita</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>🎬 Video: El poder de la empatía</h3>
+      <div class="video-container"><iframe src="https://www.youtube.com/embed/1Evwgu369Jw" title="Empatía" allowfullscreen loading="lazy"></iframe></div>
+      <p class="video-label">📌 Duración aprox. 4 min · Reflexiona: ¿en cuál nivel de empatía actúas habitualmente con tus pacientes?</p>
+      <div class="scenario-box">
+        <div class="sc-title">🎭 Escenario – Empatía con el paciente ansioso</div>
+        <div class="sc-context">Un hombre de 55 años llega al laboratorio visiblemente angustiado. Te dice: "Me mandaron a hacerme unos exámenes de sangre porque el médico sospecha algo serio. No he podido dormir pensando en el resultado." Tienes 10 pacientes en la sala de espera.</div>
+        <div class="sc-options" id="sc1opts">
+          <button class="sc-opt" onclick="evalSc('sc1',this,false)">A) "Señor, no se preocupe, seguro no es nada grave. Siéntese por favor."</button>
+          <button class="sc-opt" onclick="evalSc('sc1',this,false)">B) Seguir con el proceso sin comentar nada para no alarmar más al paciente.</button>
+          <button class="sc-opt" onclick="evalSc('sc1',this,true)">C) "Entiendo que la espera y la incertidumbre son muy difíciles. Voy a atenderle con todo el cuidado. Si tiene preguntas sobre el proceso, con gusto le explico."</button>
+          <button class="sc-opt" onclick="evalSc('sc1',this,false)">D) "Señor, no soy médico, yo solo proceso muestras. Para eso preguntar a su doctor."</button>
+        </div>
+        <div class="sc-feedback" id="sc1fb"></div>
+      </div>
+      <div class="callout callout-blue"><strong>🔑 La empatía no es tiempo — es calidad de presencia:</strong><br/>No necesitas 10 minutos extra por paciente. Necesitas 30 segundos de contacto genuino: mirarlo a los ojos, usar su nombre, validar su emoción con una frase. Eso cambia toda la experiencia.</div>
+      <div class="nav-row"><button class="btn btn-ghost" onclick="goSection(1)">← Anterior</button><button class="btn btn-primary" onclick="goSection(3)">Siguiente →</button></div>
+    </div>
+
+    <!-- SEC 3 SERVICIO -->
+    <div class="section-panel" id="sec3">
+      <h3 style="margin-top:0">🌟 Servicio al paciente con calidad humana</h3>
+      <p class="lead">El paciente que llega al laboratorio no es solo una muestra — es una persona con miedo, expectativas y dignidad. La calidad técnica es el mínimo esperado; la calidad humana es lo que se recuerda.</p>
+      <div class="cards">
+        <div class="card"><div class="card-glow"></div><div class="c-icon">👋</div><h4>Primera impresión</h4><p>El saludo, la postura y el tono de voz en los primeros 30 segundos definen toda la experiencia del paciente.</p></div>
+        <div class="card"><div class="card-glow"></div><div class="c-icon">💬</div><h4>Comunicación clara</h4><p>Explica el procedimiento antes de hacerlo. El consentimiento informado real incluye que el paciente entienda qué va a ocurrir.</p></div>
+        <div class="card"><div class="card-glow"></div><div class="c-icon">🎯</div><h4>Resolución de quejas</h4><p>Una queja bien atendida genera más confianza que si no hubiera habido problema. Escucha, valida, actúa.</p></div>
+        <div class="card"><div class="card-glow"></div><div class="c-icon">✨</div><h4>Cierre de calidad</h4><p>"¿Tiene alguna duda sobre los próximos pasos?" es la pregunta que diferencia un servicio promedio de uno excepcional.</p></div>
+      </div>
+      <h3>🎬 Video: Atención humanizada al paciente</h3>
+      <div class="video-container"><iframe src="https://www.youtube.com/embed/cDDWvj_q-o8" title="Servicio al paciente" allowfullscreen loading="lazy"></iframe></div>
+      <p class="video-label">📌 Duración aprox. 7 min · Identifica acciones concretas aplicables en tu laboratorio</p>
+      <div class="scenario-box">
+        <div class="sc-title">🎭 Escenario – Manejo de queja del paciente</div>
+        <div class="sc-context">Una señora se acerca indignada: "¡Llevan 2 horas diciéndome que ya casi está mi resultado y nadie me dice nada! Soy diabética y no he podido comer." Efectivamente hubo un retraso técnico en el analizador.</div>
+        <div class="sc-options" id="sc2opts">
+          <button class="sc-opt" onclick="evalSc('sc2',this,false)">A) "Señora, no es culpa mía, el equipo falló. Hable con el jefe de turno."</button>
+          <button class="sc-opt" onclick="evalSc('sc2',this,false)">B) "Ya casi está, espere un momento más por favor."</button>
+          <button class="sc-opt" onclick="evalSc('sc2',this,true)">C) "Señora, tiene toda la razón en sentirse frustrada. Hubo un inconveniente técnico que retrasó los resultados. Me comprometo a verificar el estado de su muestra ahora mismo y le doy una respuesta en 5 minutos. ¿Cómo se llama para ubicarla?"</button>
+          <button class="sc-opt" onclick="evalSc('sc2',this,false)">D) Ignorarla mientras terminas lo que estás haciendo porque hay más pacientes esperando.</button>
+        </div>
+        <div class="sc-feedback" id="sc2fb"></div>
+      </div>
+      <div class="reflect-box">
+        <h4>✍️ Reflexión 2 – Mi huella en los pacientes</h4>
+        <p>¿Cómo describirías la experiencia que viven los pacientes cuando los atiendes? ¿Qué cambiarías para que esa experiencia fuera memorable de manera positiva?</p>
+        <textarea class="reflect-textarea" id="ref2" placeholder="Tu reflexión..."></textarea>
+        <div style="margin-top:12px"><button class="btn btn-ghost" onclick="submitReflect('ref2','rfb2')">Guardar ✓</button></div>
+        <div class="reflect-result" id="rfb2">💾 ¡Guardado! Cada paciente merece sentir que fue visto como persona, no como número de muestra. +15 XP</div>
+      </div>
+      <div class="nav-row"><button class="btn btn-ghost" onclick="goSection(2)">← Anterior</button><button class="btn btn-primary" onclick="goSection(4)">Siguiente →</button></div>
+    </div>
+
+    <!-- SEC 4 ACTIVIDADES -->
+    <div class="section-panel" id="sec4">
+      <h3 style="margin-top:0">🛠️ Actividades de aplicación</h3>
+      <div class="reflect-box">
+        <h4>📝 Actividad 1 – Mi protocolo de atención empática</h4>
+        <p>Escribe paso a paso cómo sería tu atención ideal a un paciente desde que entra al laboratorio hasta que se va. Incluye qué dirías, cómo te presentarías, cómo explicarías el procedimiento y cómo cerrarías la atención.</p>
+        <textarea class="reflect-textarea" id="act1" placeholder="1. Al recibir al paciente: ...&#10;2. Al explicar el procedimiento: ...&#10;3. Durante la toma de muestra: ...&#10;4. Al finalizar: ..."></textarea>
+        <div style="margin-top:12px"><button class="btn btn-ghost" onclick="submitReflect('act1','afb1')">Guardar ✓</button></div>
+        <div class="reflect-result" id="afb1">✅ ¡Excelente! Ten este protocolo en mente en tu próxima jornada. +20 XP</div>
+      </div>
+      <div class="reflect-box">
+        <h4>🌟 Mis compromisos de liderazgo y servicio</h4>
+        <div class="checklist" id="commitList">
+          <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-check"></div><span class="cl-label">Usar el nombre del paciente al menos una vez durante la atención</span></div>
+          <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-check"></div><span class="cl-label">Explicar brevemente el procedimiento antes de realizarlo</span></div>
+          <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-check"></div><span class="cl-label">Tomar la iniciativa en una tarea del laboratorio sin esperar que me lo pidan</span></div>
+          <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-check"></div><span class="cl-label">Ante una queja, escuchar completamente antes de responder</span></div>
+          <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-check"></div><span class="cl-label">Reconocer a un compañero por algo que hizo bien esta semana</span></div>
+          <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-check"></div><span class="cl-label">Mantener contacto visual y postura abierta con cada paciente que atiendo</span></div>
+        </div>
+        <button class="btn btn-amber" style="margin-top:16px" onclick="saveCommitments()">Asumir compromisos 🌟</button>
+        <div class="reflect-result" id="commitfb" style="margin-top:12px">🌟 ¡Compromisos guardados! El liderazgo empático se construye con acciones pequeñas y consistentes. +25 XP</div>
+      </div>
+      <div class="nav-row"><button class="btn btn-ghost" onclick="goSection(3)">← Anterior</button><button class="btn btn-primary" onclick="goSection(5)">Ir a Evaluación →</button></div>
+    </div>
+
+    <!-- SEC 5 EVALUACIÓN -->
+    <div class="section-panel" id="sec5">
+      <h3 style="margin-top:0">✅ Evaluación del Módulo 4</h3>
+      <p class="lead">8 preguntas · ¡Demuestra tu liderazgo respondiendo con confianza!</p>
+      <div class="quiz-q" id="q1"><div class="q-num">Pregunta 1 de 8</div><div class="q-text">¿Cuál es la principal característica del liderazgo situacional?</div><div class="q-opts"><button class="q-opt" onclick="ansQ(1,this,false)">Mantener siempre el mismo estilo de liderazgo para ser consistente</button><button class="q-opt" onclick="ansQ(1,this,true)">Adaptar el estilo de liderazgo según el contexto y las necesidades del equipo</button><button class="q-opt" onclick="ansQ(1,this,false)">Liderar solo cuando se tiene un cargo formal</button><button class="q-opt" onclick="ansQ(1,this,false)">Imponer las decisiones para ser percibido como autoridad</button></div><div class="q-fb" id="qfb1"></div></div>
+      <div class="quiz-q" id="q2"><div class="q-num">Pregunta 2 de 8</div><div class="q-text">La empatía compasiva se diferencia de la empatía cognitiva porque:</div><div class="q-opts"><button class="q-opt" onclick="ansQ(2,this,false)">Es más superficial y no requiere acción</button><button class="q-opt" onclick="ansQ(2,this,false)">Solo implica entender intelectualmente al otro</button><button class="q-opt" onclick="ansQ(2,this,true)">Incluye comprender, conectar emocionalmente Y actuar para ayudar</button><button class="q-opt" onclick="ansQ(2,this,false)">Es exclusiva de los profesionales de salud con más experiencia</button></div><div class="q-fb" id="qfb2"></div></div>
+      <div class="quiz-q" id="q3"><div class="q-num">Pregunta 3 de 8</div><div class="q-text">Ante un paciente ansioso con miedo a la toma de sangre, la respuesta más empática es:</div><div class="q-opts"><button class="q-opt" onclick="ansQ(3,this,false)">"No se preocupe, es un pinchazo pequeño, ya pasó."</button><button class="q-opt" onclick="ansQ(3,this,false)">Proceder rápidamente para que el paciente no tenga tiempo de asustarse.</button><button class="q-opt" onclick="ansQ(3,this,true)">"Entiendo que es incómodo. Cuénteme qué le genera más miedo para tomarlo con cuidado."</button><button class="q-opt" onclick="ansQ(3,this,false)">Llamar a otro profesional para que lo atienda.</button></div><div class="q-fb" id="qfb3"></div></div>
+      <div class="quiz-q" id="q4"><div class="q-num">Pregunta 4 de 8</div><div class="q-text">¿Cuál de las siguientes acciones demuestra liderazgo en un estudiante de práctica sin cargo formal?</div><div class="q-opts"><button class="q-opt" onclick="ansQ(4,this,false)">Dar órdenes a sus compañeros cuando el tutor no está presente</button><button class="q-opt" onclick="ansQ(4,this,true)">Llegar puntual, tomar iniciativa y mantener calidad técnica incluso sin supervisión</button><button class="q-opt" onclick="ansQ(4,this,false)">Buscar siempre ser reconocido públicamente por sus aportes</button><button class="q-opt" onclick="ansQ(4,this,false)">Esperar instrucciones antes de realizar cualquier acción</button></div><div class="q-fb" id="qfb4"></div></div>
+      <div class="quiz-q" id="q5"><div class="q-num">Pregunta 5 de 8</div><div class="q-text">Ante una queja de un paciente, el primer paso en una atención de calidad es:</div><div class="q-opts"><button class="q-opt" onclick="ansQ(5,this,false)">Explicar de inmediato los motivos del problema</button><button class="q-opt" onclick="ansQ(5,this,false)">Redirigir al paciente con el supervisor</button><button class="q-opt" onclick="ansQ(5,this,true)">Escuchar completamente y validar la frustración del paciente antes de responder</button><button class="q-opt" onclick="ansQ(5,this,false)">Pedir disculpas sin escuchar el relato completo</button></div><div class="q-fb" id="qfb5"></div></div>
+      <div class="quiz-q" id="q6"><div class="q-num">Pregunta 6 de 8</div><div class="q-text">¿Por qué la calidad humana en la atención es tan importante como la calidad técnica?</div><div class="q-opts"><button class="q-opt" onclick="ansQ(6,this,false)">Porque compensa los errores técnicos</button><button class="q-opt" onclick="ansQ(6,this,false)">Porque es lo que evalúan los tutores principalmente</button><button class="q-opt" onclick="ansQ(6,this,true)">Porque el paciente es una persona con emociones cuya experiencia impacta su bienestar y confianza en el sistema de salud</button><button class="q-opt" onclick="ansQ(6,this,false)">Porque es un requisito institucional</button></div><div class="q-fb" id="qfb6"></div></div>
+      <div class="quiz-q" id="q7"><div class="q-num">Pregunta 7 de 8</div><div class="q-text">La diferencia entre simpatía y empatía es que:</div><div class="q-opts"><button class="q-opt" onclick="ansQ(7,this,false)">La simpatía es más profunda que la empatía</button><button class="q-opt" onclick="ansQ(7,this,true)">La simpatía siente lástima desde afuera; la empatía comprende desde adentro la perspectiva del otro</button><button class="q-opt" onclick="ansQ(7,this,false)">Son sinónimos en el contexto clínico</button><button class="q-opt" onclick="ansQ(7,this,false)">La empatía es solo para profesionales con más experiencia</button></div><div class="q-fb" id="qfb7"></div></div>
+      <div class="quiz-q" id="q8"><div class="q-num">Pregunta 8 de 8</div><div class="q-text">¿Qué hace que un servicio sea memorable positivamente para el paciente?</div><div class="q-opts"><button class="q-opt" onclick="ansQ(8,this,false)">Que los resultados lleguen en el menor tiempo posible</button><button class="q-opt" onclick="ansQ(8,this,false)">Que el laboratorio tenga equipos modernos</button><button class="q-opt" onclick="ansQ(8,this,false)">Que el profesional sea el más técnicamente preparado</button><button class="q-opt" onclick="ansQ(8,this,true)">Que el paciente se haya sentido visto, escuchado y tratado con dignidad</button></div><div class="q-fb" id="qfb8"></div></div>
+      <div class="result-panel" id="resultPanel">
+        <div style="color:var(--muted);font-size:.85rem;letter-spacing:.1em;text-transform:uppercase">Resultado final</div>
+        <div class="result-big" id="resultScore">–</div>
+        <div style="font-size:1.8rem;letter-spacing:4px;margin-bottom:12px" id="resultStars">–</div>
+        <p class="result-msg" id="resultMsg">–</p>
+        <div class="result-badge" id="resultBadge">–</div>
+        <br/><br/><button class="btn btn-primary" onclick="restartQuiz()">Intentar de nuevo</button>
+      </div>
+      <div class="nav-row"><button class="btn btn-ghost" onclick="goSection(4)">← Anterior</button><button class="btn btn-amber" onclick="calcScore()">Ver resultado 🏁</button></div>
+    </div>
+  </div>
+</div>
+<div class="achievement-toast" id="achieveToast" style="display:none"><div class="a-icon" id="achieveIcon">🏆</div><div class="a-text"><strong id="achieveTitle">Logro</strong><span id="achieveDesc">XP</span></div></div>
+<script>
+let studentName='',xp=0,currentSec=0,visitedSecs=new Set([0]);
+const TOTAL_SECS=6,qAnswers={};
+const qFbOk=["✅ ¡Correcto! El liderazgo situacional es precisamente esa flexibilidad de adaptarse al contexto.","✅ ¡Exacto! La empatía compasiva cierra el ciclo: comprender + sentir + actuar.","✅ ¡Muy bien! Preguntar qué le genera miedo antes de actuar es empatía real en práctica.","✅ ¡Correcto! El liderazgo se demuestra en la actitud y el compromiso diario, no en el cargo.","✅ ¡Acertado! Escuchar y validar antes de explicar es la base de la atención de calidad.","✅ ¡Exacto! La experiencia del paciente impacta su bienestar, su adherencia al tratamiento y su confianza.","✅ ¡Correcto! La empatía genuina se pone en los zapatos del otro — la simpatía solo observa desde afuera.","✅ ¡Perfecto! El paciente recuerda cómo lo hiciste sentir, más que cuán rápido llegó el resultado."];
+const qFbKo=["❌ La rigidez en el estilo de liderazgo reduce la efectividad. Adaptarse es la clave del liderazgo situacional.","❌ La empatía cognitiva solo entiende. La compasiva va un paso más allá: actúa.","❌ Minimizar el miedo o proceder sin consultar puede aumentar la ansiedad. Preguntar y escuchar primero siempre.","❌ Dar órdenes sin cargo o esperar instrucciones para todo son los extremos que hay que evitar. El liderazgo es iniciativa responsable.","❌ Explicar antes de escuchar puede parecer defensivo. La validación emocional primero abre la puerta a la solución.","❌ La calidad técnica es necesaria pero insuficiente. La dimensión humana es lo que completa la atención.","❌ Simpatía y empatía no son sinónimos. La empatía requiere comprensión activa de la perspectiva del otro.","❌ La rapidez y los equipos importan, pero lo que el paciente recuerda es cómo fue tratado como persona."];
+const scFbOk=["✅ ¡Excelente! Validar la emoción sin minimizarla y ofrecer apoyo dentro de tu rol es empatía compasiva en acción.","✅ ¡Muy bien! Escuchar, validar, comprometerte a una acción concreta y en un tiempo definido es la fórmula perfecta para convertir una queja en confianza."];
+const scFbKo=["❌ Minimizar la ansiedad del paciente ('no es nada') o ignorarla daña la confianza. Validar y acompañar, dentro de tu rol, es lo correcto.","❌ Negar responsabilidad o pedir que espere sin información específica aumenta la frustración. La clave es validar, comprometerse y actuar."];
+window.addEventListener('load',()=>{setTimeout(()=>{document.getElementById('loader').style.opacity='0';setTimeout(()=>document.getElementById('loader').style.display='none',500)},1200)});
+function startApp(){const n=document.getElementById('nameInput').value.trim();studentName=n||'Estudiante';document.getElementById('welcome').style.display='none';document.getElementById('app').style.display='block';document.getElementById('greetName').textContent=studentName;updateProgress();showAchievement('🚀','¡Módulo 4 iniciado!','Bienvenido/a, '+studentName);gainXP(10,false)}
+function goSection(idx){document.querySelectorAll('.section-panel').forEach((s,i)=>s.classList.toggle('active',i===idx));document.querySelectorAll('.mnav-btn').forEach((b,i)=>{b.classList.remove('active');if(i===idx)b.classList.add('active')});if(idx>currentSec)gainXP(5,false);currentSec=Math.max(currentSec,idx);visitedSecs.add(idx);updateProgress();window.scrollTo({top:0,behavior:'smooth'})}
+function updateProgress(){const pct=Math.round((visitedSecs.size/TOTAL_SECS)*100);document.getElementById('progFill').style.width=pct+'%';document.getElementById('progPct').textContent=pct+'%'}
+function gainXP(amount,announce=true){xp+=amount;document.getElementById('xpCount').textContent=xp;if(announce)showAchievement('⚡','¡XP ganados!','+'+amount+' XP · Total: '+xp)}
+let toastTimeout;
+function showAchievement(icon,title,desc){const t=document.getElementById('achieveToast');document.getElementById('achieveIcon').textContent=icon;document.getElementById('achieveTitle').textContent=title;document.getElementById('achieveDesc').textContent=desc;t.style.display='flex';t.style.animation='none';void t.offsetWidth;t.style.animation='toastIn .4s ease';clearTimeout(toastTimeout);toastTimeout=setTimeout(()=>{t.style.display='none'},3500)}
+function toggleCheck(item){item.classList.toggle('checked');if(item.classList.contains('checked'))gainXP(2,false)}
+function submitReflect(inputId,fbId){const val=document.getElementById(inputId).value.trim();if(val.length<20){alert('Por favor escribe un poco más.');return}document.getElementById(fbId).style.display='block';gainXP(15);showAchievement('✍️','¡Reflexión guardada!','+15 XP')}
+function saveCommitments(){const checked=document.querySelectorAll('#commitList .cl-item.checked').length;if(checked<1){alert('Selecciona al menos un compromiso.');return}document.getElementById('commitfb').style.display='block';gainXP(25);showAchievement('🌟','¡Compromisos de liderazgo!',checked+' asumidos · +25 XP')}
+function evalSc(scId,btn,isOk){const num=parseInt(scId.replace('sc',''))-1;const opts=document.querySelectorAll('#'+scId+'opts .sc-opt');opts.forEach(o=>o.disabled=true);btn.classList.add(isOk?'correct':'wrong');if(!isOk)opts.forEach(o=>{if(o.getAttribute('onclick').includes(',true)'))o.classList.add('correct')});const fb=document.getElementById(scId+'fb');fb.textContent=isOk?scFbOk[num]:scFbKo[num];fb.className='sc-feedback '+(isOk?'ok':'ko');if(isOk){gainXP(20);showAchievement('🎭','¡Escenario resuelto!','+20 XP')}}
+function ansQ(num,btn,isOk){if(qAnswers[num]!==undefined)return;qAnswers[num]=isOk?1:0;const opts=document.querySelectorAll('#q'+num+' .q-opt');opts.forEach(o=>o.disabled=true);btn.classList.add(isOk?'correct':'wrong');if(!isOk)opts.forEach(o=>{if(o.getAttribute('onclick').includes(',true)'))o.classList.add('correct')});const fb=document.getElementById('qfb'+num);fb.textContent=isOk?qFbOk[num-1]:qFbKo[num-1];fb.className='q-fb '+(isOk?'ok':'ko');if(isOk)gainXP(10,false)}
+function calcScore(){const total=Object.values(qAnswers).length;if(total<8){alert('Responde todas las preguntas primero.');return}const score=Object.values(qAnswers).reduce((a,b)=>a+b,0);const pct=Math.round(score/8*100);document.getElementById('resultScore').textContent=pct+' / 100';let stars='',msg='',badge='';if(pct>=87){stars='⭐⭐⭐⭐⭐';msg='¡Sobresaliente! Lideras con empatía y sirves con excelencia. Tus pacientes lo sentirán.';badge='🏆 Líder Empático/a Nivel Experto';gainXP(50);showAchievement('🏆','¡Resultado sobresaliente!','+50 XP')}else if(pct>=62){stars='⭐⭐⭐⭐';msg='¡Muy bien! Practica la empatía compasiva en tu próxima jornada.';badge='✨ Liderazgo en desarrollo';gainXP(30)}else{stars='⭐⭐⭐';msg='¡Continúa! Revisa los conceptos de empatía y servicio al paciente.';badge='📖 Sigue creciendo';gainXP(15)}document.getElementById('resultStars').textContent=stars;document.getElementById('resultMsg').textContent=msg;document.getElementById('resultBadge').textContent=badge;document.getElementById('resultPanel').classList.add('show');document.getElementById('resultPanel').scrollIntoView({behavior:'smooth',block:'center'})}
+function restartQuiz(){Object.keys(qAnswers).forEach(k=>delete qAnswers[k]);for(let i=1;i<=8;i++){const q=document.getElementById('q'+i);q.querySelectorAll('.q-opt').forEach(o=>{o.disabled=false;o.classList.remove('correct','wrong')});const fb=document.getElementById('qfb'+i);fb.className='q-fb';fb.textContent=''}document.getElementById('resultPanel').classList.remove('show');window.scrollTo({top:0,behavior:'smooth'})}
+</script>
+</body>
+</html>

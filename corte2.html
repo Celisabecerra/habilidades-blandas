@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Corte 2 · Habilidades Blandas | Bacteriología</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#0a0f1e;--surface:#111827;--surface2:#1e2a3a;--border:#2d3f55;--green:#4ade80;--orange:#fb923c;--amber:#f59e0b;--text:#e2e8f0;--muted:#8b95a1;--radius:16px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 16px}
+.badge{background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.3);color:var(--green);font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;padding:6px 18px;border-radius:100px;margin-bottom:20px;display:inline-block}
+h1{font-family:'Syne',sans-serif;font-size:clamp(1.8rem,5vw,2.8rem);text-align:center;line-height:1.2;margin-bottom:8px}
+h1 span{color:var(--green)}
+.subtitle{color:var(--muted);text-align:center;margin-bottom:48px;font-size:1rem;max-width:480px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;width:100%;max-width:700px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:32px;text-decoration:none;color:var(--text);transition:all .25s;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:16px}
+.card:hover{transform:translateY(-6px);box-shadow:0 16px 48px rgba(0,0,0,.5);border-color:var(--green)}
+.card-m3::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:linear-gradient(180deg,var(--green),#16a34a)}
+.card-m4::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:linear-gradient(180deg,var(--orange),var(--amber))}
+.card:hover.card-m4{border-color:var(--orange)}
+.card-num{font-family:'Syne',sans-serif;font-size:.75rem;letter-spacing:.15em;text-transform:uppercase}
+.card-m3 .card-num{color:var(--green)}
+.card-m4 .card-num{color:var(--orange)}
+.card-icon{font-size:2.5rem}
+.card-title{font-family:'Syne',sans-serif;font-size:1.3rem;color:#fff;line-height:1.2}
+.card-desc{font-size:.9rem;color:var(--muted);line-height:1.6}
+.card-chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{background:var(--surface2);border:1px solid var(--border);border-radius:100px;padding:4px 12px;font-size:.78rem;color:var(--muted)}
+.card-m3 .card-cta{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#16a34a,var(--green));color:#0a0f1e;padding:11px 24px;border-radius:8px;font-weight:700;font-size:.9rem;margin-top:4px;width:fit-content}
+.card-m4 .card-cta{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--orange),var(--amber));color:#0a0f1e;padding:11px 24px;border-radius:8px;font-weight:700;font-size:.9rem;margin-top:4px;width:fit-content}
+.footer{margin-top:48px;color:var(--muted);font-size:.82rem;text-align:center}
+</style>
+</head>
+<body>
+  <div class="badge">Habilidades Blandas · Segundo Corte</div>
+  <h1>Módulos del<br/><span>Segundo Corte</span></h1>
+  <p class="subtitle">Bacteriología IX – X Semestre · Práctica Formativa<br/>Completa los dos módulos en el orden que prefieras</p>
+
+  <div class="cards">
+    <a class="card card-m3" href="https://celisabecerra.github.io/habilidades-blandas/modulo3_manejo_conflicto.html" target="_blank">
+      <div class="card-num">Módulo 3 de 5</div>
+      <div class="card-icon">🤝</div>
+      <div class="card-title">Manejo del Conflicto y Relaciones Interpersonales</div>
+      <div class="card-desc">Aprende a resolver conflictos de manera constructiva y a construir relaciones profesionales sólidas con tutores, compañeros y pacientes.</div>
+      <div class="card-chips">
+        <span class="chip">⏱ ~45 min</span>
+        <span class="chip">🎯 6 secciones</span>
+        <span class="chip">📝 Evaluación</span>
+      </div>
+      <div class="card-cta">Iniciar módulo →</div>
+    </a>
+
+    <a class="card card-m4" href="https://celisabecerra.github.io/habilidades-blandas/modulo4_liderazgo_empatia.html" target="_blank">
+      <div class="card-num">Módulo 4 de 5</div>
+      <div class="card-icon">🦁</div>
+      <div class="card-title">Liderazgo, Empatía y Servicio al Cliente</div>
+      <div class="card-desc">Desarrolla tu liderazgo personal, conecta con empatía con cada paciente y eleva la calidad humana de tu atención en el laboratorio.</div>
+      <div class="card-chips">
+        <span class="chip">⏱ ~45 min</span>
+        <span class="chip">🎯 6 secciones</span>
+        <span class="chip">📝 Evaluación</span>
+      </div>
+      <div class="card-cta">Iniciar módulo →</div>
+    </a>
+  </div>
+
+  <div class="footer">Universidad Colegio Mayor de Cundinamarca · Programa de Bacteriología</div>
+</body>
+</html>

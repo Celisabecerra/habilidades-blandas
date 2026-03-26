@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Proceso Administrativo en Salud | Bacteriología VIII</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#07090f;--surface:#0d1117;--surface2:#131a24;--border:#1e2d3d;
+  --blue:#3b82f6;--blue2:#60a5fa;
+  --green:#22c55e;--green2:#4ade80;
+  --orange:#f97316;--orange2:#fb923c;
+  --violet:#7c3aed;--violet2:#a78bfa;
+  --amber:#f59e0b;--rose:#f43f5e;
+  --text:#e2e8f0;--muted:#8b95a1;--white:#fff;
+  --radius:14px;--shadow:0 8px 32px rgba(0,0,0,.6);
+  --accent:var(--blue);--accent2:var(--blue2);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;line-height:1.7;min-height:100vh;overflow-x:hidden}
+
+/* LOADER */
+#loader{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+.loader-ring{width:56px;height:56px;border:3px solid var(--border);border-top-color:var(--blue2);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* WELCOME */
+#welcome{position:fixed;inset:0;background:linear-gradient(135deg,#07090f,#0a0f1a,#07090f);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;overflow-y:auto}
+.w-badge{background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);color:var(--blue2);font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;padding:6px 18px;border-radius:100px;margin-bottom:20px;display:inline-block}
+#welcome h1{font-family:'Syne',sans-serif;font-size:clamp(2rem,5vw,3.2rem);line-height:1.15;margin-bottom:14px}
+#welcome h1 span{color:var(--blue2)}
+#welcome p{color:var(--muted);max-width:520px;margin:0 auto 32px}
+.mod-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;max-width:800px;width:100%;margin-bottom:32px}
+.mod-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:left;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.mod-card:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+.mod-card .mc-num{font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;margin-bottom:8px}
+.mod-card .mc-icon{font-size:2rem;margin-bottom:8px}
+.mod-card .mc-title{font-family:'Syne',sans-serif;font-size:1rem;color:var(--white)}
+.mod-card .mc-sub{font-size:.8rem;color:var(--muted);margin-top:4px}
+.mc-m1{border-color:rgba(59,130,246,.3)}.mc-m1 .mc-num{color:var(--blue2)}.mc-m1:hover{border-color:var(--blue2)}
+.mc-m2{border-color:rgba(34,197,94,.3)}.mc-m2 .mc-num{color:var(--green2)}.mc-m2:hover{border-color:var(--green2)}
+.mc-m3{border-color:rgba(249,115,22,.3)}.mc-m3 .mc-num{color:var(--orange2)}.mc-m3:hover{border-color:var(--orange2)}
+.mc-m4{border-color:rgba(124,58,237,.3)}.mc-m4 .mc-num{color:var(--violet2)}.mc-m4:hover{border-color:var(--violet2)}
+.info-chips{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:24px}
+.chip{background:var(--surface2);border:1px solid var(--border);border-radius:100px;padding:5px 14px;font-size:.8rem;color:var(--muted)}
+.name-wrap{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:24px;width:100%;max-width:380px}
+.name-wrap input{flex:1;min-width:200px;background:var(--surface);border:1.5px solid var(--border);color:var(--text);padding:13px 18px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:1rem;outline:none;transition:border-color .2s}
+.name-wrap input:focus{border-color:var(--blue2)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 28px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:600;cursor:pointer;border:none;transition:all .2s}
+.btn-primary{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#07090f}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(59,130,246,.4)}
+.btn-ghost{background:transparent;color:var(--accent2);border:1.5px solid var(--accent2)}
+.btn-ghost:hover{background:rgba(59,130,246,.08)}
+
+/* APP */
+#app{display:none;min-height:100vh}
+.top-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100;flex-wrap:wrap}
+.top-logo{font-family:'Syne',sans-serif;font-size:.9rem;color:var(--blue2);font-weight:800;white-space:nowrap}
+.top-greet{color:var(--muted);font-size:.85rem;flex:1}.top-greet span{color:var(--text);font-weight:600}
+.xp-badge{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);color:var(--amber);font-size:.8rem;font-weight:600;padding:5px 14px;border-radius:100px;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.prog-bar-wrap{padding:12px 28px;background:var(--surface);border-bottom:1px solid var(--border)}
+.prog-row{display:flex;justify-content:space-between;margin-bottom:6px;font-size:.8rem;color:var(--muted)}
+.prog-bar{height:5px;background:var(--border);border-radius:4px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px;transition:width .6s cubic-bezier(.4,0,.2,1)}
+
+/* MODULE NAV */
+.mod-nav{display:flex;background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto}
+.mnav-btn{padding:14px 20px;background:none;border:none;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:500;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:all .2s;display:flex;align-items:center;gap:8px}
+.mnav-btn:hover{color:var(--text)}
+.mnav-btn.active-m1{color:var(--blue2);border-bottom-color:var(--blue2)}
+.mnav-btn.active-m2{color:var(--green2);border-bottom-color:var(--green2)}
+.mnav-btn.active-m3{color:var(--orange2);border-bottom-color:var(--orange2)}
+.mnav-btn.active-m4{color:var(--violet2);border-bottom-color:var(--violet2)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--border)}
+.mnav-btn.active-m1 .dot{background:var(--blue2);box-shadow:0 0 8px var(--blue2)}
+.mnav-btn.active-m2 .dot{background:var(--green2);box-shadow:0 0 8px var(--green2)}
+.mnav-btn.active-m3 .dot{background:var(--orange2);box-shadow:0 0 8px var(--orange2)}
+.mnav-btn.active-m4 .dot{background:var(--violet2);box-shadow:0 0 8px var(--violet2)}
+
+/* MODULE SECTIONS NAV */
+.sec-nav{display:flex;overflow-x:auto;padding:0 28px;background:var(--surface2);border-bottom:1px solid var(--border);gap:2px}
+.snav-btn{padding:11px 16px;background:none;border:none;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.82rem;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s}
+.snav-btn:hover{color:var(--text)}.snav-btn.active{color:var(--accent2);border-bottom-color:var(--accent2)}
+
+/* CONTENT */
+.page{max-width:860px;margin:0 auto;padding:48px 28px 100px}
+.mod-panel{display:none}.mod-panel.active{display:block;animation:fadeSlide .4s ease}
+.sec-panel{display:none}.sec-panel.active{display:block;animation:fadeSlide .35s ease}
+@keyframes fadeSlide{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+
+.hero{background:linear-gradient(135deg,var(--surface),var(--surface2));border:1px solid var(--border);border-radius:var(--radius);padding:40px;margin-bottom:32px;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;border-radius:50%;background:var(--accent2);opacity:.04}
+.hero .h-badge{font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;margin-bottom:10px}
+.hero h2{font-family:'Syne',sans-serif;font-size:clamp(1.6rem,4vw,2.2rem);line-height:1.2;margin-bottom:10px}
+.hero p{color:var(--muted);max-width:580px}
+.obj-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:20px}
+.obj-item{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:8px;padding:12px 14px;font-size:.87rem;display:flex;gap:10px;align-items:flex-start}
+
+h3{font-family:'Syne',sans-serif;font-size:1.2rem;color:var(--white);margin:36px 0 12px}
+h4{font-family:'Syne',sans-serif;font-size:1rem;color:var(--white);margin:20px 0 8px}
+p{margin-bottom:14px;color:var(--text)}
+.lead{font-size:1.05rem;color:var(--muted);border-left:3px solid var(--accent2);padding-left:16px;margin-bottom:28px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin:20px 0}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px;transition:transform .2s,border-color .2s}
+.card:hover{transform:translateY(-3px);border-color:var(--accent2)}
+.card .c-icon{font-size:1.8rem;margin-bottom:10px}
+.card h4{margin:0 0 6px;font-size:.95rem}.card p{font-size:.84rem;color:var(--muted);margin:0}
+.card-accent{position:absolute;top:0;left:0;width:3px;height:100%;border-radius:2px}
+
+.callout{border-radius:10px;padding:18px 22px;margin:22px 0;font-size:.93rem}
+.callout-blue{background:rgba(59,130,246,.07);border-left:4px solid var(--blue2)}
+.callout-green{background:rgba(34,197,94,.07);border-left:4px solid var(--green2)}
+.callout-amber{background:rgba(245,158,11,.07);border-left:4px solid var(--amber)}
+.callout-rose{background:rgba(244,63,94,.07);border-left:4px solid var(--rose)}
+.callout strong{color:var(--white)}
+
+.table-wrap{overflow-x:auto;margin:18px 0;border-radius:10px;border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+thead tr{background:var(--surface2)}
+thead th{padding:11px 14px;text-align:left;font-weight:600;font-size:.8rem;letter-spacing:.05em;text-transform:uppercase}
+tbody td{padding:11px 14px;border-top:1px solid var(--border);color:var(--text)}
+tbody tr:hover{background:rgba(255,255,255,.02)}
+
+.video-wrap{position:relative;width:100%;padding-bottom:56.25%;margin:22px 0;border-radius:12px;overflow:hidden;background:var(--surface2);border:1px solid var(--border)}
+.video-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:none}
+.video-label{font-size:.8rem;color:var(--muted);margin-top:8px;padding-left:4px}
+
+/* CASES */
+.case-tabs{display:flex;gap:6px;margin:20px 0 0;flex-wrap:wrap}
+.case-tab{padding:8px 16px;border:1.5px solid var(--border);border-radius:100px;font-size:.82rem;cursor:pointer;background:var(--surface);color:var(--muted);transition:all .2s}
+.case-tab.active,.case-tab:hover{border-color:var(--accent2);color:var(--accent2);background:rgba(59,130,246,.06)}
+.case-content{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-top:10px;display:none}
+.case-content.active{display:block;animation:fadeSlide .3s ease}
+.case-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:16px}
+.case-emoji{font-size:2rem}.case-info h4{margin:0 0 4px;color:var(--white)}.case-info p{margin:0;font-size:.85rem;color:var(--muted)}
+.case-body p{color:var(--muted);font-size:.93rem;margin-bottom:12px}
+
+/* QUIZ */
+.quiz-q{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:18px}
+.q-num{font-size:.72rem;color:var(--accent2);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}
+.q-text{font-size:.98rem;font-weight:500;color:var(--white);margin-bottom:18px;line-height:1.5}
+.q-opts{display:flex;flex-direction:column;gap:9px}
+.q-opt{background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:12px 16px;cursor:pointer;font-size:.91rem;color:var(--text);text-align:left;transition:all .2s;display:flex;align-items:center;gap:10px}
+.q-opt::before{content:'';width:16px;height:16px;min-width:16px;border-radius:50%;border:2px solid var(--border);transition:all .2s}
+.q-opt:hover:not(:disabled){border-color:var(--accent2);background:rgba(59,130,246,.04)}
+.q-opt.correct{border-color:var(--green2);background:rgba(34,197,94,.07);color:#6ee7b7}.q-opt.correct::before{background:var(--green2);border-color:var(--green2)}
+.q-opt.wrong{border-color:var(--rose);background:rgba(244,63,94,.07);color:#fda4af}.q-opt.wrong::before{background:var(--rose);border-color:var(--rose)}
+.q-opt:disabled{cursor:not-allowed}
+.q-fb{margin-top:12px;padding:11px 14px;border-radius:8px;font-size:.87rem;display:none}
+.q-fb.ok{display:block;background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.25);color:#6ee7b7}
+.q-fb.ko{display:block;background:rgba(244,63,94,.07);border:1px solid rgba(244,63,94,.25);color:#fda4af}
+.result-panel{background:linear-gradient(135deg,var(--surface),var(--surface2));border:2px solid var(--accent2);border-radius:var(--radius);padding:36px;text-align:center;margin-top:24px;display:none}
+.result-panel.show{display:block;animation:fadeSlide .5s ease}
+.result-big{font-family:'Syne',sans-serif;font-size:3.5rem;color:var(--accent2);margin:12px 0 6px}
+.result-badge{display:inline-block;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);color:var(--blue2);padding:7px 18px;border-radius:100px;font-size:.83rem;font-weight:600}
+
+/* BIBILOGRAPHY */
+.bib-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:12px;display:flex;gap:14px;align-items:flex-start}
+.bib-num{font-family:'Syne',sans-serif;font-size:1.1rem;color:var(--accent2);min-width:32px;font-weight:700}
+.bib-body .bib-title{font-weight:600;color:var(--white);font-size:.93rem;margin-bottom:4px}
+.bib-body .bib-ref{color:var(--muted);font-size:.84rem;margin-bottom:6px}
+.bib-link{display:inline-flex;align-items:center;gap:6px;color:var(--accent2);font-size:.8rem;text-decoration:none;border:1px solid rgba(59,130,246,.3);border-radius:100px;padding:3px 12px;transition:all .2s}
+.bib-link:hover{background:rgba(59,130,246,.1)}
+
+/* ACTIVITY */
+.activity-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:26px;margin:24px 0}
+.activity-box h4{font-family:'Syne',sans-serif;color:var(--amber);margin-bottom:8px}
+.activity-box .act-desc{color:var(--muted);font-size:.91rem;margin-bottom:18px}
+.reflect-textarea{width:100%;background:var(--surface2);border:1.5px solid var(--border);color:var(--text);padding:13px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.92rem;resize:vertical;min-height:90px;outline:none;transition:border-color .2s}
+.reflect-textarea:focus{border-color:var(--accent2)}
+.act-result{margin-top:12px;padding:13px 16px;border-radius:8px;background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.2);color:var(--blue2);font-size:.88rem;display:none}
+
+/* DOFA GRID */
+.dofa-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0}
+.dofa-cell{border-radius:10px;padding:14px;background:var(--surface2);border:1px solid var(--border)}
+.dofa-cell h5{font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;font-family:'Syne',sans-serif}
+.dofa-cell textarea{width:100%;background:transparent;border:none;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.85rem;resize:none;min-height:70px;outline:none}
+.dofa-d{border-top:3px solid var(--blue2)}.dofa-d h5{color:var(--blue2)}
+.dofa-o{border-top:3px solid var(--green2)}.dofa-o h5{color:var(--green2)}
+.dofa-f{border-top:3px solid var(--rose)}.dofa-f h5{color:var(--rose)}
+.dofa-a{border-top:3px solid var(--amber)}.dofa-a h5{color:var(--amber)}
+
+/* NAV ROW */
+.nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:48px;padding-top:20px;border-top:1px solid var(--border);gap:10px;flex-wrap:wrap}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:linear-gradient(135deg,#07090f,#0d1117);border:1px solid var(--amber);border-radius:12px;padding:14px 18px;display:flex;align-items:center;gap:12px;z-index:500;animation:toastIn .4s ease;max-width:280px}
+@keyframes toastIn{from{opacity:0;transform:translateX(70px)}to{opacity:1;transform:translateX(0)}}
+.toast .t-icon{font-size:1.8rem}.toast .t-txt strong{display:block;color:var(--amber);font-size:.88rem;margin-bottom:2px}.toast .t-txt span{color:var(--muted);font-size:.78rem}
+
+/* SMART */
+.smart-row{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px}
+.smart-letter{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;min-width:36px;color:var(--accent2)}
+.smart-body strong{color:var(--white);font-size:.95rem}.smart-body p{color:var(--muted);font-size:.85rem;margin:2px 0 0}
+
+/* PHVA */
+.phva-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:20px 0}
+.phva-card{border-radius:12px;padding:20px;text-align:center;border:1px solid var(--border)}
+.phva-card .ph-letter{font-family:'Syne',sans-serif;font-size:2.5rem;font-weight:800;margin-bottom:6px}
+.phva-card h5{font-size:.9rem;margin-bottom:6px;color:var(--white)}.phva-card p{font-size:.8rem;color:var(--muted);margin:0}
+.phva-p{background:rgba(59,130,246,.06);border-color:rgba(59,130,246,.3)}.phva-p .ph-letter{color:var(--blue2)}
+.phva-h{background:rgba(34,197,94,.06);border-color:rgba(34,197,94,.3)}.phva-h .ph-letter{color:var(--green2)}
+.phva-v{background:rgba(249,115,22,.06);border-color:rgba(249,115,22,.3)}.phva-v .ph-letter{color:var(--orange2)}
+.phva-a{background:rgba(124,58,237,.06);border-color:rgba(124,58,237,.3)}.phva-a .ph-letter{color:var(--violet2)}
+
+/* KPI TRACKER */
+.kpi-row{display:flex;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)}
+.kpi-row:last-child{border-bottom:none}
+.kpi-name{flex:1;font-size:.9rem;color:var(--text)}
+.kpi-bar-wrap{flex:2;height:8px;background:var(--border);border-radius:4px;overflow:hidden;cursor:pointer}
+.kpi-bar{height:100%;border-radius:4px;transition:width .4s}
+.kpi-val{min-width:40px;text-align:right;font-size:.85rem;font-weight:600;color:var(--accent2)}
+
+@media(max-width:640px){.page{padding:24px 14px 80px}.top-bar{padding:10px 14px}.dofa-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div id="loader"><div class="loader-ring"></div><p style="color:var(--muted);font-size:.88rem">Cargando módulos...</p></div>
+
+<!-- WELCOME -->
+<div id="welcome">
+  <div class="w-badge">Administración en Salud · Bacteriología VIII Semestre</div>
+  <div style="font-size:1.4rem;margin-bottom:14px">🏥 🌿 🔬</div>
+  <h1>El Proceso<br/><span>Administrativo</span><br/>en Salud</h1>
+  <p>4 módulos interactivos para comprender Planeación, Organización, Dirección y Control con casos reales de empresas colombianas en los énfasis clínico, ambiental e industrial.</p>
+  <div class="name-wrap"><input type="text" id="nameInput" placeholder="¿Cómo te llamas?" maxlength="40"/></div>
+  <div class="info-chips"><div class="chip">📚 4 módulos</div><div class="chip">⏱ ~2 horas</div><div class="chip">🇨🇴 Casos colombianos</div><div class="chip">🎯 Autoaprendizaje</div></div>
+  <div class="mod-cards">
+    <div class="mod-card mc-m1" onclick="startApp(0)"><div class="mc-num">Módulo 1</div><div class="mc-icon">🗺️</div><div class="mc-title">Planeación</div><div class="mc-sub">Estrategia, DOFA, objetivos SMART</div></div>
+    <div class="mod-card mc-m2" onclick="startApp(1)"><div class="mc-num">Módulo 2</div><div class="mc-icon">🏗️</div><div class="mc-title">Organización</div><div class="mc-sub">Estructuras, funciones, procesos</div></div>
+    <div class="mod-card mc-m3" onclick="startApp(2)"><div class="mc-num">Módulo 3</div><div class="mc-icon">🧭</div><div class="mc-title">Dirección</div><div class="mc-sub">Liderazgo, motivación, comunicación</div></div>
+    <div class="mod-card mc-m4" onclick="startApp(3)"><div class="mc-num">Módulo 4</div><div class="mc-icon">📊</div><div class="mc-title">Control</div><div class="mc-sub">Indicadores, PHVA, calidad</div></div>
+  </div>
+  <button class="btn btn-primary" onclick="startApp(0)">Comenzar desde el inicio →</button>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="top-bar">
+    <div class="top-logo">🔬 Proceso Administrativo en Salud</div>
+    <div class="top-greet">Hola, <span id="greetName">estudiante</span> · Bacteriología VIII</div>
+    <div class="xp-badge">⚡ <span id="xpCount">0</span> XP</div>
+  </div>
+  <div class="prog-bar-wrap">
+    <div class="prog-row"><span>Progreso general</span><span id="progPct">0%</span></div>
+    <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  </div>
+  <nav class="mod-nav">
+    <button class="mnav-btn" id="mnav0" onclick="switchMod(0)"><span class="dot"></span>🗺️ Planeación</button>
+    <button class="mnav-btn" id="mnav1" onclick="switchMod(1)"><span class="dot"></span>🏗️ Organización</button>
+    <button class="mnav-btn" id="mnav2" onclick="switchMod(2)"><span class="dot"></span>🧭 Dirección</button>
+    <button class="mnav-btn" id="mnav3" onclick="switchMod(3)"><span class="dot"></span>📊 Control</button>
+  </nav>
+  <nav class="sec-nav" id="secNav"></nav>
+
+  <!-- ══════════════════ MÓDULO 1: PLANEACIÓN ══════════════════ -->
+  <div class="mod-panel" id="mod0">
+    <div class="page">
+
+      <!-- S0: INTRO -->
+      <div class="sec-panel active" id="mod0sec0">
+        <div class="hero" style="--accent:var(--blue);--accent2:var(--blue2)">
+          <div class="h-badge" style="color:var(--blue2)">🗺️ Módulo 1 · Planeación</div>
+          <h2>Sin un mapa no hay<br/>destino posible</h2>
+          <p>La planeación es la primera función del proceso administrativo y la más estratégica. Determina qué queremos lograr, cómo lo lograremos y con qué recursos contamos.</p>
+          <div class="obj-list">
+            <div class="obj-item"><span>🎯</span><span>Comprender los tipos y niveles de planeación en organizaciones de salud</span></div>
+            <div class="obj-item"><span>🎯</span><span>Aplicar herramientas de planeación estratégica: DOFA, PESTEL, objetivos SMART</span></div>
+            <div class="obj-item"><span>🎯</span><span>Analizar casos reales de planeación en empresas colombianas del sector salud</span></div>
+          </div>
+        </div>
+        <div class="callout callout-blue"><strong>💡 ¿Por qué planeación en bacteriología?</strong><br/>Como bacteriólogo/a en práctica formativa, tomarás decisiones que impactan pacientes, ecosistemas o procesos industriales. La planeación te permite anticipar recursos, prever riesgos y actuar con criterio — no por intuición.</div>
+        <h3>¿Qué es la planeación?</h3>
+        <p>La planeación es el proceso mediante el cual una organización define sus objetivos, selecciona las estrategias para alcanzarlos y determina los recursos necesarios. Es la función que responde las preguntas fundamentales: <strong style="color:var(--white)">¿Qué queremos lograr? ¿Cómo lo lograremos? ¿Cuándo? ¿Con qué?</strong></p>
+        <div class="cards">
+          <div class="card" style="position:relative;overflow:hidden"><div class="card-accent" style="background:var(--blue2)"></div><div class="c-icon">🌐</div><h4>Planeación Estratégica</h4><p>A largo plazo (3–5 años). Define la misión, visión y objetivos institucionales. La realiza la alta dirección.</p></div>
+          <div class="card" style="position:relative;overflow:hidden"><div class="card-accent" style="background:var(--green2)"></div><div class="c-icon">⚙️</div><h4>Planeación Táctica</h4><p>A mediano plazo (1–2 años). Traduce la estrategia en planes por áreas o departamentos.</p></div>
+          <div class="card" style="position:relative;overflow:hidden"><div class="card-accent" style="background:var(--orange2)"></div><div class="c-icon">📋</div><h4>Planeación Operativa</h4><p>A corto plazo (semanas/meses). Detalla actividades, tareas y procedimientos del día a día.</p></div>
+        </div>
+        <div class="nav-row"><span></span><button class="btn btn-primary" onclick="goSec(0,1)">Siguiente: Herramientas →</button></div>
+      </div>
+
+      <!-- S1: HERRAMIENTAS -->
+      <div class="sec-panel" id="mod0sec1">
+        <h3 style="margin-top:0">🛠️ Herramientas de Planeación Estratégica</h3>
+        <p class="lead">Un bacteriólogo que planea bien no solo sabe qué hacer hoy — sabe hacia dónde va su organización y cómo contribuye a esa dirección desde el laboratorio.</p>
+
+        <h4>Análisis DOFA (FODA)</h4>
+        <p>El análisis DOFA es una herramienta de diagnóstico estratégico que evalúa factores internos (Debilidades y Fortalezas) y externos (Oportunidades y Amenazas) de una organización.</p>
+        <div class="dofa-grid">
+          <div class="dofa-cell dofa-d"><h5>🔵 Debilidades (Internas)</h5><p style="color:var(--muted);font-size:.83rem">Factores internos que limitan el desempeño.<br/><em>Ej: equipos obsoletos, personal insuficiente</em></p></div>
+          <div class="dofa-cell dofa-o"><h5>🟢 Oportunidades (Externas)</h5><p style="color:var(--muted);font-size:.83rem">Factores del entorno favorables a aprovechar.<br/><em>Ej: nuevas tecnologías, demanda creciente</em></p></div>
+          <div class="dofa-cell dofa-f"><h5>🔴 Fortalezas (Internas)</h5><p style="color:var(--muted);font-size:.83rem">Capacidades internas que generan ventaja.<br/><em>Ej: personal certificado, equipos de punta</em></p></div>
+          <div class="dofa-cell dofa-a"><h5>🟡 Amenazas (Externas)</h5><p style="color:var(--muted);font-size:.83rem">Factores del entorno que representan riesgos.<br/><em>Ej: competencia, cambios normativos</em></p></div>
+        </div>
+
+        <h4>Objetivos SMART</h4>
+        <p>Los objetivos bien formulados son la columna vertebral de cualquier plan. Para que un objetivo sea útil debe cumplir los criterios SMART:</p>
+        <div style="margin:16px 0">
+          <div class="smart-row"><div class="smart-letter">S</div><div class="smart-body"><strong>Specific (Específico)</strong><p>Define exactamente qué se quiere lograr. Evita la ambigüedad.</p></div></div>
+          <div class="smart-row"><div class="smart-letter">M</div><div class="smart-body"><strong>Measurable (Medible)</strong><p>Establece indicadores cuantitativos o cualitativos verificables.</p></div></div>
+          <div class="smart-row"><div class="smart-letter">A</div><div class="smart-body"><strong>Achievable (Alcanzable)</strong><p>Retador pero realista con los recursos disponibles.</p></div></div>
+          <div class="smart-row"><div class="smart-letter">R</div><div class="smart-body"><strong>Relevant (Relevante)</strong><p>Alineado con los objetivos estratégicos de la organización.</p></div></div>
+          <div class="smart-row"><div class="smart-letter">T</div><div class="smart-body"><strong>Time-bound (Temporal)</strong><p>Tiene una fecha límite o plazo definido claramente.</p></div></div>
+        </div>
+        <div class="callout callout-green"><strong>✅ Ejemplo SMART en laboratorio clínico:</strong><br/>"Reducir el tiempo de entrega de resultados de hemocultivo en un 20% — de 72 a 58 horas — durante el primer semestre de 2026, en el Laboratorio de Microbiología del Hospital Universitario Nacional."</div>
+
+        <h3>🎬 Video: Planeación Estratégica en Salud</h3>
+        <div class="video-wrap"><iframe src="https://www.youtube.com/embed/5RJUs5TmGcM" title="Planeacion estrategica" allowfullscreen loading="lazy"></iframe></div>
+        <p class="video-label">📌 Proceso de planeación estratégica — conceptos clave aplicados al sector salud</p>
+        <div class="nav-row"><button class="btn btn-ghost" onclick="goSec(0,0)">← Anterior</button><button class="btn btn-primary" onclick="goSec(0,2)">Siguiente: Casos colombianos →</button></div>
+      </div>
+
+      <!-- S2: CASOS -->
+      <div class="sec-panel" id="mod0sec2">
+        <h3 style="margin-top:0">🇨🇴 Casos Colombianos — Planeación en los Tres Énfasis</h3>
+        <p class="lead">La planeación no ocurre solo en oficinas directivas. En el laboratorio, cada protocolo, cada turno y cada decisión sobre recursos es un acto de planeación.</p>
+        <div class="case-tabs">
+          <button class="case-tab active" onclick="showCase('plan','clinico')">🏥 Clínico</button>
+          <button class="case-tab" onclick="showCase('plan','ambiental')">🌿 Ambiental</button>
+          <button class="case-tab" onclick="showCase('plan','industrial')">🏭 Industrial</button>
+        </div>
+        <div class="case-content active" id="plan-clinico">
+          <div class="case-header"><div class="case-emoji">🏥</div><div class="case-info"><h4>Hospital Universitario Nacional de Colombia (HUN)</h4><p>Laboratorio Clínico — Planeación estratégica 2022–2026</p></div></div>
+          <div class="case-body">
+            <p>El HUN, como centro de referencia nacional, desarrolla planes estratégicos que integran el laboratorio de microbiología en sus objetivos de calidad y docencia. El Plan de Acción 2022–2026 incluye objetivos específicos para la reducción de infecciones asociadas a la atención en salud (IAAS), lo cual requiere que el laboratorio planee su capacidad de respuesta ante emergencias microbiológicas.</p>
+            <p><strong style="color:var(--white)">Aplicación de DOFA en el Laboratorio del HUN:</strong></p>
+            <div class="table-wrap"><table><thead><tr><th style="color:var(--blue2)">Fortalezas</th><th style="color:var(--rose)">Debilidades</th><th style="color:var(--green2)">Oportunidades</th><th style="color:var(--amber)">Amenazas</th></tr></thead><tbody><tr><td>Personal con posgrados y certificación</td><td>Alta rotación de bacteriólogos en urgencias</td><td>Financiación MEN para investigación</td><td>Resistencia antimicrobiana emergente</td></tr><tr><td>Equipos automatizados MALDI-TOF</td><td>Espacio físico limitado para expansión</td><td>Convenios con universidades</td><td>Cambios en normativa de bioseguridad</td></tr></tbody></table></div>
+            <p class="callout callout-blue"><strong>📌 Fuente:</strong> Plan de Desarrollo Institucional HUN 2022–2026. Disponible en: <a href="https://hospital.unal.edu.co" target="_blank" style="color:var(--blue2)">hospital.unal.edu.co</a></p>
+          </div>
+        </div>
+        <div class="case-content" id="plan-ambiental">
+          <div class="case-header"><div class="case-emoji">🌿</div><div class="case-info"><h4>IDEAM — Instituto de Hidrología, Meteorología y Estudios Ambientales</h4><p>Laboratorio de Calidad Ambiental — Planeación de monitoreo hídrico</p></div></div>
+          <div class="case-body">
+            <p>El IDEAM planea anualmente sus programas de monitoreo de calidad del agua en fuentes hídricas colombianas. El Laboratorio de Calidad Ambiental del IDEAM define objetivos SMART para el monitoreo de coliformes, E. coli y patógenos en cuerpos de agua estratégicos como el río Bogotá y la cuenca del Magdalena.</p>
+            <p><strong style="color:var(--white)">Objetivo SMART — IDEAM 2025:</strong></p>
+            <div class="callout callout-green">"Analizar microbiológicamente el 100% de los 48 puntos de monitoreo crítico del río Bogotá — con énfasis en coliformes fecales y E. coli — durante los 4 trimestres de 2025, con resultados reportados en el sistema SIRH en máximo 72 horas por muestra."</div>
+            <p>Esta planeación incluye la proyección de insumos (medios de cultivo, reactivos), capacitación del personal en normas ISO 17025, y coordinación con la CAR Cundinamarca para la toma de muestras.</p>
+            <p class="callout callout-blue"><strong>📌 Fuente:</strong> IDEAM. Plan Estratégico 2023–2026. Disponible en: <a href="https://www.ideam.gov.co" target="_blank" style="color:var(--blue2)">ideam.gov.co</a></p>
+          </div>
+        </div>
+        <div class="case-content" id="plan-industrial">
+          <div class="case-header"><div class="case-emoji">🏭</div><div class="case-info"><h4>Laboratorios Lafrancol — Grupo Sanofi Colombia</h4><p>Control Microbiológico en Industria Farmacéutica — Planeación de calidad</p></div></div>
+          <div class="case-body">
+            <p>Lafrancol, uno de los laboratorios farmacéuticos más grandes de Colombia con sede en Cali, planea su sistema de control microbiológico de acuerdo con las Normas de Buenas Prácticas de Manufactura (BPM) del INVIMA y las guías de la OMS. El Plan Maestro de Validación define objetivos anuales para el laboratorio microbiológico.</p>
+            <p><strong style="color:var(--white)">Elementos de planeación del laboratorio microbiológico industrial:</strong></p>
+            <div class="table-wrap"><table><thead><tr><th>Elemento planificado</th><th>Herramienta</th><th>Responsable</th></tr></thead><tbody><tr><td>Calendario de pruebas de esterilidad</td><td>Cronograma BPM</td><td>Director de Calidad</td></tr><tr><td>Compra anual de medios de cultivo</td><td>Presupuesto proyectado</td><td>Jefe de Laboratorio</td></tr><tr><td>Calificación de nuevos equipos</td><td>Plan Maestro de Validación</td><td>Bacteriólogo QA</td></tr><tr><td>Capacitación en norma USP <62></td><td>Plan de formación</td><td>Recursos Humanos</td></tr></tbody></table></div>
+            <p class="callout callout-blue"><strong>📌 Fuente:</strong> INVIMA. Manual de BPM para laboratorios farmacéuticos. Disponible en: <a href="https://www.invima.gov.co" target="_blank" style="color:var(--blue2)">invima.gov.co</a></p>
+          </div>
+        </div>
+        <div class="nav-row"><button class="btn btn-ghost" onclick="goSec(0,1)">← Anterior</button><button class="btn btn-primary" onclick="goSec(0,3)">Siguiente: Actividad →</button></div>
+      </div>
+
+      <!-- S3: ACTIVIDAD -->
+      <div class="sec-panel" id="mod0sec3">
+        <h3 style="margin-top:0">✍️ Actividad: Construye tu DOFA</h3>
+        <div class="activity-box">
+          <h4>🏗️ DOFA para un laboratorio clínico universitario</h4>
+          <p class="act-desc">Imagina que eres el jefe de laboratorio de microbiología del Hospital Universitario Nacional. A partir de lo que sabes del contexto colombiano, completa el análisis DOFA. No hay respuestas perfectas — lo importante es tu razonamiento.</p>
+          <div class="dofa-grid">
+            <div class="dofa-cell dofa-f"><h5>💪 Fortalezas</h5><textarea class="reflect-textarea" id="dofa_f" placeholder="Ej: Personal especializado, equipos de automatización..."></textarea></div>
+            <div class="dofa-cell dofa-d"><h5>⚠️ Debilidades</h5><textarea class="reflect-textarea" id="dofa_d" placeholder="Ej: Presupuesto limitado, alta rotación de personal..."></textarea></div>
+            <div class="dofa-cell dofa-o"><h5>🌟 Oportunidades</h5><textarea class="reflect-textarea" id="dofa_o" placeholder="Ej: Nuevas tecnologías moleculares, convenios..."></textarea></div>
+            <div class="dofa-cell dofa-a"><h5>⚡ Amenazas</h5><textarea class="reflect-textarea" id="dofa_a" placeholder="Ej: Resistencia antimicrobiana, recortes presupuestales..."></textarea></div>
+          </div>
+          <button class="btn btn-ghost" style="margin-top:12px" onclick="saveDOFA()">Guardar DOFA ✓</button>
+          <div class="act-result" id="dofa-result">🎯 ¡DOFA guardado! Recuerda que un buen análisis DOFA es el punto de partida de cualquier plan estratégico sólido. +20 XP</div>
+        </div>
+
+        <div class="activity-box">
+          <h4>📝 Redacta un objetivo SMART</h4>
+          <p class="act-desc">Basado en el énfasis que más te interese (clínico, ambiental o industrial), redacta un objetivo SMART para el laboratorio donde realizarás tu práctica formativa.</p>
+          <textarea class="reflect-textarea" id="smart_obj" style="min-height:100px" placeholder="Reducir / Aumentar / Implementar / Diseñar... [Qué] en [cuánto] durante [cuándo] en [dónde]..."></textarea>
+          <div style="margin-top:10px"><button class="btn btn-ghost" onclick="saveReflect('smart_obj','smart-result')">Guardar objetivo ✓</button></div>
+          <div class="act-result" id="smart-result">✅ ¡Guardado! Los objetivos SMART bien formulados aumentan en un 42% la probabilidad de logro (Locke & Latham, 2002). +15 XP</div>
+        </div>
+        <div class="nav-row"><button class="btn btn-ghost" onclick="goSec(0,2)">← Anterior</button><button class="btn btn-primary" onclick="goSec(0,4)">Siguiente: Evaluación →</button></div>
+      </div>
+
+      <!-- S4: QUIZ -->
+      <div class="sec-panel" id="mod0sec4">
+        <h3 style="margin-top:0">✅ Evaluación — Módulo 1: Planeación</h3>
+        <p class="lead">8 preguntas para consolidar lo aprendido. ¡Ánimo!</p>
+
+        <div class="quiz-q"><div class="q-num">Pregunta 1 de 8</div><div class="q-text">¿Cuál es la principal diferencia entre la planeación estratégica y la planeación operativa?</div><div class="q-opts">
+          <button class="q-opt" onclick="ansQ('m0',1,this,false)">La planeación estratégica es responsabilidad exclusiva del bacteriólogo jefe</button>
+          <button class="q-opt" onclick="ansQ('m0',1,this,true)">La planeación estratégica define objetivos a largo plazo para toda la organización, mientras la operativa detalla tareas cotidianas</button>
+          <button class="q-opt" onclick="ansQ('m0',1,this,false)">La planeación operativa siempre incluye el análisis DOFA</button>
+          <button class="q-opt" onclick="ansQ('m0',1,this,false)">No hay diferencia significativa entre los dos tipos</button>
+        </div><div class="q-fb" id="m0qfb1"></div></div>
+
+        <div class="quiz-q"><div class="q-num">Pregunta 2 de 8</div><div class="q-text">En un objetivo SMART, la "M" de Medible implica que:</div><div class="q-opts">
+          <button class="q-opt" onclick="ansQ('m0',2,this,false)">El objetivo debe ser motivador para el equipo</button>
+          <button class="q-opt" onclick="ansQ('m0',2,this,true)">Debe existir un indicador cuantitativo o cualitativo que permita verificar si se logró</button>
+          <button class="q-opt" onclick="ansQ('m0',2,this,false)">El objetivo se puede modificar según las circunstancias</button>
+          <button class="q-opt" onclick="ansQ('m0',2,this,false)">El objetivo debe poder medirse únicamente con datos numéricos</button>
+        </div><div class="q-fb" id="m0qfb2"></div></div>
+
+        <div class="quiz-q"><div class="q-num">Pregunta 3 de 8</div><div class="q-text">El IDEAM planea anualmente el monitoreo microbiológico de fuentes hídricas. ¿A qué nivel de planeación corresponde esta actividad?</div><div class="q-opts">
+          <button class="q-opt" onclick="ansQ('m0',3,this,false)">Planeación estratégica — porque involucra a toda la institución</button>
+          <button class="q-opt" onclick="ansQ('m0',3,this,false)">Planeación estratégica exclusivamente</button>
+          <button class="q-opt" onclick="ansQ('m0',3,this,true)">Planeación táctica y operativa — traduce la estrategia en programas anuales específicos con actividades concretas</button>
+          <button class="q-opt" onclick="ansQ('m0',3,this,false)">No corresponde a ningún nivel de planeación formal</button>
+        </div><div class="q-fb" id="m0qfb3"></div></div>
+
+        <div class="quiz-q"><div class="q-num">Pregunta 4 de 8</div><div class="q-text">En el análisis DOFA de Lafrancol, la "alta demanda de productos farmacéuticos en mercados centroamericanos" sería:</div><div class="q-opts">
+          <button class="q-opt" onclick="ansQ('m0',4,this,false)">Una Fortaleza, porque es algo que ya posee la empresa</button>
+          <button class="q-opt" onclick="ansQ('m0',4,this,true)">Una Oportunidad, porque es un factor externo favorable que la empresa puede aprovechar</button>
+          <button class="q-opt" onclick="ansQ('m0',4,this,false)">Una Amenaza, porque implica más competencia</button>
+          <button class="q-opt" onclick="ansQ('m0',4,this,false)">Una Debilidad, porque la empresa aún no exporta</button>
+        </div><div class="q-fb" id="m0qfb4"></div></div>
+
+        <div class="quiz-q"><div class="q-num">Pregunta 5 de 8</div><div class="q-text">¿Cuál de los siguientes NO es un criterio del objetivo SMART?</div><div class="q-opts">
+          <button class="q-opt" onclick="ansQ('m0',5,this,false)">Específico</button>
+          <button class="q-opt" onclick="ansQ('m0',5,this,false)">Medible</button>
+          <button class="q-opt" onclick="ansQ('m0',5,this,true)">Sostenible</button>
+          <button class="q-opt" onclick="ansQ('m0',5,this,false)">Temporal</button>
+        </div><div class="q-fb" id="m0qfb5"></div></div>
+
+        <div class="quiz-q"><div class="q-num">Pregunta 6 de 8</div><div class="q-text">Como bacteriólogo en práctica en un hospital colombiano, identificas que la tasa de contaminación de hemocultivos es del 8% cuando el estándar es <3%. ¿Qué función del proceso administrativo debes iniciar primero?</div><div class="q-opts">
+          <button class="q-opt" onclick="ansQ('m0',6,this,false)">Dirección — motivar al equipo para mejorar</button>
+          <button class="q-opt" onclick="ansQ('m0',6,this,true)">Planeación — definir un objetivo SMART de reducción y diseñar un plan de mejora con acciones específicas</button>
+          <button class="q-opt" onclick="ansQ('m0',6,this,false)">Control — revisar los resultados actuales</button>
+          <button class="q-opt" onclick="ansQ('m0',6,this,false)">Organización — reorganizar los turnos</button>
+        </div><div class="q-fb" id="m0qfb6"></div></div>
+
+        <div class="quiz-q"><div class="q-num">Pregunta 7 de 8</div><div class="q-text">El Plan Maestro de Validación de un laboratorio farmacéutico como Lafrancol es un ejemplo de:</div><div class="q-opts">
+          <button class="q-opt" onclick="ansQ('m0',7,this,false)">Planeación informal sin soporte documental</button>
+          <button class="q-opt" onclick="ansQ('m0',7,this,true)">Planeación operativa formalizada que traduce los requisitos de BPM en actividades específicas del laboratorio</button>
+          <button class="q-opt" onclick="ansQ('m0',7,this,false)">Una herramienta exclusiva del área financiera</button>
+          <button class="q-opt" onclick="ansQ('m0',7,this,false)">Planeación estratégica de largo plazo</button>
+        </div><div class="q-fb" id="m0qfb7"></div></div>
+
+        <div class="quiz-q"><div class="q-num">Pregunta 8 de 8</div><div class="q-text">¿Cuál es la relación correcta entre planeación y las demás funciones del proceso administrativo?</div><div class="q-opts">
+          <button class="q-opt" onclick="ansQ('m0',8,this,false)">La planeación solo se usa al inicio de un proyecto y luego no se retoma</button>
+          <button class="q-opt" onclick="ansQ('m0',8,this,false)">La planeación es independiente de la organización, dirección y control</button>
+          <button class="q-opt" onclick="ansQ('m0',8,this,true)">La planeación es la función base: sin ella, organizar, dirigir y controlar no tienen un rumbo claro. Todas las funciones se retroalimentan entre sí</button>
+          <button class="q-opt" onclick="ansQ('m0',8,this,false)">El control reemplaza a la planeación cuando hay datos suficientes</button>
+        </div><div class="q-fb" id="m0qfb8"></div></div>
+
+        <div class="result-panel" id="m0result">
+          <div style="color:var(--muted);font-size:.83rem;letter-spacing:.1em;text-transform:uppercase">Resultado · Módulo 1</div>
+          <div class="result-big" id="m0score">–</div>
+          <div style="font-size:1.6rem;letter-spacing:4px;margin-bottom:10px" id="m0stars">–</div>
+          <p style="color:var(--muted);margin-bottom:16px" id="m0msg">–</p>
+          <div class="result-badge" id="m0badge">–</div>
+          <br/><br/>
+          <button class="btn btn-primary" onclick="switchMod(1)">Ir a Módulo 2: Organización →</button>
+        </div>
+
+        <div class="nav-row"><button class="btn btn-ghost" onclick="goSec(0,3)">← Anterior</button><button class="btn btn-primary" onclick="goSec(0,5)">Bibliografía →</button></div>
+      </div>
+
+      <!-- S5: BIBLIOGRAFÍA -->
+      <div class="sec-panel" id="mod0sec5">
+        <h3 style="margin-top:0">📚 Bibliografía — Módulo 1: Planeación</h3>
+        <div class="bib-item"><div class="bib-num">1</div><div class="bib-body"><div class="bib-title">Introducción a la Administración de las Organizaciones</div><div class="bib-ref">Chiavenato, I. (2014). McGraw-Hill. 3ª ed. ISBN: 978-607-15-1070-2</div><a class="bib-link" href="https://www.mheducation.com.mx" target="_blank">🔗 Editorial</a></div></div>
+        <div class="bib-item"><div class="bib-num">2</div><div class="bib-body"><div class="bib-title">Administración: Proceso Administrativo</div><div class="bib-ref">Münch, L. (2014). Pearson Educación. 3ª ed. México. ISBN: 978-607-32-2357-0</div><a class="bib-link" href="https://www.pearsonenespanol.com" target="_blank">🔗 Editorial</a></div></div>
+        <div class="bib-item"><div class="bib-num">3</div><div class="bib-body"><div class="bib-title">Plan de Desarrollo Institucional HUN 2022–2026</div><div class="bib-ref">Hospital Universitario Nacional de Colombia (2022). Bogotá D.C.</div><a class="bib-link" href="https://hospital.unal.edu.co/transparencia/planeacion/" target="_blank">🔗 Ver documento</a></div></div>
+        <div class="bib-item"><div class="bib-num">4</div><div class="bib-body"><div class="bib-title">Plan Estratégico IDEAM 2023–2026</div><div class="bib-ref">Instituto de Hidrología, Meteorología y Estudios Ambientales (2023). Colombia.</div><a class="bib-link" href="https://www.ideam.gov.co/web/planeacion" target="_blank">🔗 Ver documento</a></div></div>
+        <div class="bib-item"><div class="bib-num">5</div><div class="bib-body"><div class="bib-title">Manual de Buenas Prácticas de Manufactura — INVIMA</div><div class="bib-ref">INVIMA (2022). Resolución 1160 de 2016 actualizada. Bogotá D.C.</div><a class="bib-link" href="https://www.invima.gov.co/normatividad" target="_blank">🔗 Ver normativa</a></div></div>
+        <div class="bib-item"><div class="bib-num">6</div><div class="bib-body"><div class="bib-title">A Theory of Goal Setting and Task Performance</div><div class="bib-ref">Locke, E. A. & Latham, G. P. (1990). Prentice Hall. ISBN: 0-13-913138-6</div><a class="bib-link" href="https://www.apa.org/pubs/books/4316940" target="_blank">🔗 APA</a></div></div>
+        <div class="bib-item"><div class="bib-num">7</div><div class="bib-body"><div class="bib-title">Administración en los Servicios de Salud</div><div class="bib-ref">Fajardo-Ortiz, G. (2015). Manual Moderno. 4ª ed. ISBN: 978-607-448-507-8</div><a class="bib-link" href="https://www.manualmoderno.com" target="_blank">🔗 Editorial</a></div></div>
+        <div class="nav-row"><button class="btn btn-ghost" onclick="goSec(0,4)">← Evaluación</button><button class="btn btn-primary" onclick="switchMod(1)">Ir a Módulo 2 →</button></div>
+      </div>
+    </div>
+  </div><!-- fin mod0 -->
+
+  <!-- ══════════════════ MÓDULO 2: ORGANIZACIÓN ══════════════════ -->
+  <div class="mod-panel" id="mod1">
+    <div class="page">
+      <div class="sec-panel active" id="mod1sec0">
+        <div class="hero">
+          <div class="h-badge" style="color:var(--green2)">🏗️ Módulo 2 · Organización</div>
+          <h2>Cada rol importa.<br/>Cada proceso tiene su lugar.</h2>
+          <p>La organización transforma los planes en estructuras reales: define quién hace qué, cómo se relacionan las áreas y cómo fluye el trabajo para lograr los objetivos.</p>
+          <div class="obj-list">
+            <div class="obj-item"><span>🎯</span><span>Comprender los tipos de estructuras organizacionales en instituciones de salud</span></div>
+            <div class="obj-item"><span>🎯</span><span>Identificar los elementos de un manual de funciones y un organigrama</span></div>
+            <div class="obj-item"><span>🎯</span><span>Analizar cómo se organiza un laboratorio clínico, ambiental e industrial colombiano</span></div>
+          </div>
+        </div>
+        <div class="callout callout-green"><strong>💡 Organización en la práctica:</strong><br/>¿Por qué a veces en un laboratorio no se sabe quién responde por un resultado? Falta de organización. Cuando los roles, responsabilidades y flujos de trabajo están claros, la calidad mejora y los errores disminuyen.</div>
+        <h3>¿Qué es la función de organización?</h3>
+        <p>Organizar es estructurar los recursos humanos, físicos y financieros de manera que permitan cumplir los objetivos definidos en la planeación. Implica dividir el trabajo, agrupar actividades, asignar responsabilidades y establecer relaciones de autoridad.</p>
+        <div class="cards">
+          <div class="card" style="position:relative;overflow:hidden"><div class="card-accent" style="background:var(--green2)"></div><div class="c-icon">🏢</div><h4>División del trabajo</h4><p>Cada persona y área tiene funciones específicas. En un laboratorio: microbiología, hematología, química clínica.</p></div>
+          <div class="card" style="position:relative;overflow:hidden"><div class="card-accent" style="background:var(--blue2)"></div><div class="c-icon">🔗</div><h4>Departamentalización</h4><p>Agrupación de actividades afines. Puede ser por función, por proceso, por producto o por cliente.</p></div>
+          <div class="card" style="position:relative;overflow:hidden"><div class="card-accent" style="background:var(--amber)"></div><div class="c-icon">📋</div><h4>Manual de funciones</h4><p>Documento que describe el propósito, responsabilidades y requisitos de cada cargo.</p></div>
+          <div class="card" style="position:relative;overflow:hidden"><div class="card-accent" style="background:var(--orange2)"></div><div class="c-icon">📊</div><h4>Organigrama</h4><p>Representación gráfica de la estructura organizacional: jerarquías, dependencias y relaciones.</p></div>
+        </div>
+        <div class="nav-row"><span></span><button class="btn btn-primary" onclick="goSec(1,1)" style="background:linear-gradient(135deg,var(--green),var(--green2));color:#07090f">Siguiente →</button></div>
+      </div>
+
+      <div class="sec-panel" id="mod1sec1">
+        <h3 style="margin-top:0">🏛️ Estructuras Organizacionales en Salud</h3>
+        <div class="table-wrap"><table><thead><tr><th style="color:var(--green2)">Tipo</th><th>Características</th><th>Ejemplo en salud Colombia</th></tr></thead><tbody>
+          <tr><td><strong style="color:var(--white)">Funcional</strong></td><td>Agrupación por especialidades. Alta eficiencia técnica.</td><td>IPS pequeñas, laboratorios independientes</td></tr>
+          <tr><td><strong style="color:var(--white)">Divisional</strong></td><td>División por productos, regiones o servicios. Más autonomía.</td><td>EPS Sanitas — divisiones por región</td></tr>
+          <tr><td><strong style="color:var(--white)">Matricial</strong></td><td>Combina funcional y proyectos. Doble dependencia.</td><td>Hospitales universitarios con investigación</td></tr>
+          <tr><td><strong style="color:var(--white)">Por procesos</strong></td><td>Orientada al flujo de trabajo y valor al paciente/cliente.</td><td>Laboratorios con certificación ISO 15189</td></tr>
+          <tr><td><strong style="color:var(--white)">Red / Virtual</strong></td><td>Organizaciones que se articulan con proveedores externos.</td><td>Redes de laboratorios de salud pública</td></tr>
+        </tbody></table></div>
+
+        <h3>🎬 Video: Estructuras organizacionales</h3>
+        <div class="video-wrap"><iframe src="https://www.youtube.com/embed/BoVFLJZDXns" title="Estructuras organizacionales" allowfullscreen loading="lazy"></iframe></div>
+        <p class="video-label">📌 Tipos de estructura organizacional y su aplicación en organizaciones de salud</p>
+
+        <h3>🇨🇴 Casos Colombianos — Organización en los Tres Énfasis</h3>
+        <div class="case-tabs">
+          <button class="case-tab active" onclick="showCase('org','clinico')">🏥 Clínico</button>
+          <button class="case-tab" onclick="showCase('org','ambiental')">🌿 Ambiental</button>
+          <button class="case-tab" onclick="showCase('org','industrial')">🏭 Industrial</button>
+        </div>
+        <div class="case-content active" id="org-clinico">
+          <div class="case-header"><div class="case-emoji">🏥</div><div class="case-info"><h4>Clínica del Country — Bogotá</h4><p>Organización del Laboratorio Clínico</p></div></div>
+          <div class="case-body">
+            <p>La Clínica del Country, institución de tercer nivel de complejidad en Bogotá, organiza su laboratorio clínico con una estructura funcional-matricial que combina la especialización técnica con la coordinación de procesos de calidad. El laboratorio se divide en secciones especializadas con un coordinador técnico-científico y reporta al Departamento de Diagnóstico.</p>
+            <p><strong style="color:var(--white)">Organigrama simplificado del laboratorio:</strong></p>
+            <div class="callout callout-green">Director Médico → Jefe de Laboratorio → [Microbiología | Hematología | Química Clínica | Inmunología | Banco de Sangre] → Bacteriólogos/Químicos → Auxiliares de laboratorio</div>
+            <p>Cada sección tiene un bacteriólogo coordinador con funciones definidas en el Manual de Cargos según la Resolución 2003 de 2014 del Ministerio de Salud.</p>
+          </div>
+        </div>
+        <div class="case-content" id="org-ambiental">
+          <div class="case-header"><div class="case-emoji">🌿</div><div class="case-info"><h4>CORPOAMAZONIA — Corporación para el Desarrollo Sostenible del Sur de la Amazonia</h4><p>Organización del área de calidad ambiental</p></div></div>
+          <div class="case-body">
+            <p>CORPOAMAZONIA cuenta con una estructura divisional organizada por subdirecciones que incluye la Subdirección de Calidad Ambiental, que coordina los laboratorios de análisis de aguas y suelos. Cada sede regional (Putumayo, Caquetá, Amazonas) tiene un equipo técnico organizado por componente ambiental.</p>
+            <p>El bacteriólogo o microbiólogo ambiental se ubica en la Subdirección de Calidad Ambiental con funciones en monitoreo microbiológico de fuentes hídricas, análisis de coliformes y control de vertimientos.</p>
+            <p class="callout callout-green"><strong>📌 Fuente:</strong> Estructura orgánica CORPOAMAZONIA. <a href="https://www.corpoamazonia.gov.co" target="_blank" style="color:var(--green2)">corpoamazonia.gov.co</a></p>
+          </div>
+        </div>
+        <div class="case-content" id="org-industrial">
+          <div class="case-header"><div class="case-emoji">🏭</div><div class="case-info"><h4>Colanta — Cooperativa Lechera de Antioquia</h4><p>Organización del laboratorio de control de calidad microbiológico</p></div></div>
+          <div class="case-body">
+            <p>Colanta, la cooperativa lechera más grande de Colombia, organiza su sistema de calidad microbiológica con laboratorios en cada planta de procesamiento. La Gerencia de Calidad e Inocuidad coordina los bacteriólogos que realizan análisis de materias primas, producto en proceso y producto terminado bajo normas NTC ISO 17025.</p>
+            <div class="table-wrap"><table><thead><tr><th>Cargo</th><th>Función principal</th><th>Dependencia</th></tr></thead><tbody>
+              <tr><td>Bacteriólogo de Recepción</td><td>Análisis microbiológico de leche cruda</td><td>Laboratorio de planta</td></tr>
+              <tr><td>Bacteriólogo de Proceso</td><td>Control en línea de producción</td><td>Jefe de calidad planta</td></tr>
+              <tr><td>Bacteriólogo de Liberación</td><td>Análisis producto terminado</td><td>Gerencia de calidad</td></tr>
+            </tbody></table></div>
+          </div>
+        </div>
+        <div class="activity-box">
+          <h4>✍️ Actividad: Diseña un organigrama</h4>
+          <p class="act-desc">Describe en texto la estructura jerárquica que tendría el laboratorio donde realizarás tu práctica. Incluye mínimo 3 niveles jerárquicos y los cargos más relevantes.</p>
+          <textarea class="reflect-textarea" id="org_act" placeholder="Ej: Gerente / Director → Jefe de Laboratorio → Bacteriólogo coordinador → Bacteriólogos → Auxiliares..."></textarea>
+          <div style="margin-top:10px"><button class="btn btn-ghost" onclick="saveReflect('org_act','org-result')" style="border-color:var(--green2);color:var(--green2)">Guardar organigrama ✓</button></div>
+          <div class="act-result" id="org-result" style="border-color:rgba(34,197,94,.3);color:var(--green2)">🏗️ ¡Guardado! Un buen organigrama elimina la ambigüedad y mejora la comunicación entre áreas. +20 XP</div>
+        </div>
+
+        <!-- QUIZ MOD2 -->
+        <h3>✅ Evaluación — Módulo 2</h3>
+        <div class="quiz-q"><div class="q-num">Pregunta 1 de 5</div><div class="q-text">¿Cuál es la función principal de un manual de cargos en un laboratorio clínico?</div><div class="q-opts">
+          <button class="q-opt" onclick="ansQ('m1',1,this,false)">Servir como documento decorativo en la sala de espera</button>
+          <button class="q-opt" onclick="ansQ('m1',1,this,true)">Definir claramente las responsabilidades, requisitos y alcance de cada cargo para evitar ambigüedad y garantizar calidad</button>
+          <button class="q-opt" onclick="ansQ('m1',1,this,false)">Reemplazar al jefe de laboratorio en la toma de decisiones</button>
+          <button class="q-opt" onclick="ansQ('m1',1,this,false)">Solo es obligatorio para hospitales de tercer nivel</button>
+        </div><div class="q-fb" id="m1qfb1"></div></div>
+
+        <div class="quiz-q"><div class="q-num">Pregunta 2 de 5</div><div class="q-text">La estructura organizacional de CORPOAMAZONIA por subdirecciones regionales es un ejemplo de:</div><div class="q-opts">
+          <button class="q-opt" onclick="ansQ('m1',2,this,false)">Estructura funcional centralizada</button>
+          <button class="q-opt" onclick="ansQ('m1',2,this,true)">Estructura divisional por región geográfica</button>
+          <button class="q-opt" onclick="ansQ('m1',2,this,false)">Estructura matricial de proyectos</button>
+          <button class="q-opt" onclick="ansQ('m1',2,this,false)">Organización informal sin jerarquías</button>
+        </div><div class="q-fb" id="m1qfb2"></div></div>
+
+        <div class="quiz-q"><div class="q-num">Pregunta 3 de 5</div><div class="q-text">En un laboratorio de alimentos como Colanta, tener diferentes bacteriólogos para recepción, proceso y liberación responde al principio de:</div><div class="q-opts">
+          <button class="q-opt" onclick="ansQ('m1',3,this,true)">División del trabajo y especialización funcional para garantizar control en cada etapa del proceso productivo</button>
+          <button class="q-opt" onclick="ansQ('m1',3,this,false)">Centralización de todas las decisiones en un solo cargo</button>
+          <button class="q-opt" onclick="ansQ('m1',3,this,false)">Reducción de costos por tener más personal</button>
+          <button class="q-opt" onclick="ansQ('m1',3,this,false)">Un requisito exclusivo del INVIMA sin fundamento administrativo</button>
+        </div><div class="q-fb" id="m1qfb3"></div></div>
+
+        <div class="quiz-q"><div class="q-num">Pregunta 4 de 5</div><div class="q-text">¿Qué norma colombiana regula las condiciones de habilitación de laboratorios clínicos, incluyendo sus requisitos de organización?</div><div class="q-opts">
+          <button class="q-opt" onclick="ansQ('m1',4,this,false)">Decreto 1072 de 2015 — Decreto Único Reglamentario del Sector Trabajo</button>
+          <button class="q-opt" onclick="ansQ('m1',4,this,true)">Resolución 2003 de 2014 — Habilitación de Servicios de Salud del Ministerio de Salud</button>
+          <button class="q-opt" onclick="ansQ('m1',4,this,false)">Ley 100 de 1993 — Sistema de Seguridad Social</button>
+          <button class="q-opt" onclick="ansQ('m1',4,this,false)">ISO 9001:2015 — Sistemas de gestión de calidad</button>
+        </div><div class="q-fb" id="m1qfb4"></div></div>
+
+        <div class="quiz-q"><div class="q-num">Pregunta 5 de 5</div><div class="q-text">¿Cuál es la relación entre organización y planeación en el proceso administrativo?</div><div class="q-opts">
+          <button class="q-opt" onclick="ansQ('m1',5,this,false)">Son funciones independientes que no se relacionan entre sí</button>
+          <button class="q-opt" onclick="ansQ('m1',5,this,false)">La organización siempre precede a la planeación</button>
+          <button class="q-opt" onclick="ansQ('m1',5,this,true)">La organización es la función que estructura los recursos y roles para ejecutar lo que fue planificado — no puede existir sin un plan previo</button>
+          <button class="q-opt" onclick="ansQ('m1',5,this,false)">Solo existe relación entre organización y control</button>
+        </div><div class="q-fb" id="m1qfb5"></div></div>
+
+        <div class="result-panel" id="m1result">
+          <div style="color:var(--muted);font-size:.83rem;letter-spacing:.1em;text-transform:uppercase">Resultado · Módulo 2</div>
+          <div class="result-big" id="m1score" style="color:var(--green2)">–</div>
+          <div style="font-size:1.6rem;letter-spacing:4px;margin-bottom:10px" id="m1stars">–</div>
+          <p style="color:var(--muted);margin-bottom:16px" id="m1msg">–</p>
+          <div class="result-badge" id="m1badge" style="background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.3);color:var(--green2)">–</div>
+          <br/><br/>
+          <button class="btn btn-primary" onclick="switchMod(2)" style="background:linear-gradient(135deg,var(--orange),var(--orange2));color:#07090f">Ir a Módulo 3: Dirección →</button>
+        </div>
+
+        <div class="nav-row"><button class="btn btn-ghost" onclick="goSec(1,0)" style="border-color:var(--green2);color:var(--green2)">← Anterior</button><button class="btn btn-primary" onclick="calcMod1()" style="background:linear-gradient(135deg,var(--green),var(--green2));color:#07090f">Ver resultado ✓</button></div>
+      </div>
+    </div>
+  </div><!-- fin mod1 -->
+
+  <!-- ══════════════════ MÓDULO 3: DIRECCIÓN ══════════════════ -->
+  <div class="mod-panel" id="mod2">
+    <div class="page">
+      <div class="sec-panel active" id="mod2sec0">
+        <div class="hero">
+          <div class="h-badge" style="color:var(--orange2)">🧭 Módulo 3 · Dirección</div>
+          <h2>Liderar no es mandar.<br/>Es inspirar y acompañar.</h2>
+          <p>La dirección es la función mediante la cual el administrador influye en las personas para que contribuyan al logro de los objetivos organizacionales y de grupo.</p>
+          <div class="obj-list">
+            <div class="obj-item"><span>🎯</span><span>Distinguir estilos de liderazgo y su aplicación en contextos de salud</span></div>
+            <div class="obj-item"><span>🎯</span><span>Comprender la motivación como herramienta de gestión del talento humano</span></div>
+            <div class="obj-item"><span>🎯</span><span>Identificar estrategias de comunicación efectiva en equipos de laboratorio</span></div>
+          </div>
+        </div>
+        <div class="callout callout-amber"><strong>💡 ¿Por qué dirección en bacteriología?</strong><br/>En práctica formativa, interactuarás con jefes, tutores, compañeros y pacientes. Entender la dirección te permite trabajar bien en equipo, comunicarte con claridad, y en el futuro, liderar tu propio servicio de laboratorio.</div>
+        <h3>Los tres pilares de la Dirección</h3>
+        <div class="cards">
+          <div class="card" style="position:relative;overflow:hidden"><div class="card-accent" style="background:var(--orange2)"></div><div class="c-icon">👑</div><h4>Liderazgo</h4><p>Capacidad de influir en otros para alcanzar metas. El liderazgo efectivo adapta su estilo al contexto y madurez del equipo.</p></div>
+          <div class="card" style="position:relative;overflow:hidden"><div class="card-accent" style="background:var(--amber)"></div><div class="c-icon">🔥</div><h4>Motivación</h4><p>Proceso que activa, dirige y sostiene el comportamiento hacia los objetivos. Va más allá del salario.</p></div>
+          <div class="card" style="position:relative;overflow:hidden"><div class="card-accent" style="background:var(--green2)"></div><div class="c-icon">💬</div><h4>Comunicación</h4><p>Transmisión efectiva de información, instrucciones y retroalimentación. Clave para la seguridad del paciente y la calidad analítica.</p></div>
+        </div>
+
+        <h3>Estilos de Liderazgo — Modelo Situacional de Hersey y Blanchard</h3>
+        <div class="table-wrap"><table><thead><tr><th style="color:var(--orange2)">Estilo</th><th>Comportamiento directivo</th><th>Comportamiento de apoyo</th><th>Cuándo usar</th></tr></thead><tbody>
+          <tr><td><strong style="color:var(--white)">Dirigir (E1)</strong></td><td>Alto</td><td>Bajo</td><td>Estudiante nuevo en laboratorio — poca experiencia</td></tr>
+          <tr><td><strong style="color:var(--white)">Entrenar (E2)</strong></td><td>Alto</td><td>Alto</td><td>Bacteriólogo con conocimiento pero sin confianza</td></tr>
+          <tr><td><strong style="color:var(--white)">Apoyar (E3)</strong></td><td>Bajo</td><td>Alto</td><td>Profesional competente con motivación variable</td></tr>
+          <tr><td><strong style="color:var(--white)">Delegar (E4)</strong></td><td>Bajo</td><td>Bajo</td><td>Experto autónomo y comprometido</td></tr>
+        </tbody></table></div>
+
+        <h3>🎬 Video: Liderazgo en equipos de salud</h3>
+        <div class="video-wrap"><iframe src="https://www.youtube.com/embed/2LMPuMlbGzg" title="Liderazgo en salud" allowfullscreen loading="lazy"></iframe></div>
+        <p class="video-label">📌 Liderazgo situacional y trabajo en equipo en instituciones de salud</p>
+
+        <h3>🇨🇴 Casos Colombianos — Dirección en los Tres Énfasis</h3>
+        <div class="case-tabs">
+          <button class="case-tab active" onclick="showCase('dir','clinico')">🏥 Clínico</button>
+          <button class="case-tab" onclick="showCase('dir','ambiental')">🌿 Ambiental</button>
+          <button class="case-tab" onclick="showCase('dir','industrial')">🏭 Industrial</button>
+        </div>
+        <div class="case-content active" id="dir-clinico">
+          <div class="case-header"><div class="case-emoji">🏥</div><div class="case-info"><h4>Fundación Santa Fe de Bogotá</h4><p>Gestión del talento humano en el Departamento de Patología y Laboratorio</p></div></div>
+          <div class="case-body">
+            <p>La Fundación Santa Fe, hospital de alta complejidad y referente de calidad en Colombia, implementa estrategias de liderazgo y motivación basadas en su modelo de gestión humana. El Laboratorio Clínico trabaja con un jefe que aplica el estilo de liderazgo participativo: convoca a los bacteriólogos en las decisiones de compra de equipos, protocolos y mejoras de procesos.</p>
+            <p><strong style="color:var(--white)">Estrategias de motivación aplicadas:</strong></p>
+            <div class="callout callout-amber">• Rotación planificada entre secciones para evitar el agotamiento<br/>• Reconocimiento mensual al bacteriólogo con menor tasa de no conformidades<br/>• Financiación de posgrados y especializaciones como beneficio institucional<br/>• Reuniones semanales de retroalimentación con lenguaje constructivo</div>
+          </div>
+        </div>
+        <div class="case-content" id="dir-ambiental">
+          <div class="case-header"><div class="case-emoji">🌿</div><div class="case-info"><h4>Parques Nacionales Naturales de Colombia</h4><p>Liderazgo en equipos interdisciplinarios de monitoreo ambiental</p></div></div>
+          <div class="case-body">
+            <p>Los equipos de monitoreo ambiental de Parques Nacionales trabajan en condiciones de campo complejas — selva, páramo, costas — con profesionales de diferentes disciplinas: biólogos, bacteriólogos, ingenieros ambientales. La dirección en este contexto requiere liderazgo adaptativo y alta capacidad de comunicación interprofesional.</p>
+            <p>El bacteriólogo en campo debe comunicar resultados de análisis de aguas a equipos no especializados, tomar decisiones autónomas sobre muestreo en ausencia del jefe, y motivar al equipo en condiciones de alta dificultad logística.</p>
+          </div>
+        </div>
+        <div class="case-content" id="dir-industrial">
+          <div class="case-header"><div class="case-emoji">🏭</div><div class="case-info"><h4>Bavaria S.A. — AB InBev Colombia</h4><p>Liderazgo en laboratorio de control microbiológico cervecero</p></div></div>
+          <div class="case-body">
+            <p>Bavaria, la empresa de bebidas más grande de Colombia, opera laboratorios de microbiología en sus plantas de Bogotá, Barranquilla, Medellín y Cali. El jefe de laboratorio debe dirigir equipos de turnos rotativos (incluyendo fines de semana y festivos), lo que requiere estrategias de motivación específicas para mantener la calidad analítica en toda circunstancia.</p>
+            <p>Aplican el liderazgo por objetivos: cada bacteriólogo tiene metas mensuales de rendimiento analítico vinculadas a un sistema de incentivos. La comunicación se gestiona a través de reuniones diarias de turno (briefings de 10 minutos) y plataformas digitales de reporte en tiempo real.</p>
+          </div>
+        </div>
+
+        <div class="activity-box">
+          <h4>🧠 Actividad: ¿Cuál es tu estilo de liderazgo?</h4>
+          <p class="act-desc">Reflexiona: en una situación donde un compañero de práctica comete repetidamente el mismo error de identificación de muestras, ¿cómo actuarías? Describe tu respuesta y el estilo de liderazgo que aplicarías.</p>
+          <textarea class="reflect-textarea" id="dir_act" placeholder="Describe cómo abordarías la situación, qué le dirías al compañero, y qué harías para que no vuelva a ocurrir..."></textarea>
+          <div style="margin-top:10px"><button class="btn btn-ghost" onclick="saveReflect('dir_act','dir-result')" style="border-color:var(--orange2);color:var(--orange2)">Guardar reflexión ✓</button></div>
+          <div class="act-result" id="dir-result" style="border-color:rgba(249,115,22,.3);color:var(--orange2)">🧭 ¡Guardado! El liderazgo efectivo se desarrolla con práctica y autoconocimiento. +15 XP</div>
+        </div>
+
+        <!-- QUIZ MOD3 -->
+        <h3>✅ Evaluación — Módulo 3</h3>
+        <div class="quiz-q"><div class="q-num">Pregunta 1 de 5</div><div class="q-text">Según el modelo de liderazgo situacional, ¿qué estilo debería aplicar un jefe de laboratorio con un estudiante en práctica que recién inicia?</div><div class="q-opts">
+          <button class="q-opt" onclick="ansQ('m2',1,this,true)">Dirigir (E1) — alta dirección y bajo apoyo, porque el estudiante aún no tiene la competencia necesaria</button>
+          <button class="q-opt" onclick="ansQ('m2',1,this,false)">Delegar (E4) — darle total autonomía desde el primer día</button>
+          <button class="q-opt" onclick="ansQ('m2',1,this,false)">Apoyar (E3) — solo acompañamiento emocional</button>
+          <button class="q-opt" onclick="ansQ('m2',1,this,false)">No importa el estilo — todos aprenden igual</button>
+        </div><div class="q-fb" id="m2qfb1"></div></div>
+
+        <div class="quiz-q"><div class="q-num">Pregunta 2 de 5</div><div class="q-text">La Fundación Santa Fe reconoce mensualmente al bacteriólogo con menor tasa de no conformidades. ¿Qué teoría de motivación respalda esta práctica?</div><div class="q-opts">
+          <button class="q-opt" onclick="ansQ('m2',2,this,false)">Teoría de las necesidades de Maslow</button>
+          <button class="q-opt" onclick="ansQ('m2',2,this,true)">Teoría del reforzamiento de Skinner — el reconocimiento como reforzador positivo aumenta la conducta deseada</button>
+          <button class="q-opt" onclick="ansQ('m2',2,this,false)">Teoría X de McGregor</button>
+          <button class="q-opt" onclick="ansQ('m2',2,this,false)">No tiene respaldo teórico</button>
+        </div><div class="q-fb" id="m2qfb2"></div></div>
+
+        <div class="quiz-q"><div class="q-num">Pregunta 3 de 5</div><div class="q-text">En un laboratorio clínico, un bacteriólogo detecta un resultado crítico de laboratorio. ¿Cuál es la acción de comunicación más importante?</div><div class="q-opts">
+          <button class="q-opt" onclick="ansQ('m2',3,this,false)">Esperar al médico para que revise el sistema de información</button>
+          <button class="q-opt" onclick="ansQ('m2',3,this,false)">Registrar el resultado y no comunicarlo hasta que el médico lo solicite</button>
+          <button class="q-opt" onclick="ansQ('m2',3,this,true)">Notificar de inmediato al médico tratante de forma verbal y documentada, siguiendo el protocolo de valores críticos</button>
+          <button class="q-opt" onclick="ansQ('m2',3,this,false)">Repetir el examen antes de informar</button>
+        </div><div class="q-fb" id="m2qfb3"></div></div>
+
+        <div class="quiz-q"><div class="q-num">Pregunta 4 de 5</div><div class="q-text">¿Cuál es la diferencia entre autoridad formal y liderazgo?</div><div class="q-opts">
+          <button class="q-opt" onclick="ansQ('m2',4,this,false)">No hay diferencia — quien tiene el cargo siempre es el líder</button>
+          <button class="q-opt" onclick="ansQ('m2',4,this,true)">La autoridad formal viene del cargo; el liderazgo es la capacidad de influir en otros independientemente de la posición jerárquica</button>
+          <button class="q-opt" onclick="ansQ('m2',4,this,false)">El liderazgo solo existe en el sector privado</button>
+          <button class="q-opt" onclick="ansQ('m2',4,this,false)">La autoridad formal es más efectiva que el liderazgo</button>
+        </div><div class="q-fb" id="m2qfb4"></div></div>
+
+        <div class="quiz-q"><div class="q-num">Pregunta 5 de 5</div><div class="q-text">¿Cuál de los siguientes factores es un motivador intrínseco para un bacteriólogo según la teoría de Herzberg?</div><div class="q-opts">
+          <button class="q-opt" onclick="ansQ('m2',5,this,false)">El salario mensual</button>
+          <button class="q-opt" onclick="ansQ('m2',5,this,false)">Las condiciones físicas del laboratorio</button>
+          <button class="q-opt" onclick="ansQ('m2',5,this,true)">El logro profesional, el reconocimiento por su trabajo y la oportunidad de crecimiento técnico</button>
+          <button class="q-opt" onclick="ansQ('m2',5,this,false)">La estabilidad laboral del cargo</button>
+        </div><div class="q-fb" id="m2qfb5"></div></div>
+
+        <div class="result-panel" id="m2result">
+          <div style="color:var(--muted);font-size:.83rem;letter-spacing:.1em;text-transform:uppercase">Resultado · Módulo 3</div>
+          <div class="result-big" id="m2score" style="color:var(--orange2)">–</div>
+          <div style="font-size:1.6rem;letter-spacing:4px;margin-bottom:10px" id="m2stars">–</div>
+          <p style="color:var(--muted);margin-bottom:16px" id="m2msg">–</p>
+          <div class="result-badge" id="m2badge" style="background:rgba(249,115,22,.1);border-color:rgba(249,115,22,.3);color:var(--orange2)">–</div>
+          <br/><br/>
+          <button class="btn btn-primary" onclick="switchMod(3)" style="background:linear-gradient(135deg,var(--violet),var(--violet2));color:#fff">Ir a Módulo 4: Control →</button>
+        </div>
+
+        <div class="nav-row"><button class="btn btn-ghost" onclick="switchMod(1)" style="border-color:var(--orange2);color:var(--orange2)">← Módulo anterior</button><button class="btn btn-primary" onclick="calcMod2()" style="background:linear-gradient(135deg,var(--orange),var(--orange2));color:#07090f">Ver resultado ✓</button></div>
+      </div>
+    </div>
+  </div><!-- fin mod2 -->
+
+  <!-- ══════════════════ MÓDULO 4: CONTROL ══════════════════ -->
+  <div class="mod-panel" id="mod3">
+    <div class="page">
+      <div class="sec-panel active" id="mod3sec0">
+        <div class="hero">
+          <div class="h-badge" style="color:var(--violet2)">📊 Módulo 4 · Control</div>
+          <h2>Lo que no se mide<br/>no se puede mejorar.</h2>
+          <p>El control es la función que verifica que lo ejecutado corresponde a lo planeado, y genera las acciones correctivas necesarias para mantener o mejorar el desempeño organizacional.</p>
+          <div class="obj-list">
+            <div class="obj-item"><span>🎯</span><span>Comprender el proceso y los tipos de control en organizaciones de salud</span></div>
+            <div class="obj-item"><span>🎯</span><span>Aplicar el ciclo PHVA (Planear-Hacer-Verificar-Actuar) en laboratorios</span></div>
+            <div class="obj-item"><span>🎯</span><span>Diseñar indicadores de gestión relevantes para el énfasis de práctica</span></div>
+          </div>
+        </div>
+        <div class="callout" style="background:rgba(124,58,237,.07);border-left:4px solid var(--violet2)"><strong>💡 Control en bacteriología:</strong><br/>Cada control de calidad interno que haces en el laboratorio es un acto de control administrativo. El bacteriólogo que entiende el control no solo hace buena ciencia — garantiza la seguridad del paciente, del ecosistema o del producto.</div>
+
+        <h3>El Ciclo PHVA — Base del Control en Calidad</h3>
+        <div class="phva-grid">
+          <div class="phva-card phva-p"><div class="ph-letter">P</div><h5>Planear</h5><p>Define qué controlar, cómo medirlo y qué estándares son aceptables</p></div>
+          <div class="phva-card phva-h"><div class="ph-letter">H</div><h5>Hacer</h5><p>Ejecuta los procedimientos según lo planeado con registros precisos</p></div>
+          <div class="phva-card phva-v"><div class="ph-letter">V</div><h5>Verificar</h5><p>Compara los resultados con los estándares. Identifica desviaciones</p></div>
+          <div class="phva-card phva-a"><div class="ph-letter">A</div><h5>Actuar</h5><p>Implementa acciones correctivas o preventivas y estandariza mejoras</p></div>
+        </div>
+
+        <h3>Tipos de Control</h3>
+        <div class="table-wrap"><table><thead><tr><th style="color:var(--violet2)">Tipo</th><th>Momento</th><th>Ejemplo en laboratorio</th></tr></thead><tbody>
+          <tr><td><strong style="color:var(--white)">Control previo / Preventivo</strong></td><td>Antes del proceso</td><td>Verificar fecha de vencimiento de reactivos antes de iniciar análisis</td></tr>
+          <tr><td><strong style="color:var(--white)">Control concurrente</strong></td><td>Durante el proceso</td><td>Monitorear temperaturas de incubación durante cultivo bacteriano</td></tr>
+          <tr><td><strong style="color:var(--white)">Control posterior / Correctivo</strong></td><td>Después del proceso</td><td>Análisis de causa raíz ante resultado de control de calidad fuera de límites</td></tr>
+        </tbody></table></div>
+
+        <h3>Indicadores de Gestión (KPIs) en Laboratorio</h3>
+        <p>Un indicador de gestión es una medida cuantitativa o cualitativa que permite evaluar el desempeño de un proceso en relación con los objetivos planteados.</p>
+        <div class="callout" style="background:rgba(124,58,237,.07);border-left:4px solid var(--violet2)"><strong>Indicador = (Valor obtenido / Valor esperado) × 100</strong><br/><br/>
+        Ejemplo: Tasa de rechazo de muestras = (Muestras rechazadas / Total muestras recibidas) × 100<br/>Estándar aceptable: ≤ 2% según resolución 3100 de 2019</div>
+
+        <div class="activity-box">
+          <h4>📊 Actividad: Panel de Indicadores (KPI Tracker)</h4>
+          <p class="act-desc">Haz clic en las barras para ajustar el valor actual de cada indicador y compara con el estándar esperado:</p>
+          <div id="kpiTracker">
+            <div class="kpi-row"><span class="kpi-name">🧫 Tasa de contaminación de hemocultivos</span><div class="kpi-bar-wrap" onclick="adjKPI(this,0)"><div class="kpi-bar" style="width:55%;background:var(--rose)"></div></div><span class="kpi-val">5.5% <small style="color:var(--muted)">(meta ≤3%)</small></span></div>
+            <div class="kpi-row"><span class="kpi-name">⏱️ TAT (Tiempo de respuesta urgencias)</span><div class="kpi-bar-wrap" onclick="adjKPI(this,1)"><div class="kpi-bar" style="width:80%;background:var(--amber)"></div></div><span class="kpi-val">80% ≤60min</span></div>
+            <div class="kpi-row"><span class="kpi-name">✅ % Muestras sin no conformidades</span><div class="kpi-bar-wrap" onclick="adjKPI(this,2)"><div class="kpi-bar" style="width:94%;background:var(--green2)"></div></div><span class="kpi-val">94% <small style="color:var(--muted)">(meta ≥95%)</small></span></div>
+            <div class="kpi-row"><span class="kpi-name">🌡️ % Equipos calibrados al día</span><div class="kpi-bar-wrap" onclick="adjKPI(this,3)"><div class="kpi-bar" style="width:100%;background:var(--green2)"></div></div><span class="kpi-val">100%</span></div>
+          </div>
+          <p style="font-size:.8rem;color:var(--muted);margin-top:10px">💡 Haz clic en cualquier barra para ajustar su valor. Los indicadores en rojo requieren acción correctiva inmediata.</p>
+        </div>
+
+        <h3>🎬 Video: Control de Calidad en Laboratorio Clínico</h3>
+        <div class="video-wrap"><iframe src="https://www.youtube.com/embed/fzqpNzE7674" title="Control calidad laboratorio" allowfullscreen loading="lazy"></iframe></div>
+        <p class="video-label">📌 Gestión de calidad y control en el laboratorio clínico — PHVA y no conformidades</p>
+
+        <h3>🇨🇴 Casos Colombianos — Control en los Tres Énfasis</h3>
+        <div class="case-tabs">
+          <button class="case-tab active" onclick="showCase('ctrl','clinico')">🏥 Clínico</button>
+          <button class="case-tab" onclick="showCase('ctrl','ambiental')">🌿 Ambiental</button>
+          <button class="case-tab" onclick="showCase('ctrl','industrial')">🏭 Industrial</button>
+        </div>
+        <div class="case-content active" id="ctrl-clinico">
+          <div class="case-header"><div class="case-emoji">🏥</div><div class="case-info"><h4>EPS Sanitas — Red de Laboratorios</h4><p>Sistema de indicadores de calidad en laboratorios de la red</p></div></div>
+          <div class="case-body">
+            <p>EPS Sanitas, con presencia en más de 25 ciudades colombianas, implementa un sistema centralizado de control de calidad para su red de laboratorios clínicos. El sistema incluye indicadores definidos en su Manual de Calidad bajo los estándares de la Resolución 3100 de 2019 y la norma ISO 15189.</p>
+            <div class="table-wrap"><table><thead><tr><th>Indicador</th><th>Estándar EPS Sanitas</th><th>Frecuencia de medición</th></tr></thead><tbody>
+              <tr><td>Tasa de rechazo de muestras</td><td>≤ 2%</td><td>Mensual</td></tr>
+              <tr><td>Tiempo de respuesta urgencias (TAT)</td><td>≤ 60 minutos</td><td>Diaria</td></tr>
+              <tr><td>% Control de calidad interno aprobado</td><td>≥ 95%</td><td>Diaria</td></tr>
+              <tr><td>Tasa de quejas y reclamos</td><td>≤ 0.5%</td><td>Mensual</td></tr>
+            </tbody></table></div>
+          </div>
+        </div>
+        <div class="case-content" id="ctrl-ambiental">
+          <div class="case-header"><div class="case-emoji">🌿</div><div class="case-info"><h4>ANLA — Autoridad Nacional de Licencias Ambientales</h4><p>Control y seguimiento ambiental a proyectos de alto impacto</p></div></div>
+          <div class="case-body">
+            <p>La ANLA realiza control posterior a las licencias ambientales otorgadas en Colombia. El bacteriólogo ambiental que trabaja en proyectos con licencia ANLA (minería, petróleo, infraestructura) debe reportar indicadores de calidad microbiológica del agua según los Planes de Manejo Ambiental (PMA).</p>
+            <p>Los indicadores de control ambiental microbiológico incluyen: coliformes totales y fecales en cuerpos de agua cercanos, E. coli en pozos de agua potable, y recuento total de mesófilos en suelos intervenidos. El incumplimiento genera medidas preventivas o sancionatorias por la ANLA.</p>
+            <p class="callout" style="background:rgba(124,58,237,.07);border-left:4px solid var(--violet2)"><strong>📌 Fuente:</strong> ANLA. Resoluciones de seguimiento ambiental. <a href="https://www.anla.gov.co" target="_blank" style="color:var(--violet2)">anla.gov.co</a></p>
+          </div>
+        </div>
+        <div class="case-content" id="ctrl-industrial">
+          <div class="case-header"><div class="case-emoji">🏭</div><div class="case-info"><h4>Pfizer Colombia — Control Microbiológico de Medicamentos</h4><p>PHVA en laboratorio de control de calidad farmacéutico</p></div></div>
+          <div class="case-body">
+            <p>Pfizer Colombia, con plantas de manufactura en Bogotá, implementa el ciclo PHVA en su laboratorio de control microbiológico para garantizar la esterilidad y pureza de sus productos. El bacteriólogo de control de calidad ejecuta diariamente el ciclo:</p>
+            <div class="phva-grid" style="margin:14px 0">
+              <div class="phva-card phva-p" style="text-align:left"><div class="ph-letter" style="font-size:1.5rem">P</div><p style="font-size:.82rem">Define lote a analizar, parámetros USP, controles positivos y negativos</p></div>
+              <div class="phva-card phva-h" style="text-align:left"><div class="ph-letter" style="font-size:1.5rem">H</div><p style="font-size:.82rem">Realiza prueba de esterilidad, endotoxinas y recuento microbiano</p></div>
+              <div class="phva-card phva-v" style="text-align:left"><div class="ph-letter" style="font-size:1.5rem">V</div><p style="font-size:.82rem">Compara resultados con especificaciones. Si OOS: inicia investigación</p></div>
+              <div class="phva-card phva-a" style="text-align:left"><div class="ph-letter" style="font-size:1.5rem">A</div><p style="font-size:.82rem">Libera o retiene lote. Documenta acciones correctivas en CAPA</p></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="activity-box">
+          <h4>✍️ Actividad: Diseña un indicador de control</h4>
+          <p class="act-desc">Según el énfasis donde realizarás tu práctica, diseña un indicador de gestión siguiendo la estructura: Nombre del indicador, fórmula de cálculo, estándar esperado, frecuencia de medición y acción correctiva si se incumple.</p>
+          <textarea class="reflect-textarea" id="ctrl_act" style="min-height:120px" placeholder="Nombre: ___&#10;Fórmula: (___/___) × 100&#10;Estándar: ≤ o ≥ ___%&#10;Frecuencia: diaria/semanal/mensual&#10;Acción correctiva: ___"></textarea>
+          <div style="margin-top:10px"><button class="btn btn-ghost" onclick="saveReflect('ctrl_act','ctrl-result')" style="border-color:var(--violet2);color:var(--violet2)">Guardar indicador ✓</button></div>
+          <div class="act-result" id="ctrl-result" style="border-color:rgba(124,58,237,.3);color:var(--violet2)">📊 ¡Indicador guardado! Diseñar tus propios indicadores es la habilidad más valiosa del control administrativo. +25 XP</div>
+        </div>
+
+        <!-- QUIZ MOD4 -->
+        <h3>✅ Evaluación — Módulo 4: Control</h3>
+        <div class="quiz-q"><div class="q-num">Pregunta 1 de 6</div><div class="q-text">¿En qué fase del ciclo PHVA se identifican las desviaciones entre los resultados obtenidos y los estándares esperados?</div><div class="q-opts">
+          <button class="q-opt" onclick="ansQ('m3',1,this,false)">Planear</button>
+          <button class="q-opt" onclick="ansQ('m3',1,this,false)">Hacer</button>
+          <button class="q-opt" onclick="ansQ('m3',1,this,true)">Verificar</button>
+          <button class="q-opt" onclick="ansQ('m3',1,this,false)">Actuar</button>
+        </div><div class="q-fb" id="m3qfb1"></div></div>
+
+        <div class="quiz-q"><div class="q-num">Pregunta 2 de 6</div><div class="q-text">La verificación de la fecha de vencimiento de los medios de cultivo antes de iniciar un análisis es un ejemplo de:</div><div class="q-opts">
+          <button class="q-opt" onclick="ansQ('m3',2,this,true)">Control preventivo — se realiza antes del proceso para evitar errores</button>
+          <button class="q-opt" onclick="ansQ('m3',2,this,false)">Control concurrente — se realiza durante el proceso</button>
+          <button class="q-opt" onclick="ansQ('m3',2,this,false)">Control posterior — se realiza después del proceso</button>
+          <button class="q-opt" onclick="ansQ('m3',2,this,false)">No es un tipo de control administrativo</button>
+        </div><div class="q-fb" id="m3qfb2"></div></div>
+
+        <div class="quiz-q"><div class="q-num">Pregunta 3 de 6</div><div class="q-text">EPS Sanitas define la tasa de rechazo de muestras ≤2% como estándar. Si el mes pasado fue del 4%, ¿qué debe hacer el jefe de laboratorio?</div><div class="q-opts">
+          <button class="q-opt" onclick="ansQ('m3',3,this,false)">Cambiar el estándar al 4% para que el indicador quede en verde</button>
+          <button class="q-opt" onclick="ansQ('m3',3,this,true)">Iniciar un análisis de causa raíz, implementar acciones correctivas e iniciar el ciclo PHVA para reducir la tasa</button>
+          <button class="q-opt" onclick="ansQ('m3',3,this,false)">Ignorarlo si ocurre solo un mes</button>
+          <button class="q-opt" onclick="ansQ('m3',3,this,false)">Reportarlo solo si se repite tres meses consecutivos</button>
+        </div><div class="q-fb" id="m3qfb3"></div></div>
+
+        <div class="quiz-q"><div class="q-num">Pregunta 4 de 6</div><div class="q-text">¿Qué norma técnica colombiana rige la competencia de los laboratorios de ensayo y calibración, incluyendo laboratorios ambientales?</div><div class="q-opts">
+          <button class="q-opt" onclick="ansQ('m3',4,this,false)">ISO 9001:2015 — Sistemas de Gestión de Calidad general</button>
+          <button class="q-opt" onclick="ansQ('m3',4,this,true)">ISO/IEC 17025:2017 (NTC-ISO/IEC 17025) — Requisitos generales para la competencia de laboratorios</button>
+          <button class="q-opt" onclick="ansQ('m3',4,this,false)">Resolución 2003 de 2014 — Habilitación de servicios de salud</button>
+          <button class="q-opt" onclick="ansQ('m3',4,this,false)">Decreto 1575 de 2007 — Sistema para la protección y control de la calidad del agua</button>
+        </div><div class="q-fb" id="m3qfb4"></div></div>
+
+        <div class="quiz-q"><div class="q-num">Pregunta 5 de 6</div><div class="q-text">En Pfizer Colombia, cuando un resultado de prueba de esterilidad está OOS (Out of Specification), la acción inmediata es:</div><div class="q-opts">
+          <button class="q-opt" onclick="ansQ('m3',5,this,false)">Liberar el lote y hacer el reporte internamente</button>
+          <button class="q-opt" onclick="ansQ('m3',5,this,true)">Iniciar una investigación de causa raíz, retener el lote y documentar en el sistema CAPA antes de tomar decisiones</button>
+          <button class="q-opt" onclick="ansQ('m3',5,this,false)">Repetir la prueba sin documentar el primer resultado</button>
+          <button class="q-opt" onclick="ansQ('m3',5,this,false)">Descartarlo como error de laboratorio sin mayor investigación</button>
+        </div><div class="q-fb" id="m3qfb5"></div></div>
+
+        <div class="quiz-q"><div class="q-num">Pregunta 6 de 6</div><div class="q-text">¿Cómo se relaciona el control con las demás funciones del proceso administrativo?</div><div class="q-opts">
+          <button class="q-opt" onclick="ansQ('m3',6,this,false)">El control es independiente y se aplica solo al final de cada ciclo</button>
+          <button class="q-opt" onclick="ansQ('m3',6,this,false)">El control solo se relaciona con la organización</button>
+          <button class="q-opt" onclick="ansQ('m3',6,this,true)">El control cierra el ciclo y retroalimenta la planeación: los resultados del control informan nuevos planes, ajustes en la organización y cambios en la dirección</button>
+          <button class="q-opt" onclick="ansQ('m3',6,this,false)">El control reemplaza a la planeación cuando la organización es madura</button>
+        </div><div class="q-fb" id="m3qfb6"></div></div>
+
+        <div class="result-panel" id="m3result">
+          <div style="color:var(--muted);font-size:.83rem;letter-spacing:.1em;text-transform:uppercase">Resultado · Módulo 4 — Final</div>
+          <div class="result-big" id="m3score" style="color:var(--violet2)">–</div>
+          <div style="font-size:1.6rem;letter-spacing:4px;margin-bottom:10px" id="m3stars">–</div>
+          <p style="color:var(--muted);margin-bottom:16px" id="m3msg">–</p>
+          <div class="result-badge" id="m3badge" style="background:rgba(124,58,237,.1);border-color:rgba(124,58,237,.3);color:var(--violet2)">–</div>
+          <br/><br/>
+          <div id="finalDiploma" style="display:none;margin-top:24px;background:linear-gradient(135deg,#07090f,#0d1117);border:2px solid var(--amber);border-radius:var(--radius);padding:32px;text-align:center">
+            <div style="font-size:2rem;margin-bottom:12px">🎓</div>
+            <div style="font-family:'Syne',sans-serif;font-size:1.3rem;color:var(--amber);margin-bottom:8px">Certificado de Finalización</div>
+            <div style="font-family:'Syne',sans-serif;font-size:1.7rem;color:var(--white);margin:12px 0" id="diplomaName">–</div>
+            <p style="color:var(--muted);font-size:.88rem">Ha completado los 4 módulos del Proceso Administrativo en Salud<br/>Universidad Colegio Mayor de Cundinamarca · Bacteriología VIII</p>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:16px 0;font-size:.8rem">
+              <span style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);color:var(--blue2);padding:4px 12px;border-radius:100px">✓ Planeación</span>
+              <span style="background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);color:var(--green2);padding:4px 12px;border-radius:100px">✓ Organización</span>
+              <span style="background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);color:var(--orange2);padding:4px 12px;border-radius:100px">✓ Dirección</span>
+              <span style="background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.3);color:var(--violet2);padding:4px 12px;border-radius:100px">✓ Control</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- BIBLIOGRAFÍA FINAL -->
+        <h3 style="margin-top:48px">📚 Bibliografía General — Todos los Módulos</h3>
+        <div class="bib-item"><div class="bib-num">1</div><div class="bib-body"><div class="bib-title">Introducción a la Administración de las Organizaciones</div><div class="bib-ref">Chiavenato, I. (2014). McGraw-Hill. 3ª ed. ISBN: 978-607-15-1070-2</div><a class="bib-link" href="https://www.mheducation.com.mx" target="_blank">🔗 Editorial</a></div></div>
+        <div class="bib-item"><div class="bib-num">2</div><div class="bib-body"><div class="bib-title">Administración: Proceso Administrativo</div><div class="bib-ref">Münch, L. (2014). Pearson Educación. 3ª ed. ISBN: 978-607-32-2357-0</div><a class="bib-link" href="https://www.pearsonenespanol.com" target="_blank">🔗 Editorial</a></div></div>
+        <div class="bib-item"><div class="bib-num">3</div><div class="bib-body"><div class="bib-title">Administración en los Servicios de Salud</div><div class="bib-ref">Fajardo-Ortiz, G. (2015). Manual Moderno. 4ª ed. ISBN: 978-607-448-507-8</div><a class="bib-link" href="https://www.manualmoderno.com" target="_blank">🔗 Editorial</a></div></div>
+        <div class="bib-item"><div class="bib-num">4</div><div class="bib-body"><div class="bib-title">Resolución 2003 de 2014 — Habilitación de Servicios de Salud</div><div class="bib-ref">Ministerio de Salud y Protección Social de Colombia (2014). Bogotá D.C.</div><a class="bib-link" href="https://www.minsalud.gov.co/normatividad_nuevo/resolucion-2003-de-2014.pdf" target="_blank">🔗 Texto completo</a></div></div>
+        <div class="bib-item"><div class="bib-num">5</div><div class="bib-body"><div class="bib-title">Resolución 3100 de 2019 — Indicadores de calidad de laboratorios</div><div class="bib-ref">Ministerio de Salud y Protección Social de Colombia (2019). Bogotá D.C.</div><a class="bib-link" href="https://www.minsalud.gov.co" target="_blank">🔗 Minsalud</a></div></div>
+        <div class="bib-item"><div class="bib-num">6</div><div class="bib-body"><div class="bib-title">NTC-ISO/IEC 17025:2017 — Requisitos para laboratorios de ensayo y calibración</div><div class="bib-ref">ICONTEC (2018). Colombia. Disponible en Biblioteca Nacional de Colombia.</div><a class="bib-link" href="https://www.icontec.org" target="_blank">🔗 ICONTEC</a></div></div>
+        <div class="bib-item"><div class="bib-num">7</div><div class="bib-body"><div class="bib-title">ISO 15189:2022 — Laboratorios clínicos: Requisitos de calidad y competencia</div><div class="bib-ref">ISO (2022). Ginebra, Suiza. Traducción oficial en español disponible.</div><a class="bib-link" href="https://www.iso.org/standard/76677.html" target="_blank">🔗 ISO</a></div></div>
+        <div class="bib-item"><div class="bib-num">8</div><div class="bib-body"><div class="bib-title">Manual de Buenas Prácticas de Manufactura — INVIMA</div><div class="bib-ref">INVIMA (2022). Resolución 1160 de 2016 actualizada. Bogotá D.C.</div><a class="bib-link" href="https://www.invima.gov.co" target="_blank">🔗 INVIMA</a></div></div>
+        <div class="bib-item"><div class="bib-num">9</div><div class="bib-body"><div class="bib-title">Management of Leadership</div><div class="bib-ref">Hersey, P., Blanchard, K. & Johnson, D. (2012). Prentice Hall. 10ª ed.</div><a class="bib-link" href="https://www.pearson.com" target="_blank">🔗 Editorial</a></div></div>
+        <div class="bib-item"><div class="bib-num">10</div><div class="bib-body"><div class="bib-title">Plan de Desarrollo IDEAM 2023–2026</div><div class="bib-ref">IDEAM (2023). Instituto de Hidrología, Meteorología y Estudios Ambientales. Colombia.</div><a class="bib-link" href="https://www.ideam.gov.co" target="_blank">🔗 IDEAM</a></div></div>
+
+        <div class="nav-row"><button class="btn btn-ghost" onclick="switchMod(2)" style="border-color:var(--violet2);color:var(--violet2)">← Módulo anterior</button><button class="btn btn-primary" onclick="calcMod3()" style="background:linear-gradient(135deg,var(--violet),var(--violet2))">Ver resultado final 🏁</button></div>
+      </div>
+    </div>
+  </div><!-- fin mod3 -->
+</div><!-- fin app -->
+
+<div class="toast" id="toast" style="display:none"><div class="t-icon" id="tIcon">⚡</div><div class="t-txt"><strong id="tTitle">Logro</strong><span id="tDesc">XP</span></div></div>
+
+<script>
+let name='', xp=0, curMod=0, visited=new Set([0]);
+const mColors=['blue2','green2','orange2','violet2'];
+const mAccents=['var(--blue2)','var(--green2)','var(--orange2)','var(--violet2)'];
+const mAccentsBg=['rgba(59,130,246,.1)','rgba(34,197,94,.1)','rgba(249,115,22,.1)','rgba(124,58,237,.1)'];
+const qAnswers={};
+const secNames=[
+  ['Introducción','Herramientas','Casos','Actividad','Evaluación','Bibliografía'],
+  ['Introducción y Evaluación'],
+  ['Introducción y Evaluación'],
+  ['Introducción y Evaluación'],
+];
+
+// Q feedback texts
+const qFbOk={
+  m0:{1:'✅ Correcto. La planeación estratégica define el rumbo de toda la organización a largo plazo.',2:'✅ Exacto. Sin indicador verificable, el objetivo queda en buenas intenciones.',3:'✅ Correcto. Los programas anuales del IDEAM son planeación táctica-operativa.',4:'✅ Perfecto. Las oportunidades son factores externos favorables — no dependen de la empresa.',5:'✅ Correcto. "Sostenible" no hace parte del acrónimo SMART.',6:'✅ Exacto. Siempre se debe planear antes de actuar.',7:'✅ Correcto. El Plan Maestro de Validación es planeación operativa formalizada.',8:'✅ Excelente. Las 4 funciones son un ciclo integrado y continuo.'},
+  m1:{1:'✅ Correcto. El manual de cargos es esencial para la claridad organizacional y la calidad.',2:'✅ Exacto. La estructura divisional por región es típica de organizaciones como Corpoamazonia.',3:'✅ Perfecto. La división del trabajo garantiza control especializado en cada etapa.',4:'✅ Correcto. La Resolución 2003 de 2014 regula la habilitación de servicios de salud.',5:'✅ Exacto. La organización no tiene sentido sin un plan previo que ejecutar.'},
+  m2:{1:'✅ Correcto. El estudiante nuevo necesita dirección clara y específica.',2:'✅ Exacto. El reconocimiento es un reforzador positivo que aumenta la conducta deseada.',3:'✅ Correcto. Los valores críticos deben comunicarse inmediatamente.',4:'✅ Perfecto. El liderazgo trasciende la jerarquía formal.',5:'✅ Exacto. Los factores motivadores intrínsecos de Herzberg son los que generan satisfacción real.'},
+  m3:{1:'✅ Exacto. La fase Verificar compara resultados con estándares e identifica desviaciones.',2:'✅ Correcto. El control preventivo anticipa errores antes de que ocurran.',3:'✅ Exacto. OOS requiere investigación, acción correctiva y nuevo ciclo PHVA.',4:'✅ Correcto. ISO/IEC 17025 es la norma de competencia para laboratorios de ensayo y calibración.',5:'✅ Exacto. OOS requiere retención del lote e investigación CAPA antes de cualquier decisión.',6:'✅ Perfecto. El control cierra el ciclo y retroalimenta toda la gestión administrativa.'}
+};
+const qFbKo={
+  m0:{1:'❌ La diferencia clave es el horizonte temporal y el alcance. La estratégica es a largo plazo para toda la org.',2:'❌ Medible significa que hay un indicador para verificarlo — puede ser cuantitativo o cualitativo.',3:'❌ Los programas anuales con actividades específicas son planeación táctica-operativa, no solo estratégica.',4:'❌ La demanda en mercados externos es una oportunidad — factor externo favorable a aprovechar.',5:'❌ Sostenible no hace parte de SMART. Los criterios son: Específico, Medible, Alcanzable, Relevante, Temporal.',6:'❌ Ante un problema de calidad, siempre se debe comenzar planeando la solución.',7:'❌ El Plan Maestro de Validación traduce los requisitos BPM en actividades operativas concretas.',8:'❌ Las 4 funciones son interdependientes. La planeación sin control es incompleta y viceversa.'},
+  m1:{1:'❌ El manual de cargos define responsabilidades y evita ambigüedad — es un instrumento de gestión clave.',2:'❌ La estructura por regiones geográficas es divisional, no funcional centralizada.',3:'❌ Tener diferentes bacteriólogos por etapa aplica la división del trabajo especializado.',4:'❌ La Resolución 2003 de 2014 es la norma específica de habilitación de servicios de salud en Colombia.',5:'❌ Organizar sin planear es como construir sin planos. La organización siempre parte de un plan.'},
+  m2:{1:'❌ Un estudiante nuevo sin experiencia necesita Dirigir (E1): alta dirección y bajo apoyo.',2:'❌ El reconocimiento actúa como reforzador positivo según la teoría del condicionamiento operante de Skinner.',3:'❌ Los valores críticos requieren comunicación inmediata — es parte del protocolo de seguridad del paciente.',4:'❌ El liderazgo es una capacidad de influencia que va más allá del cargo formal.',5:'❌ Los factores higiénicos (salario, condiciones) evitan insatisfacción pero no generan motivación. Los intrínsecos sí.'},
+  m3:{1:'❌ La fase Verificar es donde se compara lo obtenido con el estándar. El Actuar implementa correcciones.',2:'❌ Verificar el vencimiento antes de iniciar es un control preventivo, no concurrente.',3:'❌ Cambiar el estándar es inaceptable. Se debe investigar la causa y corregirla.',4:'❌ ISO/IEC 17025 es la norma específica para laboratorios de ensayo y calibración.',5:'❌ Jamás se debe repetir sin documentar. El proceso OOS requiere investigación formal y CAPA.',6:'❌ El control es el eslabón que cierra el ciclo y alimenta una nueva planeación. No puede estar aislado.'}
+};
+
+window.addEventListener('load',()=>{
+  setTimeout(()=>{
+    document.getElementById('loader').style.opacity='0';
+    setTimeout(()=>document.getElementById('loader').style.display='none',500);
+  },1200);
+});
+
+function startApp(modIdx){
+  name=document.getElementById('nameInput').value.trim()||'Estudiante';
+  document.getElementById('welcome').style.display='none';
+  document.getElementById('app').style.display='block';
+  document.getElementById('greetName').textContent=name;
+  switchMod(modIdx);
+  gainXP(10,false);
+  showToast('🚀','¡Módulos cargados!','Bienvenido/a, '+name);
+}
+
+function switchMod(idx){
+  document.querySelectorAll('.mod-panel').forEach((p,i)=>p.classList.toggle('active',i===idx));
+  document.querySelectorAll('.mnav-btn').forEach((b,i)=>{
+    b.className='mnav-btn';
+    if(i===idx)b.classList.add('active-m'+i);
+  });
+  curMod=idx;
+  visited.add(idx);
+  // set accent
+  document.documentElement.style.setProperty('--accent',`var(--${['blue','green','orange','violet'][idx]})`);
+  document.documentElement.style.setProperty('--accent2',`var(--${['blue2','green2','orange2','violet2'][idx]})`);
+  buildSecNav(idx);
+  updateProgress();
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(idx>0)gainXP(5,false);
+}
+
+function buildSecNav(modIdx){
+  const nav=document.getElementById('secNav');
+  nav.innerHTML='';
+  const names=secNames[modIdx];
+  names.forEach((n,i)=>{
+    const b=document.createElement('button');
+    b.className='snav-btn'+(i===0?' active':'');
+    b.textContent=n;
+    b.onclick=()=>goSec(modIdx,i);
+    nav.appendChild(b);
+  });
+}
+
+function goSec(modIdx,secIdx){
+  const panels=document.querySelectorAll(`#mod${modIdx} .sec-panel`);
+  panels.forEach((p,i)=>p.classList.toggle('active',i===secIdx));
+  document.querySelectorAll('.snav-btn').forEach((b,i)=>b.classList.toggle('active',i===secIdx));
+  if(secIdx>0)gainXP(3,false);
+  updateProgress();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function updateProgress(){
+  const pct=Math.round((visited.size/4)*100);
+  document.getElementById('progFill').style.width=pct+'%';
+  document.getElementById('progPct').textContent=pct+'%';
+}
+
+function gainXP(amount,announce=true){
+  xp+=amount;
+  document.getElementById('xpCount').textContent=xp;
+  if(announce)showToast('⚡','XP ganados','+'+amount+' XP · Total: '+xp);
+}
+
+let toastT;
+function showToast(icon,title,desc){
+  const t=document.getElementById('toast');
+  document.getElementById('tIcon').textContent=icon;
+  document.getElementById('tTitle').textContent=title;
+  document.getElementById('tDesc').textContent=desc;
+  t.style.display='flex';t.style.animation='none';void t.offsetWidth;t.style.animation='toastIn .4s ease';
+  clearTimeout(toastT);toastT=setTimeout(()=>t.style.display='none',3200);
+}
+
+function showCase(prefix,type){
+  document.querySelectorAll(`[id^="${prefix}-"]`).forEach(el=>el.classList.remove('active'));
+  document.getElementById(`${prefix}-${type}`).classList.add('active');
+  document.querySelectorAll(`.case-tab`).forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
+}
+
+function saveDOFA(){
+  const f=document.getElementById('dofa_f').value.trim();
+  const d=document.getElementById('dofa_d').value.trim();
+  const o=document.getElementById('dofa_o').value.trim();
+  const a=document.getElementById('dofa_a').value.trim();
+  if(f.length<5||d.length<5||o.length<5||a.length<5){alert('Por favor completa los cuatro cuadrantes antes de guardar.');return;}
+  document.getElementById('dofa-result').style.display='block';
+  gainXP(20);
+}
+
+function saveReflect(inputId,resultId){
+  const val=document.getElementById(inputId).value.trim();
+  if(val.length<20){alert('Por favor escribe un poco más antes de guardar.');return;}
+  document.getElementById(resultId).style.display='block';
+  gainXP(15);
+}
+
+function adjKPI(barWrap,idx){
+  const bar=barWrap.querySelector('.kpi-bar');
+  const current=parseInt(bar.style.width)||50;
+  const newVal=prompt('Ingresa el valor actual (0-100):');
+  if(newVal===null)return;
+  const v=Math.min(100,Math.max(0,parseInt(newVal)||current));
+  bar.style.width=v+'%';
+  bar.style.background=v>=80?'var(--green2)':v>=60?'var(--amber)':'var(--rose)';
+}
+
+function ansQ(modKey,num,btn,isOk){
+  if(qAnswers[modKey+'_'+num]!==undefined)return;
+  qAnswers[modKey+'_'+num]=isOk?1:0;
+  const opts=btn.closest('.q-opts').querySelectorAll('.q-opt');
+  opts.forEach(o=>o.disabled=true);
+  btn.classList.add(isOk?'correct':'wrong');
+  if(!isOk)opts.forEach(o=>{if(o.getAttribute('onclick').includes(',true)'))o.classList.add('correct');});
+  const fb=document.getElementById(modKey+'qfb'+num);
+  const fbText=isOk?qFbOk[modKey][num]:qFbKo[modKey][num];
+  fb.textContent=fbText;
+  fb.className='q-fb '+(isOk?'ok':'ko');
+  if(isOk)gainXP(10,false);
+}
+
+function calcScore(modKey,total){
+  let score=0;
+  for(let i=1;i<=total;i++){score+=(qAnswers[modKey+'_'+i]||0);}
+  const pct=Math.round(score/total*100);
+  return pct;
+}
+
+function showResult(modKey,total,resultId,scoreId,starsId,msgId,badgeId){
+  const pct=calcScore(modKey,total);
+  document.getElementById(scoreId).textContent=pct+' / 100';
+  let stars='',msg='',badge='',bonus=0;
+  if(pct>=87){stars='⭐⭐⭐⭐⭐';msg='¡Excelente! Dominas esta función del proceso administrativo.';badge='🏆 Nivel Sobresaliente';bonus=50;}
+  else if(pct>=62){stars='⭐⭐⭐⭐';msg='¡Muy bien! Revisa los conceptos donde tuviste errores para consolidar el aprendizaje.';badge='✨ Nivel Alto';bonus=30;}
+  else{stars='⭐⭐⭐';msg='Repasa el contenido del módulo y vuelve a intentarlo.';badge='📖 Sigue creciendo';bonus=15;}
+  document.getElementById(starsId).textContent=stars;
+  document.getElementById(msgId).textContent=msg;
+  document.getElementById(badgeId).textContent=badge;
+  document.getElementById(resultId).classList.add('show');
+  document.getElementById(resultId).scrollIntoView({behavior:'smooth',block:'center'});
+  gainXP(bonus);
+}
+
+function calcMod1(){
+  const total=Object.keys(qAnswers).filter(k=>k.startsWith('m0_')).length;
+  if(total<8){alert('Responde todas las preguntas del módulo 1 antes de ver el resultado.');return;}
+  showResult('m0',8,'m0result','m0score','m0stars','m0msg','m0badge');
+}
+function calcMod2(){
+  showResult('m1',5,'m1result','m1score','m1stars','m1msg','m1badge');
+}
+function calcMod3(){
+  showResult('m2',5,'m2result','m2score','m2stars','m2msg','m2badge');
+}
+function calcMod3_done(){
+  showResult('m2',5,'m2result','m2score','m2stars','m2msg','m2badge');
+}
+function calcMod4(){showResult('m3',6,'m3result','m3score','m3stars','m3msg','m3badge');}
+function calcMod3(){
+  const answered=Object.keys(qAnswers).filter(k=>k.startsWith('m2_')).length;
+  if(answered<5){alert('Responde todas las preguntas antes de ver el resultado.');return;}
+  showResult('m2',5,'m2result','m2score','m2stars','m2msg','m2badge');
+}
+
+// Override calcMod3 for mod4
+function calcMod3(){ 
+  const a2=Object.keys(qAnswers).filter(k=>k.startsWith('m2_')).length;
+  if(a2<5){alert('Responde todas las preguntas del módulo 3.');return;}
+  showResult('m2',5,'m2result','m2score','m2stars','m2msg','m2badge');
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  // patch calc buttons
+  document.querySelectorAll('.q-opt').forEach(btn=>{
+    btn.addEventListener('click',function(){
+      const onclickStr=this.getAttribute('onclick');
+      if(onclickStr){
+        const match=onclickStr.match(/ansQ\('(m\d+)',(\d+),this,(true|false)\)/);
+        if(match){ansQ(match[1],parseInt(match[2]),this,match[3]==='true');}
+      }
+    });
+  });
+});
+
+// Auto-detect result buttons
+window.calcMod3=function(){
+  const a=Object.keys(qAnswers).filter(k=>k.startsWith('m2_')).length;
+  if(a<5){alert('Responde todas las preguntas del módulo 3.');return;}
+  showResult('m2',5,'m2result','m2score','m2stars','m2msg','m2badge');
+};
+window.calcMod4_final=function(){
+  const a=Object.keys(qAnswers).filter(k=>k.startsWith('m3_')).length;
+  if(a<6){alert('Responde todas las preguntas del módulo 4.');return;}
+  showResult('m3',6,'m3result','m3score','m3stars','m3msg','m3badge');
+  document.getElementById('finalDiploma').style.display='block';
+  document.getElementById('diplomaName').textContent=name;
+  gainXP(100);
+  showToast('🎓','¡Programa completado!','¡Felicitaciones, '+name+'!');
+};
+</script>
+</body>
+</html>
